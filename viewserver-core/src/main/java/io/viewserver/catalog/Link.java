@@ -20,7 +20,7 @@ import io.viewserver.operators.IInput;
 import io.viewserver.operators.IOutput;
 
 /**
-* Created by nick on 10/03/2015.
+* Created by bemm on 10/03/2015.
 */
 class Link {
     private IOutput output;

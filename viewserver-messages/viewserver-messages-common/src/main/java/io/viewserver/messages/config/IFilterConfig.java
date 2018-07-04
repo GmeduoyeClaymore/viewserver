@@ -17,7 +17,7 @@
 package io.viewserver.messages.config;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public interface IFilterConfig<T> extends IOperatorConfig<T> {
     FilterMode getMode();

@@ -19,7 +19,7 @@ package io.viewserver.sql;
 import com.facebook.presto.sql.tree.*;
 
 /**
- * Created by nick on 22/11/15.
+ * Created by bemm on 22/11/15.
  */
 public class SupportedExpressionRewriter<C> extends ExpressionRewriter<C> {
     @Override

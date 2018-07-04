@@ -26,7 +26,7 @@ import java.util.BitSet;
 import java.util.List;
 
 /**
- * Created by nick on 04/12/15.
+ * Created by bemm on 04/12/15.
  */
 public class ValueLists {
     public static IValueList valueListOf(Object... values) {

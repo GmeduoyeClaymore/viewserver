@@ -17,7 +17,7 @@
 package io.viewserver.operators;
 
 /**
- * Created by nick on 10/02/2015.
+ * Created by bemm on 10/02/2015.
  */
 public class MiscOperatorTests {
 }

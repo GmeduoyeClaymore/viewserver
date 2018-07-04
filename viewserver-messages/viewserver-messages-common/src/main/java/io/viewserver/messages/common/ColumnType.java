@@ -17,7 +17,7 @@
 package io.viewserver.messages.common;
 
 /**
- * Created by nick on 04/12/15.
+ * Created by bemm on 04/12/15.
  */
 public enum ColumnType {
     Boolean,

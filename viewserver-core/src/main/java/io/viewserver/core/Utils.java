@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by nick on 10/09/15.
+ * Created by bemm on 10/09/15.
  */
 public class Utils {
     // TODO: get rid of the static variable

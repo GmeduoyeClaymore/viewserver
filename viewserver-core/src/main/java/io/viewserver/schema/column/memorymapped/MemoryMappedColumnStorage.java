@@ -21,7 +21,7 @@ import io.viewserver.schema.column.ColumnStorageBase;
 import java.nio.file.Path;
 
 /**
- * Created by nick on 27/10/15.
+ * Created by bemm on 27/10/15.
  */
 public class MemoryMappedColumnStorage extends ColumnStorageBase {
     private Path schemaDirectory;

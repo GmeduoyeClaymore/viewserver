@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * Created by nick on 11/02/2015.
+ * Created by bemm on 11/02/2015.
  */
 public interface IValueReader {
     Date readDate(String field);

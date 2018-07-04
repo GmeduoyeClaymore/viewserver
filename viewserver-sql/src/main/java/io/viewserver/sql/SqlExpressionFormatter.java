@@ -21,7 +21,7 @@ import com.facebook.presto.sql.tree.Expression;
 import com.facebook.presto.sql.tree.StringLiteral;
 
 /**
- * Created by nick on 20/11/15.
+ * Created by bemm on 20/11/15.
  */
 public class SqlExpressionFormatter extends ExpressionFormatter.Formatter {
     public static String formatExpression(Expression expression)

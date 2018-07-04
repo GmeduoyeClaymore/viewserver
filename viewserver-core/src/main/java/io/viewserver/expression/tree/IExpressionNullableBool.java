@@ -19,7 +19,7 @@ package io.viewserver.expression.tree;
 import io.viewserver.core.NullableBool;
 
 /**
- * Created by nick on 09/03/2015.
+ * Created by bemm on 09/03/2015.
  */
 public interface IExpressionNullableBool extends IExpressionBool {
     NullableBool getNullableBool(int row);

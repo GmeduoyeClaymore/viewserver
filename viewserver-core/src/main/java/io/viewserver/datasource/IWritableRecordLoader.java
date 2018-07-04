@@ -21,7 +21,7 @@ import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nick on 19/02/2015.
+ * Created by bemm on 19/02/2015.
  */
 public interface IWritableRecordLoader extends IRecordLoader {
     TableKeyDefinition getDerivedTableKeyDefinition();

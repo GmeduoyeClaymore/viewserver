@@ -19,7 +19,7 @@ package io.viewserver.execution;
 import io.viewserver.messages.common.ValueLists;
 
 /**
- * Created by nick on 17/03/2015.
+ * Created by bemm on 17/03/2015.
  */
 public interface IParameterHolder {
     ValueLists.IValueList getParameterValue(String name);

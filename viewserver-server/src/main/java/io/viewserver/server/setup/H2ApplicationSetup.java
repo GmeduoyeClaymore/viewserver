@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Created by nick on 10/09/15.
+ * Created by bemm on 10/09/15.
  */
 public class H2ApplicationSetup implements IApplicationSetup {
     private static final Logger log = LoggerFactory.getLogger(H2ApplicationSetup.class);

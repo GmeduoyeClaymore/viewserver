@@ -17,7 +17,7 @@
 package io.viewserver.subscription;
 
 /**
- * Created by nick on 14/07/15.
+ * Created by bemm on 14/07/15.
  */
 public enum SubscriptionFlags {
     SnapshotOnly

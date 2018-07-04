@@ -28,7 +28,7 @@ import io.viewserver.messages.protobuf.dto.OperatorMessage;
 import java.util.List;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class ConfigurateCommand extends PoolableMessage<ConfigurateCommand> implements IConfigurateCommand<ConfigurateCommand>,
         ICommandExtension<ConfigurateCommand> {

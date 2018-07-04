@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 
 /**
- * Created by nick on 15/12/15.
+ * Created by bemm on 15/12/15.
  */
 public class ValueListSerialisationModule extends SimpleModule {
     public ValueListSerialisationModule() {

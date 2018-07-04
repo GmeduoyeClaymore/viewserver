@@ -24,7 +24,7 @@ import io.viewserver.messages.protobuf.dto.SortConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class SortConfig extends PoolableMessage<SortConfig> implements ISortConfig<SortConfig> {
     private SortConfigMessage.SortConfigDtoOrBuilder sortConfigDto;

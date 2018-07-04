@@ -25,7 +25,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.SubscribeDataSourceCommandMessage;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class SubscribeDataSourceCommand extends PoolableMessage<SubscribeDataSourceCommand> implements ISubscribeDataSourceCommand<SubscribeDataSourceCommand>,
         ICommandExtension<SubscribeDataSourceCommand> {

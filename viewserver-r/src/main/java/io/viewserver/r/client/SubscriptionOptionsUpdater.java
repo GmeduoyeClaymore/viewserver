@@ -20,7 +20,7 @@ import io.viewserver.client.ClientSubscription;
 import io.viewserver.execution.Options;
 
 /**
- * Created by nick on 14/07/15.
+ * Created by bemm on 14/07/15.
  */
 public class SubscriptionOptionsUpdater implements ClientSubscription.ISubscriptionOptionsUpdater {
     private final int offset;

@@ -17,7 +17,7 @@
 package io.viewserver.messages;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface IMessagePool {
     <T extends IPoolableMessage> T get(Class<T> clazz);

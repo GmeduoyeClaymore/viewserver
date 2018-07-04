@@ -24,7 +24,7 @@ import io.viewserver.messages.protobuf.dto.TableEditCommandMessage;
 import io.viewserver.messages.tableevent.ITableEvent;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class TableEditCommand extends PoolableMessage<TableEditCommand> implements ITableEditCommand<TableEditCommand>,
         ICommandExtension<TableEditCommand> {

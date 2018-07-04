@@ -21,7 +21,7 @@ import io.viewserver.execution.nodes.*;
 import io.viewserver.execution.steps.IExecutionPlanStep;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlConnectionStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     @Override

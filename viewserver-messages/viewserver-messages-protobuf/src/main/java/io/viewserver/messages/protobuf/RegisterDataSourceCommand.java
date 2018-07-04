@@ -24,7 +24,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.RegisterDataSourceCommandMessage;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class RegisterDataSourceCommand extends PoolableMessage<RegisterDataSourceCommand>
         implements IRegisterDataSourceCommand<RegisterDataSourceCommand>, ICommandExtension<RegisterDataSourceCommand> {

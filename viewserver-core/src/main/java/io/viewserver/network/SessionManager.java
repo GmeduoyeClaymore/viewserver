@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by nick on 19/02/2015.
+ * Created by bemm on 19/02/2015.
  */
 public class SessionManager extends InputOperatorBase implements IPeerSessionAuthenticationHandler {
     private static final Logger log = LoggerFactory.getLogger(SessionManager.class);

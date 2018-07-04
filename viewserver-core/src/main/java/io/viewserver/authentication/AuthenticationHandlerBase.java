@@ -21,7 +21,7 @@ import io.viewserver.messages.command.IAuthenticateCommand;
 import java.util.List;
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public abstract class AuthenticationHandlerBase implements IAuthenticationHandler {
     @Override

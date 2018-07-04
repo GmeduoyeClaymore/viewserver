@@ -26,7 +26,7 @@ import io.viewserver.messages.tableevent.*;
 import java.util.List;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class TableEvent extends PoolableMessage<TableEvent> implements ITableEvent<TableEvent> {
     private TableEventMessage.TableEventDtoOrBuilder tableEventDto;

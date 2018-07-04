@@ -23,7 +23,7 @@ import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public class RollingTable extends Table {
     private final BoundedFifoBufferInt rows;

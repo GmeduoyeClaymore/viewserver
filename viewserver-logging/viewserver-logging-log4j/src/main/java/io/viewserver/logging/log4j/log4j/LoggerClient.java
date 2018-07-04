@@ -29,7 +29,7 @@ import org.apache.logging.log4j.ThreadContext;
 import java.net.URISyntaxException;
 
 /**
- * Created by nick on 30/09/15.
+ * Created by bemm on 30/09/15.
  */
 public class LoggerClient extends ViewServerClient {
     public LoggerClient(String name, String url, ReconnectionSettings settings) throws URISyntaxException {

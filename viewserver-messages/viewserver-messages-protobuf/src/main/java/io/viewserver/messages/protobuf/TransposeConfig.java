@@ -23,7 +23,7 @@ import io.viewserver.messages.protobuf.dto.TransposeConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class TransposeConfig extends PoolableMessage<TransposeConfig> implements ITransposeConfig<TransposeConfig> {
     private TransposeConfigMessage.TransposeConfigDtoOrBuilder transposeConfigDto;

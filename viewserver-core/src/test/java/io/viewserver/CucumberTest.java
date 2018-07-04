@@ -24,8 +24,8 @@ import org.junit.runner.RunWith;
 
 /**
 /*
- * Created by nick on 12/02/2015.
- *//*
+ * Created by bemm on 12/02/2015.
+ */
 
 @Category(Spec.class)
 @RunWith(Cucumber.class)
@@ -41,4 +41,4 @@ import org.junit.runner.RunWith;
 )
 public class CucumberTest {
 }
-*/
+

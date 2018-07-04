@@ -35,7 +35,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 /**
- * Created by nick on 29/09/15.
+ * Created by bemm on 29/09/15.
  */
 public class ViewServerManager extends AbstractManager {
     private static final ViewServerManagerFactory factory = new ViewServerManagerFactory();

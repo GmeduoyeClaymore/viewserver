@@ -25,7 +25,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class Options extends PoolableMessage<Options> implements IOptions<Options> {
     private OptionsMessage.OptionsDtoOrBuilder optionsDto;

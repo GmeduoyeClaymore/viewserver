@@ -19,7 +19,7 @@ package io.viewserver.adapters.common;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * Created by nick on 15/09/15.
+ * Created by bemm on 15/09/15.
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,

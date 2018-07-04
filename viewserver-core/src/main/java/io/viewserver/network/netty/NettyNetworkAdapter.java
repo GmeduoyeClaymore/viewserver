@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class NettyNetworkAdapter implements INetworkAdapter {
     private static final Logger log = LoggerFactory.getLogger(NettyNetworkAdapter.class);

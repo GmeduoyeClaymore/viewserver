@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlSelectStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     private SummaryRegistry summaryRegistry;

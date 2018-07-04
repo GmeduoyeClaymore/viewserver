@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by nick on 11/07/15.
+ * Created by bemm on 11/07/15.
  */
 public class EndpointFactoryRegistry {
     private static final ConcurrentHashMap<String, IEndpointFactory> factories = new ConcurrentHashMap<>();

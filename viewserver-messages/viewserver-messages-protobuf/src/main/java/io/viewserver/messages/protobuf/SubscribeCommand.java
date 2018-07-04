@@ -25,7 +25,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.SubscribeCommandMessage;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class SubscribeCommand extends PoolableMessage<SubscribeCommand> implements ISubscribeCommand<SubscribeCommand>,
         ICommandExtension<SubscribeCommand> {

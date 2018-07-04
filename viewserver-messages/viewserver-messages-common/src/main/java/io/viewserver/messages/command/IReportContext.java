@@ -24,7 +24,7 @@ import io.viewserver.messages.common.ValueLists;
 import java.util.List;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public interface IReportContext<T> extends IRecyclableMessage<T> {
     String getReportId();

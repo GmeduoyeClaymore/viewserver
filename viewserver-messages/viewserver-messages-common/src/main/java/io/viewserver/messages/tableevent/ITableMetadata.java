@@ -23,7 +23,7 @@ import io.viewserver.messages.common.ColumnType;
 import java.util.List;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface ITableMetadata<T> extends IPoolableMessage<T> {
     List<IMetadataValue> getMetadataValues();

@@ -22,7 +22,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.UnsubscribeCommandMessage;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class UnsubscribeCommand extends PoolableMessage<UnsubscribeCommand> implements IUnsubscribeCommand<UnsubscribeCommand>,
     ICommandExtension<UnsubscribeCommand> {

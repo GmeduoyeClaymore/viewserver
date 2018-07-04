@@ -17,7 +17,7 @@
 package io.viewserver.messages;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public interface IRecyclableMessage<T> extends IPoolableMessage<T> {
     void setDto(Object dto);

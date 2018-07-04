@@ -21,7 +21,7 @@ package io.viewserver.schema.column;
 import io.viewserver.core._KeyType_;
 
 /**
- * Created by nick on 02/03/2015.
+ * Created by bemm on 02/03/2015.
  */
 public abstract class Column_KeyName_Base extends ColumnBase implements IColumn_KeyName_ {
     protected Column_KeyName_Base(String name) {

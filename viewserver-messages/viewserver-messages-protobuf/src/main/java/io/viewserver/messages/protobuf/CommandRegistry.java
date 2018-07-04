@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class CommandRegistry {
     public static final CommandRegistry INSTANCE = new CommandRegistry();

@@ -17,7 +17,7 @@
 package io.viewserver.adapters.common;
 
 /**
- * Created by nick on 15/09/15.
+ * Created by bemm on 15/09/15.
  */
 public interface IPollingDataQueryProvider extends IDataQueryProvider {
     String getDeltaQuery(Object lastDeltaValue);

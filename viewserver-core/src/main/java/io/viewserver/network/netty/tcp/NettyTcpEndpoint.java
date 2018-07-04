@@ -36,7 +36,7 @@ import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public class NettyTcpEndpoint implements INettyEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NettyTcpEndpoint.class);

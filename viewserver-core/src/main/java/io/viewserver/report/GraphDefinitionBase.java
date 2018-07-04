@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nick on 02/03/2015.
+ * Created by bemm on 02/03/2015.
  */
 public abstract class GraphDefinitionBase<T> implements IGraphDefinition {
     private final List<IGraphNode> nodes = new ArrayList<>();

@@ -17,7 +17,7 @@
 package io.viewserver.client;
 
 /**
- * Created by nick on 18/03/2015.
+ * Created by bemm on 18/03/2015.
  */
 public class ViewServerClientException extends RuntimeException {
     public ViewServerClientException() {

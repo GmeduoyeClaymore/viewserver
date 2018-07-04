@@ -19,7 +19,7 @@ package io.viewserver.messages.heartbeat;
 import io.viewserver.messages.IPoolableMessage;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface IHeartbeat<T> extends IPoolableMessage<T> {
     Type getType();

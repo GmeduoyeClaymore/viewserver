@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by nick on 20/11/15.
+ * Created by bemm on 20/11/15.
  */
 public class SqlHavingStep extends SqlFilterStepBase {
     private SummaryRegistry summaryRegistry;

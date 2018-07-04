@@ -21,7 +21,7 @@ import io.viewserver.messages.config.IRollingTableConfig;
 import io.viewserver.messages.protobuf.dto.RollingTableConfigMessage;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class RollingTableConfig extends PoolableMessage<RollingTableConfig> implements IRollingTableConfig<RollingTableConfig> {
     private RollingTableConfigMessage.RollingTableConfigDtoOrBuilder rollingTableConfigDto;

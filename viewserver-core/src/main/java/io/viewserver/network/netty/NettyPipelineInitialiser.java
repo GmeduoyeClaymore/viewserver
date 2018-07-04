@@ -24,7 +24,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class NettyPipelineInitialiser extends ChannelInitializer<Channel> {
     private INetworkMessageWheel networkMessageWheel;

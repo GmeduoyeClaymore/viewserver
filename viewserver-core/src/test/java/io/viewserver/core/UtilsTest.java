@@ -19,7 +19,7 @@ package io.viewserver.core;
 import org.junit.Test;
 
 /**
- * Created by nick on 13/10/15.
+ * Created by bemm on 13/10/15.
  */
 public class UtilsTest {
     @Test

@@ -21,7 +21,7 @@ import io.viewserver.operators.ConfigurableOperatorFactoryBase;
 import io.viewserver.operators.IOperator;
 
 /**
- * Created by nick on 10/11/15.
+ * Created by bemm on 10/11/15.
  */
 public class TablePartitionFactory extends ConfigurableOperatorFactoryBase<ITablePartitionConfig> {
     @Override

@@ -26,7 +26,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public abstract class RecyclingList<TMessage extends IRecyclableMessage, TDto> implements List<TMessage> {
     private Class<TMessage> messageClass;

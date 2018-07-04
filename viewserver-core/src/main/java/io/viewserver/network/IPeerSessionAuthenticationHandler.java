@@ -19,7 +19,7 @@ package io.viewserver.network;
 import io.viewserver.authentication.AuthenticationToken;
 
 /**
- * Created by nick on 19/02/2015.
+ * Created by bemm on 19/02/2015.
  */
 public interface IPeerSessionAuthenticationHandler {
     void handle(IPeerSession peerSession, AuthenticationToken authenticationToken);

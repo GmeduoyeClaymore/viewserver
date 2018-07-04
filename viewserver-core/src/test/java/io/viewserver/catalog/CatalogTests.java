@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Created by nick on 04/03/2015.
+ * Created by bemm on 04/03/2015.
  */
 public class CatalogTests {
     @Test

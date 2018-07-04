@@ -23,7 +23,7 @@ import io.viewserver.messages.protobuf.dto.CalcColConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class CalcColConfig extends PoolableMessage<CalcColConfig> implements ICalcColConfig<CalcColConfig> {
     private CalcColConfigMessage.CalcColConfigDtoOrBuilder calcColConfigDto;

@@ -26,7 +26,7 @@ import io.viewserver.operators.validator.ValidationOperator;
 import java.util.Map;
 
 /**
- * Created by nick on 10/02/2015.
+ * Created by bemm on 10/02/2015.
  */
 public class TestSubscriptionEventHandler extends SubscriptionEventHandlerBase<ClientSubscription> {
 

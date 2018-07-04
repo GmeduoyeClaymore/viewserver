@@ -23,7 +23,7 @@ import io.viewserver.execution.nodes.FilterNode;
 import io.viewserver.execution.nodes.UserFilterNode;
 
 /**
- * Created by nick on 06/03/2015.
+ * Created by bemm on 06/03/2015.
  */
 public class UserFilterStep implements IExecutionPlanStep<OptionsExecutionPlanContext> {
     private int commandId;

@@ -28,7 +28,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
 /**
- * Created by nick on 27/10/15.
+ * Created by bemm on 27/10/15.
  */
 public abstract class MemoryMappedColumnBase extends ColumnBase implements IWritableColumn {
     private File file;

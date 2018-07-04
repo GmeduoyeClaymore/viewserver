@@ -23,7 +23,7 @@ import io.viewserver.messages.protobuf.dto.ProjectionConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class ProjectionConfig extends PoolableMessage<ProjectionConfig> implements IProjectionConfig<ProjectionConfig> {
     private ProjectionConfigMessage.ProjectionConfigDtoOrBuilder projectionConfigDto;

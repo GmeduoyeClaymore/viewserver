@@ -20,7 +20,7 @@ import io.viewserver.datasource.IDataSource;
 import io.viewserver.execution.ParameterHelper;
 
 /**
- * Created by nick on 06/03/2015.
+ * Created by bemm on 06/03/2015.
  */
 public class UserFilterNode extends FilterNode {
     public UserFilterNode() {

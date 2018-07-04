@@ -20,7 +20,7 @@ import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.Schema;
 
 /**
- * Created by nick on 15/09/15.
+ * Created by bemm on 15/09/15.
  */
 public interface IWritableDataQueryProvider extends IDataQueryProvider {
     void setSchema(Schema schema);

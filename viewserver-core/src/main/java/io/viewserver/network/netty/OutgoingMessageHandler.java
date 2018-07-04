@@ -26,7 +26,7 @@ import java.util.List;
 import static io.netty.buffer.Unpooled.wrappedBuffer;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class OutgoingMessageHandler extends MessageToMessageEncoder<IMessage> {
     private INetworkMessageWheel networkMessageWheel;

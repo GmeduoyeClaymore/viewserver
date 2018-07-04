@@ -26,7 +26,7 @@ import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import org.junit.Test;
 
 /**
- * Created by nick on 12/02/2015.
+ * Created by bemm on 12/02/2015.
  */
 public class TablePartitionOperatorTests {
     @Test

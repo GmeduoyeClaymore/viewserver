@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class MessagePool implements IMessagePool {
     private static final MessagePool instance = new MessagePool();

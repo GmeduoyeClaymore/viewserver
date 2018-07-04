@@ -22,7 +22,7 @@ import io.viewserver.operators.table.ITablePartitionConfig;
 import io.viewserver.operators.table.TablePartitionOperator;
 
 /**
- * Created by nick on 10/11/15.
+ * Created by bemm on 10/11/15.
  */
 public class TablePartitionNode extends GraphNodeBase<TablePartitionNode> implements ITablePartitionConfig {
     private String partitionColumnName;

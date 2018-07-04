@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * Created by nick on 11/07/15.
+ * Created by bemm on 11/07/15.
  */
 public class RClient extends ViewServerClient {
     private static final byte[] logicalValues = new byte[]{REXPLogical.NA, REXPLogical.FALSE, REXPLogical.TRUE};

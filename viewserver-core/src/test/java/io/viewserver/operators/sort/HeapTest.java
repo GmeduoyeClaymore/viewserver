@@ -23,7 +23,7 @@ import org.junit.Test;
 import java.util.Random;
 
 /**
- * Created by nick on 16/03/2015.
+ * Created by bemm on 16/03/2015.
  */
 public class HeapTest extends BenchmarkTestBase {
     @Test

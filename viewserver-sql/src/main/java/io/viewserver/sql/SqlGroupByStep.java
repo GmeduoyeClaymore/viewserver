@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nick on 20/11/15.
+ * Created by bemm on 20/11/15.
  */
 public class SqlGroupByStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     @Override

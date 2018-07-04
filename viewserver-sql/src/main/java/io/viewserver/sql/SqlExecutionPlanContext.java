@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlExecutionPlanContext extends OptionsExecutionPlanContext {
     private final Query query;

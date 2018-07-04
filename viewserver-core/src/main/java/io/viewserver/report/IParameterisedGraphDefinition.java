@@ -19,7 +19,7 @@ package io.viewserver.report;
 import java.util.Map;
 
 /**
- * Created by nick on 02/03/2015.
+ * Created by bemm on 02/03/2015.
  */
 public interface IParameterisedGraphDefinition {
     Map<String, ParameterDefinition> getParameters();

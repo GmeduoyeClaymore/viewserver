@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public class AuthenticationHandlerRegistry {
     public static final String AUTHENTICATE_COMMAND = "authenticate";

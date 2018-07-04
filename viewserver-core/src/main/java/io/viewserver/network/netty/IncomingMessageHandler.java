@@ -25,7 +25,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import java.util.List;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class IncomingMessageHandler extends MessageToMessageDecoder<ByteBuf> {
     private INetworkMessageWheel networkMessageWheel;

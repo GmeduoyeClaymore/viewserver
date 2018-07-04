@@ -26,7 +26,7 @@ import io.viewserver.messages.protobuf.dto.ReportContextMessage;
 import java.util.List;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class ReportContext extends PoolableMessage<ReportContext>
         implements IReportContext<ReportContext> {

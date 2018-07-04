@@ -19,7 +19,7 @@ package io.viewserver.messages.config;
 import io.viewserver.messages.IPoolableMessage;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public interface IOperatorConfig<T> extends IPoolableMessage<T> {
     void setDto(Object dto);

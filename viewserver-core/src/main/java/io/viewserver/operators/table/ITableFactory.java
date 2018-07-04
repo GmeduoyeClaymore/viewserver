@@ -21,7 +21,7 @@ import io.viewserver.core.IExecutionContext;
 import io.viewserver.schema.Schema;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public interface ITableFactory<TTable extends ITable, TConfig> {
     TTable create(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, TConfig config);

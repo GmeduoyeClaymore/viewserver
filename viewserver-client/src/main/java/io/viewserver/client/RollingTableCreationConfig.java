@@ -19,7 +19,7 @@ package io.viewserver.client;
 import com.google.protobuf.ByteString;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public class RollingTableCreationConfig implements ITableCreationConfig {
     private int size;

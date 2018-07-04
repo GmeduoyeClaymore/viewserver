@@ -40,7 +40,7 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Created by nick on 27/10/15.
+ * Created by bemm on 27/10/15.
  */
 public class MemoryMappedColumnTest {
     @Test

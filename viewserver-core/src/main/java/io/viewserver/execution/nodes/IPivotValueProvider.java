@@ -20,7 +20,7 @@ import io.viewserver.execution.ParameterHelper;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * Created by nick on 27/02/2015.
+ * Created by bemm on 27/02/2015.
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public class AuthenticationToken {
     private String type;

@@ -21,7 +21,7 @@ import io.viewserver.messages.IRecyclableMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public interface ICalcColConfig<T> extends IOperatorConfig<T> {
     List<ICalculatedColumn> getCalculations();

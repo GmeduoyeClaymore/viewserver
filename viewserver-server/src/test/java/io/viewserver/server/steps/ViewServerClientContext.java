@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by nick on 10/02/2015.
+ * Created by bemm on 10/02/2015.
  */
 public class ViewServerClientContext {
     private HashMap<String, ClientConnectionContext> clientConnectionsByName;

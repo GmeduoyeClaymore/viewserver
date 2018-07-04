@@ -23,7 +23,7 @@ import io.viewserver.messages.protobuf.dto.GroupByConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class GroupByConfig extends PoolableMessage<GroupByConfig> implements IGroupByConfig<GroupByConfig> {
     private GroupByConfigMessage.GroupByConfigDtoOrBuilder groupByConfigDto;

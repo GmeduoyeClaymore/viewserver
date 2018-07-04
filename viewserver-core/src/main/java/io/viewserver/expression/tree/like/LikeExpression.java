@@ -21,7 +21,7 @@ import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nick on 31/03/2015.
+ * Created by bemm on 31/03/2015.
  */
 public class LikeExpression implements IExpressionBool {
     private final IExpressionString lhs;

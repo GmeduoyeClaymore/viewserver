@@ -22,7 +22,7 @@ import io.viewserver.messages.heartbeat.IHeartbeat;
 import io.viewserver.messages.protobuf.dto.HeartbeatMessage;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class Heartbeat extends PoolableMessage<Heartbeat> implements IHeartbeat<Heartbeat> {
     private HeartbeatMessage.HeartbeatDtoOrBuilder heartbeatDto;

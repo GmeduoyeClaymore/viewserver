@@ -21,7 +21,7 @@ import rx.Observable;
 
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public interface IAuthenticationHandler {
     AuthenticationToken authenticate(IAuthenticateCommand authenticateCommandDto);

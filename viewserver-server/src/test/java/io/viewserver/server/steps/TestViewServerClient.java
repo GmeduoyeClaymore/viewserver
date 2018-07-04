@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public class TestViewServerClient extends ViewServerClient {
     private static final Logger log = LoggerFactory.getLogger(TestViewServerClient.class);

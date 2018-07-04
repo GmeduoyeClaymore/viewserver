@@ -19,7 +19,7 @@ package io.viewserver.operators.sort;
 import java.util.Arrays;
 
 /**
- * Created by nick on 16/03/2015.
+ * Created by bemm on 16/03/2015.
  */
 public class BinaryHeap<T extends Comparable<T>> implements PriorityQueue<T> {
     private static final int DEFAULT_CAPACITY = 10;

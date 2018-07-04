@@ -20,7 +20,7 @@ import io.viewserver.messages.IMessage;
 import io.viewserver.network.IChannel;
 
 /**
- * Created by nick on 23/06/15.
+ * Created by bemm on 23/06/15.
  */
 public interface INetworkMessageListener {
     void onNetworkMessage(IChannel channel, IMessage msg);

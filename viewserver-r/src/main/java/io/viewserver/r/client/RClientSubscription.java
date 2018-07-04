@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nick on 14/07/15.
+ * Created by bemm on 14/07/15.
  */
 public class RClientSubscription extends ClientSubscriptionBase {
     private final ViewServerClient client;

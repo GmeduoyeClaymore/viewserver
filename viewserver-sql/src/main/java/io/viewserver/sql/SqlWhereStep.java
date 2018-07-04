@@ -24,7 +24,7 @@ import com.facebook.presto.sql.tree.QuerySpecification;
 import java.util.Optional;
 
 /**
- * Created by nick on 20/11/15.
+ * Created by bemm on 20/11/15.
  */
 public class SqlWhereStep extends SqlFilterStepBase {
     @Override

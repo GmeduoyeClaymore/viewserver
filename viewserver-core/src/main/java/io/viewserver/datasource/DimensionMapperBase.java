@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 02/07/15.
+ * Created by bemm on 02/07/15.
  */
 public abstract class DimensionMapperBase implements IDimensionMapper {
     private static final Logger log = LoggerFactory.getLogger(DimensionMapperBase.class);

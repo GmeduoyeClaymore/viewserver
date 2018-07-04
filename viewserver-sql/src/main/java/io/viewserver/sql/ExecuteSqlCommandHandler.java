@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class ExecuteSqlCommandHandler extends SubscriptionHandlerBase<IExecuteSqlCommand> {
     private static final Logger log = LoggerFactory.getLogger(ExecuteSqlCommandHandler.class);
