@@ -27,6 +27,13 @@
         <tag>HEAD</tag>
     </scm>
 
+    <distributionManagement>
+            <repository>
+                <id>central</id>
+                <url>http://claymoreminds.com:8040/artifactory/libs-release</url>
+            </repository>
+    </distributionManagement>
+
     <properties>
         <slf4j.version>1.7.7</slf4j.version>
         <log4j.version>2.0.2</log4j.version>
@@ -35,9 +42,6 @@
 
     <modules>
         <module>viewserver-core</module>
-        <!-- disabled - move to its own project with maven dependencies
-        <module>viewserver-property-hub</module>
-        -->
         <module>viewserver-adapters</module>
         <module>viewserver-server</module>
         <module>viewserver-sourcegen</module>
