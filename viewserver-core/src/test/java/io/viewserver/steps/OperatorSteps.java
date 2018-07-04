@@ -202,7 +202,6 @@ public class OperatorSteps {
 
     @And("^output is \"([^\"]*)\"$")
     public void outputIs(String outputName) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
         this.outputName = outputName;
     }
 }

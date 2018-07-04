@@ -19,6 +19,7 @@ package io.viewserver.factories;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.operators.IOperator;
+import io.viewserver.operators.dimension.DimensionMapperOperator;
 import io.viewserver.operators.union.UnionOperator;
 import io.viewserver.schema.ITableStorage;
 
@@ -55,5 +56,5 @@ public class TestUnionOperatorFactory implements ITestOperatorFactory{
 
     }
 
-
 }
+
