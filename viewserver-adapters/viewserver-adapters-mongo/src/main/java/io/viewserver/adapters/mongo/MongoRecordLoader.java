@@ -81,7 +81,6 @@ public class MongoRecordLoader implements IRecordLoader{
     }
 
     private void scheduleAddMongoListener(){
-        logger.debug(String.format("SCHEDULING - Addition of snapshot listener for Mongo table %s", tableName));
         this.service.submit(() -> {
             actuallyAddMongoListener();
         });
@@ -92,7 +91,7 @@ public class MongoRecordLoader implements IRecordLoader{
             return;
         }
         try {
-            logger.debug(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
+            logger.info(String.format("EXECUTING - Addition of snapshot listener for Mongo table %s", tableName));
             Block<ChangeStreamDocument<Document>> block = t -> {
                 resetConnectionRetryCounter();
                 Document fullDocument = t.getFullDocument();
@@ -100,7 +99,7 @@ public class MongoRecordLoader implements IRecordLoader{
                 if(fullDocument == null){
                     UpdateDescription description = t.getUpdateDescription();
                     if (t.getOperationType().equals(OperationType.INVALIDATE)) {
-                        logger.debug(String.format("DOCUMENT UPDATE IS INVALIDATION BARFING"));
+                        logger.info(String.format("DOCUMENT UPDATE IS INVALIDATION BARFING"));
                         throw new RuntimeException("Collection invalidated");
                     }
                     if(t.getDocumentKey() != null) {
@@ -112,9 +111,9 @@ public class MongoRecordLoader implements IRecordLoader{
                         }
                     }
                 }else{
-                    logger.debug(String.format("GOT DOCUMENT IN UPDATE - %s -version %s - Addition of snapshot listener for Mongo table %s",fullDocument.getString("_id"),fullDocument.getInteger("version"), tableName));
+                    logger.info(String.format("GOT DOCUMENT IN UPDATE - %s -version %s - Addition of snapshot listener for Mongo table %s",fullDocument.getString("_id"),fullDocument.getInteger("version"), tableName));
                     if (t.getOperationType().equals(OperationType.INVALIDATE)) {
-                        logger.debug(String.format("DOCUMENT UPDATE IS INVALIDATION BARFING"));
+                        logger.error(String.format("DOCUMENT UPDATE IS INVALIDATION BARFING"));
                         throw new RuntimeException("Collection invalidated");
                     }
                     receiveDocument(fullDocument);
@@ -122,10 +121,10 @@ public class MongoRecordLoader implements IRecordLoader{
 
             };
             if(resumeToken == null) {
-                logger.debug(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
+                logger.info(String.format("GETTING SNAPSHOT - Addition of snapshot listener for Mongo table %s", tableName));
                 getCollection().find().forEach((Block<Document>) document -> {
                     resetConnectionRetryCounter();
-                    logger.debug("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
+                    logger.info("GOT DOCUMENT IN SNAPSHOT - {} - Addition of snapshot listener for Mongo table {}", document.getString("_id"), document.getInteger("version"), tableName);
                     receiveDocument(document);
                 });
             }
@@ -140,7 +139,7 @@ public class MongoRecordLoader implements IRecordLoader{
             changeStreamDocuments.forEach(block);
         } catch (Exception ex) {
             if(isClosed){
-                logger.debug("Expected exception as loader is closed" + ex.getMessage());
+                logger.error("Expected exception as loader is closed" + ex.getMessage());
                 return;
             }
             logger.error("Error adding snapshot listener for Mongo table %s {}", tableName, ex);

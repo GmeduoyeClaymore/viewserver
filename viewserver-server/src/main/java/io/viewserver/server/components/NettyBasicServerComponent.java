@@ -61,7 +61,7 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
             serverReactor.start();
             serverReactor.scheduleTask(() -> {
                 Runtime runtime = Runtime.getRuntime();
-                log.debug("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
+                log.info("Memory used: {}; Free memory: {}; Max memory: {}", runtime.totalMemory() - runtime.freeMemory(),
                         runtime.freeMemory(), runtime.maxMemory());
             }, 1, 3 * 60 * 1000);
             return ListenableFutureObservable.from(this.getExecutionContext().submit(() -> latch.countDown(), 5), Runnable::run) ;

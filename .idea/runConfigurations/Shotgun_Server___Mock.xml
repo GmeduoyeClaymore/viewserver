@@ -1,17 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Shotgun Server" type="Application" factoryName="Application">
-    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+  <configuration default="false" name="Shotgun Server - Mock" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.shotgun.viewserver.Main" />
-    <option name="VM_PARAMETERS" value="-Xmx3G -Xms3G -XX:StringTableSize=1000003 -Dlog4j.configurationFile=log4j/log4j2-test.xml " />
-    <option name="PROGRAM_PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/viewserver-shotgun" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-    <option name="ALTERNATIVE_JRE_PATH" value="" />
-    <option name="ENABLE_SWING_INSPECTOR" value="false" />
-    <option name="ENV_VARIABLES" />
-    <option name="PASS_PARENT_ENVS" value="true" />
     <module name="viewserver-shotgun" />
-    <envs />
+    <option name="VM_PARAMETERS" value="-Xmx3G -Xms3G -XX:StringTableSize=1000003 -Dlog4j.configurationFile=log4j/log4j2-test.xml " />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/viewserver-shotgun" />
     <RunnerSettings RunnerId="Cover" />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

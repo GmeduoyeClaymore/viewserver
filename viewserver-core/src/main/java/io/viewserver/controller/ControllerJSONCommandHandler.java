@@ -63,7 +63,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             if(registration == null){
                 throw new RuntimeException("Unable to find registration for controller named \"" + controllerName + "\"");
             }
-            log.debug(String.format("JSON command controller:\"%s\" action:\"%s\" payload:\"%s\"",controllerName,trim(action),trim(data.getPayload())));
+            log.info(String.format("JSON command controller:\"%s\" action:\"%s\" payload:\"%s\"",controllerName,trim(action),trim(data.getPayload())));
             ControllerActionEntry entry = registration.getActions().get(data.getAction());
             if(entry == null){
                 throw new RuntimeException("Unable to find action named \"" + data.getAction() + "\" in controller named \"" + controllerName + "\" containing actions \"" + String.join(",",registration.getActions().keySet()) + "\"" );
@@ -75,9 +75,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                 public void run() {
                     try {
                         String message = invoke.get();
-                        if(log.isDebugEnabled()){
-                            log.debug(String.format("JSON command controller:\"%s\" action:\"%s\" result:\"%s\"",controllerName,trim(action),message));
-                        }
+                        log.info(String.format("JSON command controller:\"%s\" action:\"%s\" result:\"%s\"",controllerName,trim(action),message));
                         commandResult.setSuccess(true).setMessage(message).setComplete(true);
                     } catch (InterruptedException e) {
                         log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);

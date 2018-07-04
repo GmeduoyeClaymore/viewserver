@@ -52,7 +52,7 @@ public class H2ApplicationSetup implements IApplicationSetup {
     }
 
     @Override
-    public void run(boolean complete, boolean isTest) {
+    public void run(boolean complete) {
         javax.sql.DataSource dataSource = h2ConnectionFactory.getDataSource();
         try (Connection connection = dataSource.getConnection()) {
             setupDatabase(connection, graphDefinitions);
