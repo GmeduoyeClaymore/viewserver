@@ -1,9 +1,0 @@
-{
-  "origin": "objref://json/orders/personellOrderLocation.json",
-  "customerUserId": "{param_customerId}",
-  "orderProduct": {
-    "productId" : "GroundWorker"
-  },
-  "requiredDate": "{now_date+1}",
-  "amount" : 10000
-}

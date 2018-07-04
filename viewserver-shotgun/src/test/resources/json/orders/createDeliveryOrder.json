@@ -1,4 +1,0 @@
-{
-  "paymentId": "XXX",
-  "order": "ref://json/orders/deliveryOrder.json"
-}

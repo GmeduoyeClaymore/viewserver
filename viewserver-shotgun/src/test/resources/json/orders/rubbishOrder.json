@@ -1,9 +1,0 @@
-{
-  "origin": "objref://json/orders/rubbishOrderLocation.json",
-  "customerUserId": "{param_customerId}",
-  "orderProduct": {
-    "productId" : "HouseHoldHalfVan"
-  },
-  "requiredDate": "{now_date+1}",
-  "amount" : 10000
-}
