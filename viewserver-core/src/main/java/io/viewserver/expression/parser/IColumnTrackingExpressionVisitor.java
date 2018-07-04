@@ -19,7 +19,7 @@ package io.viewserver.expression.parser;
 import java.util.BitSet;
 
 /**
- * Created by nick on 16/02/2015.
+ * Created by bemm on 16/02/2015.
  */
 public interface IColumnTrackingExpressionVisitor {
     BitSet getColumnsUsed();

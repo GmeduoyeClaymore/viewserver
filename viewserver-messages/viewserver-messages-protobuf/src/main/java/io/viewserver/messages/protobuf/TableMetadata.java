@@ -25,7 +25,7 @@ import io.viewserver.messages.tableevent.ITableMetadata;
 import java.util.List;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class TableMetadata extends PoolableMessage<TableMetadata> implements ITableMetadata<TableMetadata> {
     private TableMetaDataMessage.TableMetaDataDtoOrBuilder tableMetadataDto;

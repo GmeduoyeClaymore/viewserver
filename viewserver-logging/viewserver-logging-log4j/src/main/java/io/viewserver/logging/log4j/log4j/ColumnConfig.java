@@ -27,7 +27,7 @@ import org.apache.logging.log4j.status.StatusLogger;
 import org.apache.logging.log4j.util.Strings;
 
 /**
- * Created by nick on 30/09/15.
+ * Created by bemm on 30/09/15.
  */
 @Plugin(name = "VSColumn", category = "Core", printObject = true)
 public class ColumnConfig {

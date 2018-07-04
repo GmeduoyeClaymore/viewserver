@@ -20,7 +20,7 @@ import io.viewserver.execution.ParameterHelper;
 import io.viewserver.messages.common.ValueLists;
 
 /**
-* Created by nick on 27/02/2015.
+* Created by bemm on 27/02/2015.
 */ //TODO - this isn't right but we need to be able to serlialize the node
 public class RangePivotValueProvider implements IPivotValueProvider {
     private String startParam;

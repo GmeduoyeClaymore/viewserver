@@ -21,7 +21,7 @@ import io.viewserver.execution.nodes.ProjectionNode;
 import io.viewserver.operators.projection.IProjectionConfig;
 
 /**
- * Created by nick on 01/04/2015.
+ * Created by bemm on 01/04/2015.
  */
 public class UserProjectionStep implements IExecutionPlanStep<OptionsExecutionPlanContext> {
     private int commandId;

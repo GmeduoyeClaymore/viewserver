@@ -47,7 +47,7 @@ import java.util.List;
 
 
 /**
- * Created by nick on 18/02/2015.
+ * Created by bemm on 18/02/2015.
  */
 public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistry, ICatalog {
     protected final ICatalog systemCatalog;

@@ -19,7 +19,7 @@ package io.viewserver.sql;
 import io.viewserver.messages.IPoolableMessage;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public interface IExecuteSqlCommand<T> extends IPoolableMessage<T> {
     String getQuery();

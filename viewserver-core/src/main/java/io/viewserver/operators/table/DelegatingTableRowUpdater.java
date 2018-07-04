@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 /**
- * Created by nick on 28/11/15.
+ * Created by bemm on 28/11/15.
  */
 public abstract class DelegatingTableRowUpdater implements ITableRowUpdater {
     private ITableRowUpdater innerUpdater;

@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 /**
- * Created by nick on 19/02/2015.
+ * Created by bemm on 19/02/2015.
  */
 public enum DataSourceOption {
     HasCalculations,

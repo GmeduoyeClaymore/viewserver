@@ -19,7 +19,7 @@ package io.viewserver.operators.table;
 import io.viewserver.operators.IOutput;
 
 /**
- * Created by nick on 12/02/2015.
+ * Created by bemm on 12/02/2015.
  */
 public interface ITable {
 

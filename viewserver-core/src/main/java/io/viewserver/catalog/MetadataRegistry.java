@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by nick on 10/03/2015.
+ * Created by bemm on 10/03/2015.
  */
 public class MetadataRegistry {
     private final Set<IInput> inputs = new HashSet<>();

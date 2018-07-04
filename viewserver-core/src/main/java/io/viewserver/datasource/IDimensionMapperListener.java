@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 /**
- * Created by nick on 02/07/15.
+ * Created by bemm on 02/07/15.
  */
 public interface IDimensionMapperListener {
     void onDimensionValueMapped(String  dataSourceName, String dimensionName, int id, Object value);

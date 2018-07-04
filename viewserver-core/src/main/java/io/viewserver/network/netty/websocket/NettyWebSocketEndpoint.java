@@ -45,7 +45,7 @@ import java.security.cert.CertificateException;
 import java.util.List;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public class NettyWebSocketEndpoint implements INettyEndpoint {
     private static final Logger log = LoggerFactory.getLogger(NettyWebSocketEndpoint.class);

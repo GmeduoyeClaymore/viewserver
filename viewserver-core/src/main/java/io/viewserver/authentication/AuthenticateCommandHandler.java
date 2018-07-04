@@ -27,7 +27,7 @@ import rx.Observable;
 
 
 /**
- * Created by nick on 27/10/15.
+ * Created by bemm on 27/10/15.
  */
 public class AuthenticateCommandHandler extends CommandHandlerBase<IAuthenticateCommand> {
     private final AuthenticationHandlerRegistry authenticationHandlerRegistry;

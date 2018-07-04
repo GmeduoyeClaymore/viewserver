@@ -23,7 +23,7 @@ import io.viewserver.messages.protobuf.dto.IndexConfigMessage;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class IndexConfig extends PoolableMessage<IndexConfig> implements IIndexConfig<IndexConfig> {
     private IndexConfigMessage.IndexConfigDtoOrBuilder indexConfigDto;

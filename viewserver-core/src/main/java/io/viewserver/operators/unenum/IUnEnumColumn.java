@@ -17,7 +17,7 @@
 package io.viewserver.operators.unenum;
 
 /**
- * Created by nick on 17/03/2015.
+ * Created by bemm on 17/03/2015.
  */
 public interface IUnEnumColumn {
 }

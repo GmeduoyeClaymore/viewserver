@@ -17,7 +17,7 @@
 package io.viewserver.reactor;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class SimpleReactorCommandWheel extends ReactorCommandWheelBase {
     @Override

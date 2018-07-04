@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public class ProtoRollingTableConfig implements IRollingTableConfig {
     private final int size;

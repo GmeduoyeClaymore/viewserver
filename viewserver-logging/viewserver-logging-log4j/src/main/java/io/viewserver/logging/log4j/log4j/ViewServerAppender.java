@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Created by nick on 29/09/15.
+ * Created by bemm on 29/09/15.
  */
 @Plugin(name = "ViewServer", category = "Core", elementType = "appender")
 public class ViewServerAppender extends AbstractAppender {

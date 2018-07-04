@@ -17,7 +17,7 @@
 package io.viewserver.network;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public interface IEndpoint {
     String getUrl();

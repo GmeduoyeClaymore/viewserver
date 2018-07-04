@@ -26,7 +26,7 @@ import io.viewserver.messages.protobuf.dto.MessageMessage;
 import io.viewserver.messages.tableevent.*;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class Message extends PoolableMessage<Message> implements IMessage<Message> {
     private MessageMessage.MessageDto messageDto;

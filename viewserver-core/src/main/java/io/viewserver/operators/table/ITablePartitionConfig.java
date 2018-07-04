@@ -17,7 +17,7 @@
 package io.viewserver.operators.table;
 
 /**
- * Created by nick on 10/11/15.
+ * Created by bemm on 10/11/15.
  */
 public interface ITablePartitionConfig {
     String getPartitionColumnName();

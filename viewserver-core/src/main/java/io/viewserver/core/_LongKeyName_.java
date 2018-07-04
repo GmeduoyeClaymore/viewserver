@@ -17,7 +17,7 @@
 package io.viewserver.core;
 
 /**
- * Created by nick on 13/03/2015.
+ * Created by bemm on 13/03/2015.
  */
 public interface _LongKeyName_ extends Comparable {
 }

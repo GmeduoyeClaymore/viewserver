@@ -29,7 +29,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import io.viewserver.schema.column.chunked.ChunkedColumnString;
 
 /**
- * Created by nick on 10/03/2015.
+ * Created by bemm on 10/03/2015.
  */
 public class ConnectionManager extends InputOperatorBase implements IMetadataListener {
     public static final String OPERATOR_NAME = "connections";

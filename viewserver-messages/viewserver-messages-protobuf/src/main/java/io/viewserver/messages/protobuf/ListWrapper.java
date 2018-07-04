@@ -23,7 +23,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public class ListWrapper<T> implements List<T> {
     private List<T> innerList;

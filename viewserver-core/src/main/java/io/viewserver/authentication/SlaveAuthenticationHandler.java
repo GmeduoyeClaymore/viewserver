@@ -19,7 +19,7 @@ package io.viewserver.authentication;
 import java.util.List;
 
 /**
- * Created by nick on 13/02/2015.
+ * Created by bemm on 13/02/2015.
  */
 public class SlaveAuthenticationHandler extends AuthenticationHandlerBase {
     @Override

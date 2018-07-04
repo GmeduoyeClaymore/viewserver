@@ -17,7 +17,7 @@
 package io.viewserver.core;
 
 /**
- * Created by nick on 09/03/2015.
+ * Created by bemm on 09/03/2015.
  */
 public enum NullableBool {
     Null((byte)0),

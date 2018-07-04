@@ -20,7 +20,7 @@
 package io.viewserver.schema.column;
 
 /**
- * Created by nick on 02/03/2015.
+ * Created by bemm on 02/03/2015.
  */
 public abstract class ColumnNullableBoolBase extends ColumnBase implements IColumnNullableBool {
     protected ColumnNullableBoolBase(String name) {

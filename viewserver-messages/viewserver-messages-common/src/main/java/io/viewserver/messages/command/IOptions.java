@@ -23,7 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface IOptions<T> extends IPoolableMessage<T> {
     int getOffset();

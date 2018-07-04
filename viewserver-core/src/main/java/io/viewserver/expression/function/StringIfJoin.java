@@ -22,7 +22,7 @@ import io.viewserver.expression.tree.IExpressionString;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nick on 24/03/2015.
+ * Created by bemm on 24/03/2015.
  */
 public class StringIfJoin implements IUserDefinedFunction, IExpressionString {
     private IExpression[] parameters;

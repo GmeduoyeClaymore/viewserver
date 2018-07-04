@@ -36,7 +36,7 @@ import rx.Observable;
 import java.util.*;
 
 /**
- * Created by nick on 31/03/2015.
+ * Created by bemm on 31/03/2015.
  */
 public class ReportContextRegistry extends KeyedTable implements ICatalog {
     public static final String OPERATOR_NAME = "reportContextRegistry";

@@ -20,7 +20,7 @@ import io.viewserver.execution.Options;
 import io.viewserver.operators.deserialiser.DeserialiserOperator;
 
 /**
- * Created by nick on 14/07/15.
+ * Created by bemm on 14/07/15.
  */
 public interface ISubscriptionFactory<TSubscription> {
     TSubscription create(DeserialiserOperator deserialiser, Options options, ViewServerClient client);

@@ -29,7 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public class NettyInProcEndpoint implements INettyEndpoint {
     private final String name;

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlFromStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     private boolean firstJoin = true;

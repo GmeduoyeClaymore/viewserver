@@ -22,7 +22,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public class RollingTableFactory implements ITableFactory<RollingTable, IRollingTableConfig> {
     @Override

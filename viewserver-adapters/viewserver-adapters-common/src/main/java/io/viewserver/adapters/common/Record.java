@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by nick on 17/09/15.
+ * Created by bemm on 17/09/15.
  */
 public class Record implements IRecord {
     protected final Map<String, Object> values = new HashMap<>();

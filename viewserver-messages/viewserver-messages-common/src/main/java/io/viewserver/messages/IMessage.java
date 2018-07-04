@@ -22,7 +22,7 @@ import io.viewserver.messages.heartbeat.IHeartbeat;
 import io.viewserver.messages.tableevent.ITableEvent;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface IMessage<T> extends IPoolableMessage<T> {
     Type getType();

@@ -17,7 +17,7 @@
 package io.viewserver;
 
 /**
- * Created by nick on 20/10/15.
+ * Created by bemm on 20/10/15.
  */
 public class Constants {
     public static final String IN = "in";

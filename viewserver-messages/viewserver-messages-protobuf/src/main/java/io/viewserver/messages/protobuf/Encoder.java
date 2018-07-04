@@ -20,7 +20,7 @@ import io.viewserver.messages.IEncoder;
 import io.viewserver.messages.IMessage;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class Encoder implements IEncoder {
     @Override

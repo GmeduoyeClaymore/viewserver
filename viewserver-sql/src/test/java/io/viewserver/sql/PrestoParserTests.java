@@ -21,7 +21,7 @@ import com.facebook.presto.sql.tree.Query;
 import org.junit.Test;
 
 /**
- * Created by nick on 12/07/15.
+ * Created by bemm on 12/07/15.
  */
 public class PrestoParserTests {
     @Test

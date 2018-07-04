@@ -17,7 +17,7 @@
 package io.viewserver.execution.nodes;
 
 /**
- * Created by nick on 05/10/15.
+ * Created by bemm on 05/10/15.
  */
 public interface ICoalesceableGraphNode extends IGraphNode {
     IGraphNode copyForCoalescing();

@@ -20,7 +20,7 @@ import io.viewserver.core.NullableBool;
 import io.viewserver.core._KeyType_;
 
 /**
- * Created by nick on 02/07/15.
+ * Created by bemm on 02/07/15.
  */
 public interface IDimensionMapper {
 

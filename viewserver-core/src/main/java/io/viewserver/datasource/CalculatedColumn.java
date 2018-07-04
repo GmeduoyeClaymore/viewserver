@@ -17,7 +17,7 @@
 package io.viewserver.datasource;
 
 /**
- * Created by nick on 18/02/2015.
+ * Created by bemm on 18/02/2015.
  */
 public class CalculatedColumn extends Column {
     private String expression;

@@ -23,7 +23,7 @@ import io.viewserver.reactor.ReactorCommandWheelBase;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Created by nick on 23/06/15.
+ * Created by bemm on 23/06/15.
  */
 public class LegacyReactorCommandWheel extends ReactorCommandWheelBase {
     private final ExecutorService executor;

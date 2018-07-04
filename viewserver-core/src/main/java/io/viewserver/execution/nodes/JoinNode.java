@@ -27,7 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 
 /**
- * Created by nick on 16/03/2015.
+ * Created by bemm on 16/03/2015.
  */
 public class JoinNode extends GraphNodeBase<JoinNode> {
     private String[] leftJoinColumns = new String[0];

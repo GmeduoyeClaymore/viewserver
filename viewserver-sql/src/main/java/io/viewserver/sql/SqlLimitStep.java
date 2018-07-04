@@ -25,7 +25,7 @@ import javolution.text.TypeFormat;
 import java.util.Optional;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlLimitStep implements IExecutionPlanStep<SqlExecutionPlanContext> {
     @Override

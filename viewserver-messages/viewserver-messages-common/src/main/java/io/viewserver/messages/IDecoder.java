@@ -19,7 +19,7 @@ package io.viewserver.messages;
 import java.io.InputStream;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface IDecoder {
 

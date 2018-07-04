@@ -19,7 +19,7 @@ package io.viewserver.core;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class Pool<T> implements IPool<T> {
     private final ConcurrentLinkedQueue<PooledItem<T>> availableItems;

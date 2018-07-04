@@ -25,7 +25,7 @@ import io.viewserver.messages.protobuf.dto.UpdateDimensionMapCommandMessage;
 import java.util.List;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class UpdateDimensionMapCommand extends PoolableMessage<UpdateDimensionMapCommand>
     implements IUpdateDimensionMapCommand<UpdateDimensionMapCommand>, ICommandExtension<UpdateDimensionMapCommand> {

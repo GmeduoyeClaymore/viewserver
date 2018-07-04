@@ -19,7 +19,7 @@ package io.viewserver.messages.config;
 import java.util.List;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public interface ITransposeConfig<T> extends IOperatorConfig<T> {
     List<String> getKeyColumns();

@@ -34,7 +34,7 @@ import java.util.BitSet;
 import java.util.Map;
 
 /**
- * Created by nick on 16/02/2015.
+ * Created by bemm on 16/02/2015.
  */
 public class AntlrExpressionParser implements IExpressionParser {
     private FunctionRegistry functionRegistry;

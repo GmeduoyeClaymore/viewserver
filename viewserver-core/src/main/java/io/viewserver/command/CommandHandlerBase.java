@@ -22,7 +22,7 @@ import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public abstract class CommandHandlerBase<TCommand> implements ICommandHandler {
     private Class<TCommand> clazz;

@@ -23,7 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 /**
- * Created by nick on 23/10/15.
+ * Created by bemm on 23/10/15.
  */
 public interface IDataSource {
     String getOutput();

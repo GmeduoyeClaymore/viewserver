@@ -19,7 +19,7 @@ import io.viewserver.r.client.RClient;
 import org.junit.Test;
 
 /**
- * Created by nick on 15/07/15.
+ * Created by bemm on 15/07/15.
  */
 public class RClientTests {
     // why the fark won't it pick up the junit dependency???????

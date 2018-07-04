@@ -22,7 +22,7 @@ import io.viewserver.messages.protobuf.dto.AuthenticateCommandMessage;
 import io.viewserver.messages.protobuf.dto.CommandMessage;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class AuthenticateCommand extends PoolableMessage<AuthenticateCommand> implements IAuthenticateCommand<AuthenticateCommand>,
         ICommandExtension<AuthenticateCommand> {

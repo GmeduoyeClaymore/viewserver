@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 
 /**
- * Created by nick on 16/09/15.
+ * Created by bemm on 16/09/15.
  */
 public class DataSourceSerialiser extends StdSerializer<DataSource> {
     public DataSourceSerialiser() {

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger log = LoggerFactory.getLogger(WebSocketServerHandler.class);

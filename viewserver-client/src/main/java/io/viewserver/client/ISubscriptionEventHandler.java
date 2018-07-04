@@ -19,7 +19,7 @@ package io.viewserver.client;
 import java.util.Map;
 
 /**
- * Created by nick on 10/02/2015.
+ * Created by bemm on 10/02/2015.
  */
 public interface ISubscriptionEventHandler<TSubscription> {
     void onSubscriptionSuccess(TSubscription subscription);

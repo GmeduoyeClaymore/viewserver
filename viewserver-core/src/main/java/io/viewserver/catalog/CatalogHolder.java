@@ -31,7 +31,7 @@ import rx.subjects.ReplaySubject;
 import java.util.*;
 
 /**
- * Created by nick on 14/10/15.
+ * Created by bemm on 14/10/15.
  */
 public class CatalogHolder implements ICatalog {
     private final HashMap<String, IOperator> operatorsByName = new HashMap<>();

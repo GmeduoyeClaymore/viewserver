@@ -28,7 +28,7 @@ import java.util.BitSet;
 import java.util.Comparator;
 
 /**
- * Created by nick on 13/03/2015.
+ * Created by bemm on 13/03/2015.
  */
 public class MinMax_KeyName_ implements ISummary {
     private final String name;

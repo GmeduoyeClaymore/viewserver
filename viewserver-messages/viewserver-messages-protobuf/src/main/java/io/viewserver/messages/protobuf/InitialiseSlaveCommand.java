@@ -22,7 +22,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.InitialiseSlaveCommandMessage;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class InitialiseSlaveCommand extends PoolableMessage<InitialiseSlaveCommand> implements IInitialiseSlaveCommand<InitialiseSlaveCommand>,
         ICommandExtension<InitialiseSlaveCommand> {

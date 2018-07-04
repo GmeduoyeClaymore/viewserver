@@ -21,7 +21,7 @@ import io.viewserver.reactor.IReactor;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Created by nick on 23/06/15.
+ * Created by bemm on 23/06/15.
  */
 public interface INetworkAdapter {
     void registerListener(INetworkMessageListener listener);

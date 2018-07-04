@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlTests extends BenchmarkTestBase {
     private static final Logger log = LoggerFactory.getLogger(SqlTests.class);

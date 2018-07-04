@@ -22,7 +22,7 @@ import io.viewserver.messages.command.ICommandResult;
 import io.viewserver.messages.protobuf.dto.CommandResultMessage;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class CommandResult extends PoolableMessage<CommandResult> implements ICommandResult<CommandResult> {
     private CommandResultMessage.CommandResultDtoOrBuilder commandResultDto;

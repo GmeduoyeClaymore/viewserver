@@ -23,7 +23,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 
 /**
- * Created by nick on 27/06/15.
+ * Created by bemm on 27/06/15.
  */
 public interface INettyEndpoint extends IEndpoint {
     ServerBootstrap getServerBootstrap(EventLoopGroup parentGroup, EventLoopGroup childGroup, ChannelHandler handler);

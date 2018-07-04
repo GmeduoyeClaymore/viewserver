@@ -20,7 +20,7 @@ import io.viewserver.messages.IPoolableMessage;
 import io.viewserver.messages.tableevent.ITableEvent;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public interface ITableEditCommand<T> extends IPoolableMessage<T> {
     String getTableName();

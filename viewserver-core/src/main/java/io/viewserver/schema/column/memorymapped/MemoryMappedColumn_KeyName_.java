@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Created by nick on 27/10/15.
+ * Created by bemm on 27/10/15.
  */
 public class MemoryMappedColumn_KeyName_ extends MemoryMappedColumnBase implements IWritableColumn_KeyName_ {
     private static final ColumnType columnType = ColumnType._KeyName_;

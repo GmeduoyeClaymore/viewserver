@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class RowEvent extends PoolableMessage<RowEvent> implements IRowEvent<RowEvent> {
     private RowEventMessage.RowEventDtoOrBuilder rowEventDto;

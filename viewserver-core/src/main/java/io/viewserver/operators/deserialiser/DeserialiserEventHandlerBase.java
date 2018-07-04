@@ -19,7 +19,7 @@ package io.viewserver.operators.deserialiser;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nick on 10/02/2015.
+ * Created by bemm on 10/02/2015.
  */
 public abstract class DeserialiserEventHandlerBase implements IDeserialiserEventHandler {
     @Override

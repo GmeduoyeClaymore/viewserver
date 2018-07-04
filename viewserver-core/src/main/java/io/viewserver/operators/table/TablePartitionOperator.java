@@ -29,7 +29,7 @@ import io.viewserver.operators.filter.FilterOperator;
 import io.viewserver.schema.column.*;
 
 /**
- * Created by nick on 12/02/2015.
+ * Created by bemm on 12/02/2015.
  */
 public class TablePartitionOperator extends FilterOperator implements ITable {
     private String partitionColumnName;

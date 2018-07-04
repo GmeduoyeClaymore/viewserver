@@ -19,7 +19,7 @@ package io.viewserver.client;
 import java.util.Map;
 
 /**
- * Created by nick on 11/02/2015.
+ * Created by bemm on 11/02/2015.
  */
 public class RowEvent {
     private int rowId;

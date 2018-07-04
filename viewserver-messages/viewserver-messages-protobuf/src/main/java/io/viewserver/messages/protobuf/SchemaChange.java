@@ -25,7 +25,7 @@ import io.viewserver.messages.tableevent.ISchemaChange;
 import java.util.List;
 
 /**
- * Created by nick on 04/12/15.
+ * Created by bemm on 04/12/15.
  */
 public class SchemaChange extends PoolableMessage<SchemaChange> implements ISchemaChange<SchemaChange> {
     private SchemaChangeMessage.SchemaChangeDtoOrBuilder schemaChangeDto;

@@ -22,7 +22,7 @@ import io.viewserver.messages.protobuf.dto.CommandMessage;
 import io.viewserver.messages.protobuf.dto.RegisterSlaveCommandMessage;
 
 /**
- * Created by nick on 07/12/15.
+ * Created by bemm on 07/12/15.
  */
 public class RegisterSlaveCommand extends PoolableMessage<RegisterSlaveCommand> implements IRegisterSlaveCommand<RegisterSlaveCommand>,
 ICommandExtension<RegisterSlaveCommand> {

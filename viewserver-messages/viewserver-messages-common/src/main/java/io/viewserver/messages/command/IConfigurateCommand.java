@@ -24,7 +24,7 @@ import io.viewserver.messages.config.IOperatorConfig;
 import java.util.List;
 
 /**
- * Created by nick on 03/12/15.
+ * Created by bemm on 03/12/15.
  */
 public interface IConfigurateCommand<T> extends IPoolableMessage<T> {
     List<IOperator> getOperators();

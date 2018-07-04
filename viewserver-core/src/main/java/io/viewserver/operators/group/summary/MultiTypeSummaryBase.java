@@ -21,7 +21,7 @@ import io.viewserver.schema.column.ColumnType;
 import io.viewserver.schema.column.IRowFlags;
 
 /**
- * Created by nick on 19/03/2015.
+ * Created by bemm on 19/03/2015.
  */
 public abstract class MultiTypeSummaryBase implements ISummary {
     protected final String name;

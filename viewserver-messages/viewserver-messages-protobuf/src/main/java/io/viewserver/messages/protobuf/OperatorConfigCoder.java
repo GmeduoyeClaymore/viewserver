@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class OperatorConfigCoder {
     public static final OperatorConfigCoder INSTANCE = new OperatorConfigCoder();

@@ -24,7 +24,7 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public abstract class PoolableMessage<T> implements IPoolableMessage<T> {
     private static final Logger log = LoggerFactory.getLogger(PoolableMessage.class);

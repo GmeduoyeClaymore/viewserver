@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nick on 19/11/15.
+ * Created by bemm on 19/11/15.
  */
 public class SqlExecutionPlan implements IExecutionPlan<SqlExecutionPlanContext> {
     private SummaryRegistry summaryRegistry;

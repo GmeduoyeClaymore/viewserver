@@ -20,7 +20,7 @@ import io.viewserver.messages.IPoolableMessage;
 import io.viewserver.messages.config.IProjectionConfig;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public interface ISubscribeCommand<T> extends IPoolableMessage<T> {
     String getOperatorName();

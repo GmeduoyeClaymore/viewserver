@@ -34,7 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by nick on 19/03/2015.
+ * Created by bemm on 19/03/2015.
  */
 public class SourceGen extends Task {
     private static Map<String, String> defaultReplacements = new HashMap<>();

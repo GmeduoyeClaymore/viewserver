@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by nick on 01/10/15.
+ * Created by bemm on 01/10/15.
  */
 public class TableFactoryRegistry {
     private final Map<String, ITableFactory> factories = new HashMap<>();

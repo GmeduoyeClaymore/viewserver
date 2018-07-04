@@ -19,7 +19,7 @@ package io.viewserver.client;
 import io.viewserver.schema.column.ColumnType;
 
 /**
- * Created by nick on 30/09/15.
+ * Created by bemm on 30/09/15.
  */
 public class Column {
     private final String name;

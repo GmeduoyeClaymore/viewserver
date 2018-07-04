@@ -23,7 +23,7 @@ import rx.Observable;
 import java.util.Collection;
 
 /**
- * Created by nick on 18/02/2015.
+ * Created by bemm on 18/02/2015.
  */
 public interface IDataSourceRegistry{
     String TABLE_NAME = "datasources";

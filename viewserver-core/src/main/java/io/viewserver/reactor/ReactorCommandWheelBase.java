@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by nick on 23/06/15.
+ * Created by bemm on 23/06/15.
  */
 public abstract class ReactorCommandWheelBase implements IReactorCommandWheel {
     protected final List<IReactorCommandListener> listeners;

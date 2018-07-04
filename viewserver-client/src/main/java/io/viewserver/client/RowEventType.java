@@ -17,7 +17,7 @@
 package io.viewserver.client;
 
 /**
- * Created by nick on 11/02/2015.
+ * Created by bemm on 11/02/2015.
  */
 public enum RowEventType {
     Add,

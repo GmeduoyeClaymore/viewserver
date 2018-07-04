@@ -19,7 +19,7 @@ package io.viewserver.authentication;
 import java.util.List;
 
 /**
- * Created by nick on 30/09/15.
+ * Created by bemm on 30/09/15.
  */
 public class LoggerAuthenticationHandler extends AuthenticationHandlerBase {
     public static final String TYPE = "logger";

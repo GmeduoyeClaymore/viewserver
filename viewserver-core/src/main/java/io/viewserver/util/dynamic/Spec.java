@@ -17,7 +17,7 @@
 package io.viewserver.util.dynamic;
 
 /**
- * Created by nick on 12/02/2015.
+ * Created by bemm on 12/02/2015.
  */
 public interface Spec {
 }

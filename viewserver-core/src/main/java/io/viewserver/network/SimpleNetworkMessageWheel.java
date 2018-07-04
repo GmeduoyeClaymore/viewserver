@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by nick on 26/06/15.
+ * Created by bemm on 26/06/15.
  */
 public class SimpleNetworkMessageWheel implements INetworkMessageWheel {
     private static final Logger log = LoggerFactory.getLogger(SimpleNetworkMessageWheel.class);

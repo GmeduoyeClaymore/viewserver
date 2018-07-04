@@ -17,7 +17,7 @@
 package io.viewserver.adapters.h2;
 
 /**
- * Created by nick on 16/02/2015.
+ * Created by bemm on 16/02/2015.
  */
 public class H2DataAdapterTest {
 //    @Test

@@ -17,7 +17,7 @@
 package io.viewserver.schema.column;
 
 /**
- * Created by nick on 18/02/2015.
+ * Created by bemm on 18/02/2015.
  */
 public class ColumnFlags {
     public static final int DATASOURCE_CALCULATION = 0;

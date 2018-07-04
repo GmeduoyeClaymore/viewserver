@@ -17,7 +17,7 @@
 package io.viewserver.operators.sort;
 
 /**
-* Created by nick on 16/03/2015.
+* Created by bemm on 16/03/2015.
 */
 public interface PriorityQueue<T> {
     /**

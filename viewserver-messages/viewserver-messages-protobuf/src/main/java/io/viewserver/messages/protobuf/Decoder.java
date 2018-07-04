@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by nick on 02/12/15.
+ * Created by bemm on 02/12/15.
  */
 public class Decoder implements IDecoder {
     private final ExtensionRegistry extensionRegistry = CommandRegistry.INSTANCE.getExtensionRegistry();

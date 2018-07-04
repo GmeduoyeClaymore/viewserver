@@ -17,7 +17,7 @@
 package io.viewserver.core;
 
 /**
- * Created by nick on 19/03/2015.
+ * Created by bemm on 19/03/2015.
  */
 public interface IArithmetic {
     public static Arithmetic_KeyName_ _KeyName_ = new Arithmetic_KeyName_();

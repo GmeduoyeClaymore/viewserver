@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.List;
 
 /**
- * Created by nick on 02/03/2015.
+ * Created by bemm on 02/03/2015.
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.CLASS,

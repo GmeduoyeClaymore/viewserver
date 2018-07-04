@@ -21,7 +21,7 @@ import io.viewserver.messages.config.IFilterConfig;
 import io.viewserver.messages.protobuf.dto.FilterConfigMessage;
 
 /**
- * Created by nick on 08/12/15.
+ * Created by bemm on 08/12/15.
  */
 public class FilterConfig extends PoolableMessage<FilterConfig> implements IFilterConfig<FilterConfig> {
     private FilterConfigMessage.FilterConfigDtoOrBuilder filterConfigDto;
