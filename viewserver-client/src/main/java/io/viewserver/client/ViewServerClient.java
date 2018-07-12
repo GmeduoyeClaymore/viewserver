@@ -133,7 +133,7 @@ public class ViewServerClient implements AutoCloseable {
             networkAdapter.setNetworkMessageWheel(networkMessageWheel);
             network = new Network(commandHandlerRegistry, executionContext, catalog, networkAdapter);
             network.setDisconnectOnTimeout(true);
-            network.setTimeoutInterval(4000);
+            network.setTimeoutInterval(5000);
             reactor = this.initReactor(network);
 
             reactor.start();

@@ -52,6 +52,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
+        recordLoaderCollection.start();
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 

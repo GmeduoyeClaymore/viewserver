@@ -27,6 +27,14 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
         return loaderMap;
     }
 
+
+    @Override
+    public void start() {
+        if(loaderMap != null){
+            loaderMap.values().forEach(c-> start());
+        }
+    }
+
     @Override
     public void close() {
         if(loaderMap != null){
