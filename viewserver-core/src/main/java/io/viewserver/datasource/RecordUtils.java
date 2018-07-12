@@ -27,7 +27,7 @@ public class RecordUtils{
 
     public static void actualyAddRecord(KeyedTable operator, IRecord rec, boolean scheduled) {
         ExecutionContext.AssertUpdateThread();
-        logger.info("{} Actually adding record rec to operator {}",(scheduled ? "SCHEDULED - " : "") ,operator.getPath());
+        logger.info(String.format("{} Actually adding record rec to operator {} - %s",rec.getValue(operator.getTableKeyDefinition().getKeyName())),(scheduled ? "SCHEDULED - " : "") ,operator.getPath());
         TableKeyDefinition tableKeyDefinition = operator.getTableKeyDefinition();
         if(tableKeyDefinition == null ){
             throw new RuntimeException(String.format("Cannot map record as no key columns are defined on schema - %s", rec));

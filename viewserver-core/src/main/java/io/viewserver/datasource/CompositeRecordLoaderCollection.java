@@ -1,25 +1,33 @@
 package io.viewserver.datasource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection {
-    private Callable<IRecordLoaderCollection>[] collections;
+    private Callable<IRecordLoaderCollection>[] collectionFactories;
+    private List<IRecordLoaderCollection> collections;
     private HashMap<String, IRecordLoader> loaderMap;
 
-    public CompositeRecordLoaderCollection(Callable<IRecordLoaderCollection>... collections){
+    private Logger logger = LoggerFactory.getLogger(CompositeRecordLoaderCollection.class);
 
-        this.collections = collections;
+    public CompositeRecordLoaderCollection(Callable<IRecordLoaderCollection>... collectionFactories){
+        this.collectionFactories = collectionFactories;
 
     }
 
     @Override
     public Map<String, IRecordLoader> getDataLoaders() {
         loaderMap = new HashMap<>();
-        for(Callable<IRecordLoaderCollection> factory : collections){
+        for(IRecordLoaderCollection collection : getCollections()){
             try {
-                loaderMap.putAll(factory.call().getDataLoaders());
+                loaderMap.putAll(collection.getDataLoaders());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -27,12 +35,24 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
         return loaderMap;
     }
 
+    private List<IRecordLoaderCollection> getCollections() {
+        if(collections == null){
+            collections = Arrays.stream(collectionFactories).map(fac -> {
+                try {
+                    return fac.call();
+                } catch (Exception e) {
+                    logger.error("Problem creating collection",e);
+                    return null;
+                }
+            }).filter(res -> res != null).collect(Collectors.toList());
+        }
+        return collections;
+    }
+
 
     @Override
     public void start() {
-        if(loaderMap != null){
-            loaderMap.values().forEach(c-> start());
-        }
+        collections.forEach(c-> c.start());
     }
 
     @Override
