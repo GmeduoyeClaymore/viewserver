@@ -65,7 +65,7 @@ public class ChunkedArray_KeyName_ {
     }
 
     public void ensureCapacity(int capacity) {
-        if(capacity <=0){
+        if(capacity < 0){
             throw new RuntimeException("Invalid capacity " + capacity + " set");
         }
         int chunk = capacity >>> chunkQuotient;

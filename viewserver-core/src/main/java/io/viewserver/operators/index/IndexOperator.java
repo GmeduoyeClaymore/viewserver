@@ -66,6 +66,16 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         processConfig(indexConfig);
     }
 
+    @Override
+    public IOutput getOutput(String name) {
+        IOutput output = super.getOutput(name);
+        if(output == null){
+            return getOrCreateOutput(name);
+        }
+        return output;
+    }
+
+
     public IInput getInput() {
         return input;
     }
@@ -120,7 +130,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
     }
 
     public IOutput getOrCreateOutput(String name, QueryHolderConfig... queryHolders) {
-        Output output = (Output) this.getOutput(name);
+        Output output = (Output) super.getOutput(name);
         if (output == null) {
             output = new Output(name, this, mapToQueryHolders(queryHolders));
             int rowId = getIndexOutputs().size();
