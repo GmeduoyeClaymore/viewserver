@@ -384,7 +384,7 @@ public class ColumnHolderUtils {
             }
             case String: {
                 Object o = columnHolder.getMetadata().getDataType().convertToDataType(value);
-                ((IWritableColumnString)columnHolder.getColumn()).setString(row,  o == null ? null : o.toString());
+                ((IWritableColumnString)columnHolder.getColumn()).setString(row,  o == null ? null : o.toString().intern());
                 break;
             }
             default: {

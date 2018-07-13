@@ -397,6 +397,9 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
             final int hashCode = node.hashCode();
             nodes.put(hashCode, node);
             final int rowId = nodeIds.addInt(hashCode);
+            if(rowId < 0){
+                throw new RuntimeException(String.format("A node named %s of type %s has already been registered",node.name,node.type));
+            }
             myTableRow.setRowId(rowId);
             myTableRow.setString(NAME_COLUMN,  node.name );
             myTableRow.setString(TYPE_COLUMN,  node.type);
@@ -522,9 +525,7 @@ public class DataSourceRegistry extends KeyedTable implements IDataSourceRegistr
 
             @Override
             public int hashCode() {
-                int result = name.hashCode();
-                result = 31 * result + type.hashCode();
-                return result;
+                return (name + "_" + type).hashCode();
             }
         }
 
