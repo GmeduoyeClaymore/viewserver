@@ -29,14 +29,7 @@ import java.util.Random;
  */
 public class EwahTest {
 
-    @Test
-    public void intHashSetTest(){
-        final int valueToStore = 788265003;
-        final IntHashSet sut = new IntHashSet(8, 0.75f, -1);
-        System.out.println(sut.addInt(valueToStore));
-        System.out.println(sut.addInt(valueToStore));
-        Assert.assertTrue(sut.addInt(valueToStore) >= 0);
-    }
+
     /*
     Cardinality 10:
 Populate column took 43757498ns
