@@ -18,6 +18,7 @@ import rx.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
     private IRecordLoaderCollection recordLoaderCollection;
@@ -42,6 +43,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         }
 
         List<Observable<Object>> readyObservables = new ArrayList<>();
+        List<Observable<IOperator>> operatorObservables = new ArrayList<>();
         logger.info("Found {} loaders", recordLoaderCollection.getDataLoaders().entrySet().size());
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
             IRecordLoader recordLoader = loaderEntry.getValue();
@@ -49,6 +51,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             logger.info("Loader {} loaders waiting for table", loaderEntry.getKey());
             Observable<IOperator> operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
+            operatorObservables.add(operator);
             this.subscriptions.add(operator.subscribe(kt -> onOperator(kt,loaderEntry.getValue())));
             readyObservables.add(loaderEntry.getValue().readyObservable());
         }
@@ -59,7 +62,16 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
-        recordLoaderCollection.start();
+        FuncN<?> onAllOperatorsInPlace = new FuncN<Object>() {
+            @Override
+            public Object call(Object... objects) {
+                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders - %s",readyObservables.size()));
+                return true;
+            }
+        };
+        Observable.zip(operatorObservables, onAllOperatorsInPlace).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).subscribe(
+                res -> recordLoaderCollection.start()
+        );
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 

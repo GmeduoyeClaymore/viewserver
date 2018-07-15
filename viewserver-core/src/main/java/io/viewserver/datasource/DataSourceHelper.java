@@ -70,7 +70,7 @@ public class DataSourceHelper {
     public static ColumnHolder createColumnHolder(String dimensionNamespace, String dimensionName, ContentType type, Cardinality cardinality, IDimensionMapper dimensionMapper) {
         io.viewserver.schema.column.ColumnType schemaColumnType = type.getColumnType();
         if (dimensionMapper != null) {
-            dimensionMapper.registerDimension(dimensionNamespace, dimensionName, type);
+            dimensionMapper.registerDimension(dimensionNamespace, dimensionName, type, cardinality);
         }
         ColumnHolder columnHolder = ColumnHolderUtils.createColumnHolder(dimensionName, cardinality.getColumnType());
         ColumnMetadata columnMetadata = ColumnHolderUtils.createColumnMetadata(cardinality.getColumnType());

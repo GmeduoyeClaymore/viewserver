@@ -25,16 +25,16 @@ import rx.Observable;
 
 
 public class BasicServerComponents implements IBasicServerComponents {
-    private final ExecutionContext serverExecutionContext;
-    private final Catalog serverCatalog;
-    private final OperatorFactoryRegistry operatorFactoryRegistry;
-    private final Configurator configurator;
-    private final CommandHandlerRegistry commandHandlerRegistry;
-    protected final IJsonSerialiser jsonSerialiser = new JacksonSerialiser();
-    private final ExecutionPlanRunner executionPlanRunner;
-    private final ConnectionManager connectionManager;
-    private final SubscriptionManager subscriptionManager;
-    private final TableFactoryRegistry tableFactoryRegistry;
+    protected ExecutionContext serverExecutionContext;
+    protected Catalog serverCatalog;
+    protected OperatorFactoryRegistry operatorFactoryRegistry;
+    protected Configurator configurator;
+    protected CommandHandlerRegistry commandHandlerRegistry;
+    protected IJsonSerialiser jsonSerialiser = new JacksonSerialiser();
+    protected ExecutionPlanRunner executionPlanRunner;
+    protected ConnectionManager connectionManager;
+    protected SubscriptionManager subscriptionManager;
+    protected TableFactoryRegistry tableFactoryRegistry;
 
 
     public BasicServerComponents() {
@@ -48,7 +48,19 @@ public class BasicServerComponents implements IBasicServerComponents {
         subscriptionManager = new SubscriptionManager();
         connectionManager = new ConnectionManager(serverExecutionContext, getServerCatalog(), new ChunkedColumnStorage(1024));
         tableFactoryRegistry = new TableFactoryRegistry();
+    }
 
+    public BasicServerComponents(ExecutionContext serverExecutionContext, Catalog serverCatalog, OperatorFactoryRegistry operatorFactoryRegistry, Configurator configurator, CommandHandlerRegistry commandHandlerRegistry, ExecutionPlanRunner executionPlanRunner, ConnectionManager connectionManager, SubscriptionManager subscriptionManager, TableFactoryRegistry tableFactoryRegistry) {
+        new Message();//to init the message pool
+        this.serverExecutionContext = serverExecutionContext;
+        this.serverCatalog = serverCatalog;
+        this.operatorFactoryRegistry = operatorFactoryRegistry;
+        this.configurator = configurator;
+        this.commandHandlerRegistry = commandHandlerRegistry;
+        this.executionPlanRunner = executionPlanRunner;
+        this.connectionManager = connectionManager;
+        this.subscriptionManager = subscriptionManager;
+        this.tableFactoryRegistry = tableFactoryRegistry;
     }
 
     @Override

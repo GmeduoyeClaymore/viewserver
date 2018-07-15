@@ -18,7 +18,6 @@ package io.viewserver.datasource;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.core._KeyType_;
-import io.viewserver.operators.dimension.DimensionMapperOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,19 +31,32 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
     private static final Logger log = LoggerFactory.getLogger(DimensionMapperBase.class);
     private static final NullableBool[] nullableBoolValues = { NullableBool.Null, NullableBool.False, NullableBool.True };
     private Map<LookupKey, Object> lookups = new HashMap<>();
+    private Map<LookupKey, ContentType> contentTypeMap = new HashMap<>();
+    private Map<LookupKey, Cardinality> cardinalityMap = new HashMap<>();
 
     @Override
-    public LookupKey registerDimension(String dimensionNamespace, Dimension dimension) {
-        return registerDimension(dimensionNamespace, dimension.getName(),dimension.getContentType());
+    public ContentType getContentType(String dimensionNamespace, String dimensionName){
+        LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
+        return contentTypeMap.get(key);
     }
-    public LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType) {
+    @Override
+    public Cardinality getCardinality(String dimensionNamespace, String dimensionName){
+        LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
+        return cardinalityMap.get(key);
+    }
+    @Override
+    public LookupKey registerDimension(String dimensionNamespace, Dimension dimension, Cardinality cardinality) {
+        return registerDimension(dimensionNamespace, dimension.getName(),dimension.getContentType(), cardinality);
+    }
+    public LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType, Cardinality cardinality) {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         Object existingLookup = lookups.get(key);
         if (existingLookup != null) {
             log.warn("Already found a dimension named " + key + " not registering it again");
             return (LookupKey) key;
         }
-
+        contentTypeMap.put(key,dimensionContentType);
+        cardinalityMap.put(key,cardinality);
         switch (dimensionContentType) {
             case Bool:
             case NullableBool: {
@@ -89,14 +101,14 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
 
     @Override
     public String lookupString(String dimensionNamespace, String dimensionName, int id) {
-        return lookupString(getLookup(dimensionNamespace, dimensionName, ContentType.String), id);
+        return lookupString(getLookup(dimensionNamespace, dimensionName, ContentType.String, Cardinality.Int), id);
     }
 
     protected abstract String lookupString(Object lookup, int id);
 
     @Override
     public byte lookupByte(String dimensionNamespace, String dimensionName, int id) {
-        return lookupByte(getLookup(dimensionNamespace, dimensionName, ContentType.Byte), id);
+        return lookupByte(getLookup(dimensionNamespace, dimensionName, ContentType.Byte, Cardinality.Byte), id);
     }
 
     protected abstract byte lookupByte(Object lookup, int id);
@@ -121,31 +133,31 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
 
     @Override
     public short lookupShort(String dimensionNamespace, String dimensionName, int id) {
-        return lookupShort(getLookup(dimensionNamespace, dimensionName, ContentType.Short), id);
+        return lookupShort(getLookup(dimensionNamespace, dimensionName, ContentType.Short, Cardinality.Short), id);
     }
 
     protected abstract short lookupShort(Object lookup, int id);
 
     @Override
     public int lookupInt(String dimensionNamespace, String dimensionName, int id) {
-        return lookupInt(getLookup(dimensionNamespace, dimensionName, ContentType.Int), id);
+        return lookupInt(getLookup(dimensionNamespace, dimensionName, ContentType.Int,Cardinality.Int), id);
     }
 
     protected abstract int lookupInt(Object lookup, int id);
 
     @Override
     public long lookupLong(String dimensionNamespace, String dimensionName,int id) {
-        return lookupLong(getLookup(dimensionNamespace, dimensionName, ContentType.Long), id);
+        return lookupLong(getLookup(dimensionNamespace, dimensionName, ContentType.Long, Cardinality.Int), id);
     }
 
     protected abstract long lookupLong(Object lookup, int id);
 
     @Override
-    public _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, ContentType dimensionContentType,int id) {
+    public _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName,int id) {
         throw new UnsupportedOperationException("Tidy this stuff up man!");
     }
 
-    protected Object getLookup(String dimensionNamespace, String dimensionName, ContentType contentType) {
+    protected Object getLookup(String dimensionNamespace, String dimensionName, ContentType contentType, Cardinality cardinality) {
         LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
         LookupKey key2 = getLookupKey("global", dimensionName);
         Object lookup = lookups.get(key);
@@ -153,10 +165,16 @@ public abstract class DimensionMapperBase implements IDimensionMapper {
             lookup = lookups.get(key2);
         }
         if (lookup == null) {
-            LookupKey newKey  = this.registerDimension(dimensionNamespace, dimensionName, contentType);
+            LookupKey newKey  = this.registerDimension(dimensionNamespace, dimensionName, contentType, cardinality);
             return lookups.get(newKey);
         }
         return lookup;
+    }
+
+    @Override
+    public Object getLookup(String dimensionNamespace, String dimensionName){
+        LookupKey key = getLookupKey(dimensionNamespace, dimensionName);
+        return lookups.get(key);
     }
 
     private LookupKey getLookupKey(String dimensionNamespace, String dimensionName) {

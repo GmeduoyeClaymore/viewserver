@@ -69,7 +69,7 @@ public class CsvRecordLoader implements IRecordLoader {
     @Override
     public int loadRecords(IOperator operator) {
         InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
-        int[] counter = new int[0];
+        int[] counter = new int[1];
         counter[0] = 0;
         this.getRecordsFromInputStream(stream, c -> {
             RecordUtils.addRecordToTableOperator((KeyedTable)operator,c);

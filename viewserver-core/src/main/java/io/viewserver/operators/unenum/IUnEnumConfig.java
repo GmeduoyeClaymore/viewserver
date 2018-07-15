@@ -24,6 +24,6 @@ import java.util.List;
  * Created by bemm on 03/11/2014.
  */
 public interface IUnEnumConfig {
-    IDataSource getDataSource();
+    String getDataSource();
     List<String> getDimensions();
 }

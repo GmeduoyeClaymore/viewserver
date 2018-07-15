@@ -60,7 +60,7 @@ public class DimensionMapperOperator extends ConfigurableOperatorBase<IDimension
             }
             indexedDimensions.put(dim.getName(),dim);
             indexedDimensionsBySourceColumn.put(dim.getSourceColumnName(),dim);
-            dimensionMapper.registerDimension(dim.isGlobal() ? "global" : dataSourceName,dim.getName(),dim.getContentType());
+            dimensionMapper.registerDimension(dim.isGlobal() ? "global" : dataSourceName,dim.getName(),dim.getContentType(), dim.getCardinality());
         }
 
     }

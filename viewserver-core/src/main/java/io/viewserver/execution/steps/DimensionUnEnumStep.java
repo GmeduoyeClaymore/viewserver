@@ -9,7 +9,7 @@ public class DimensionUnEnumStep implements IExecutionPlanStep<DimensionExecutio
     @Override
     public void execute(DimensionExecutionPlanContext dimensionExecutionPlanContext) {
 
-        UnEnumNode userUnEnum = new UnEnumNode("dimensionsUnEnum" , dimensionExecutionPlanContext.getDataSource())
+        UnEnumNode userUnEnum = new UnEnumNode("dimensionsUnEnum" , dimensionExecutionPlanContext.getDataSource().getName())
                 .withMetadata("isUserExecutionPlanNode", true)
                 .withConnection(dimensionExecutionPlanContext.getInputOperator(), dimensionExecutionPlanContext.getInputOutputName(), Constants.IN);
 

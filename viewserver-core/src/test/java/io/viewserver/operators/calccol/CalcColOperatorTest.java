@@ -48,7 +48,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                ExecutionContext executionContext = new ExecutionContext(1);
+                ExecutionContext executionContext = new ExecutionContext();
                 executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
@@ -120,7 +120,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canAddRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -176,7 +176,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canUpdateRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -231,7 +231,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canRemoveRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -281,7 +281,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canAddColumns() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -333,7 +333,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canRemoveColumns() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -387,7 +387,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void whenRemovingAColumnUsedByACalculationShouldRemoveCalculationColumn() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -439,7 +439,7 @@ public class CalcColOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void testRegexCalcCol() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 

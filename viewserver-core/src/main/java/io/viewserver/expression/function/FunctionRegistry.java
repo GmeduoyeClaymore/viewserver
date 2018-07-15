@@ -29,6 +29,7 @@ import java.util.Map;
  */
 public class FunctionRegistry {
     private Map<String, Class<? extends IUserDefinedFunction>> functions = new HashMap<>();
+    private Map<String,IUserDefinedFunction> instances = new HashMap<>();
 
     public FunctionRegistry() {
         functions.put("abs", Abs.class);
@@ -50,11 +51,17 @@ public class FunctionRegistry {
         functions.put("distanceJson", DistanceJson.class);
     }
 
+    public void registerInstance(String name, IUserDefinedFunction instance) {
+        instances.put(name, instance);
+    }
     public void register(String name, Class<? extends IUserDefinedFunction> clazz) {
         functions.put(name, clazz);
     }
 
     public IUserDefinedFunction create(String name) {
+        if(instances.containsKey(name)){
+            return instances.get(name);
+        }
         Class<? extends IUserDefinedFunction> clazz = functions.get(name);
         if (clazz == null) {
             return null;

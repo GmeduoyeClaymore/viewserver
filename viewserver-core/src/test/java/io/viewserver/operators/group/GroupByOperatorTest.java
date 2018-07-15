@@ -49,7 +49,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                IExecutionContext executionContext = new ExecutionContext(1);
+                IExecutionContext executionContext = new ExecutionContext();
                 executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
@@ -112,7 +112,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                IExecutionContext executionContext = new ExecutionContext(1);
+                IExecutionContext executionContext = new ExecutionContext();
                 executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
@@ -175,7 +175,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
         benchmark(new IBenchmarkRunner() {
             @Override
             public void run(Benchmarks benchmarks) throws Exception {
-                IExecutionContext executionContext = new ExecutionContext(1);
+                IExecutionContext executionContext = new ExecutionContext();
                 executionContext.setReactor(new TestReactor());
                 Catalog catalog = new Catalog(executionContext);
 
@@ -237,7 +237,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canAddRows() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -306,7 +306,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canUpdateRows() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -374,7 +374,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canRemoveRows() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -437,7 +437,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void removingLastRowInGroupRemovesGroup() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -500,7 +500,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canAddColumns() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -565,7 +565,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canHaveRegexSummaries() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -629,7 +629,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void canRemoveColumns() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -693,7 +693,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void testMinSummary() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -770,7 +770,7 @@ public class GroupByOperatorTest extends BenchmarkTestBase {
 
     @Test
     public void resetsCorrectly() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 

@@ -5,7 +5,7 @@ import io.viewserver.execution.ParameterHelper;
 
 public class UserUnEnumNode extends UnEnumNode {
 
-    public UserUnEnumNode(String name, IDataSource dataSource) {
+    public UserUnEnumNode(String name, String dataSource) {
         super(name,dataSource);
     }
 

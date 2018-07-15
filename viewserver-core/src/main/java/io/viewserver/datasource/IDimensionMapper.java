@@ -24,9 +24,14 @@ import io.viewserver.core._KeyType_;
  */
 public interface IDimensionMapper {
 
-    LookupKey registerDimension(String dimensionNamespace, Dimension dimension);
+    ContentType getContentType(String dimensionNamespace, String dimensionName);
 
-    LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType);
+
+    Cardinality getCardinality(String dimensionNamespace, String dimensionName);
+
+    LookupKey registerDimension(String dimensionNamespace, Dimension dimension, Cardinality cardinality);
+
+    LookupKey registerDimension(String dimensionNamespace, String dimensionName, ContentType dimensionContentType, Cardinality cardinality);
 
     String lookupString(String dimensionNamespace, String dimensionName, int id);
 
@@ -42,7 +47,9 @@ public interface IDimensionMapper {
 
     long lookupLong(String dimensionNamespace, String dimensionName, int id);
 
-    _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName,ContentType dimensionContentType, int id);
+    _KeyType_ lookup_KeyName_(String dimensionNamespace, String dimensionName, int id);
+
+    Object getLookup(String dimensionNamespace, String dimensionName);
 
     void clear();
 }

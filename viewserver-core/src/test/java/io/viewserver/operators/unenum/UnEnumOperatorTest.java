@@ -62,7 +62,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
                 DimensionMapper dimensionMapper = new DimensionMapper();
                 Dimension marketDimension = dataSource.getDimension("market");
-                dimensionMapper.registerDimension(dataSource.getName(), marketDimension.getName(), marketDimension.getContentType());
+                dimensionMapper.registerDimension(dataSource.getName(), marketDimension.getName(), marketDimension.getContentType(), Cardinality.Int);
 
                 for (int i = 0; i < 10; i++) {
                     dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), UUID.randomUUID().toString());
@@ -92,8 +92,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
                 UnEnumOperator unenum = new UnEnumOperator("unenum", executionContext, catalog, dimensionMapper);
                 unenum.configure(new IUnEnumConfig() {
                     @Override
-                    public IDataSource getDataSource() {
-                        return dataSource;
+                    public String getDataSource() {
+                        return dataSource.getName();
                     }
 
                     @Override
@@ -137,7 +137,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension, Cardinality.Int);
 
         for (int i = 0; i < 10; i++) {
             dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
@@ -166,8 +166,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         UnEnumOperator unenum = new UnEnumOperator("unenum", executionContext, catalog, dimensionMapper);
         unenum.configure(new IUnEnumConfig() {
             @Override
-            public IDataSource getDataSource() {
-                return dataSource;
+            public String getDataSource() {
+                return dataSource.getName();
             }
 
             @Override
@@ -211,7 +211,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension, Cardinality.Int);
 
         for (int i = 0; i < 10; i++) {
             dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
@@ -241,8 +241,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         UnEnumOperator unenum = new UnEnumOperator("unenum", executionContext, catalog, dimensionMapper);
         unenum.configure(new IUnEnumConfig() {
             @Override
-            public IDataSource getDataSource() {
-                return dataSource;
+            public String getDataSource() {
+                return dataSource.getName();
             }
 
             @Override
@@ -286,7 +286,7 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
 
         DimensionMapper dimensionMapper = new DimensionMapper();
         Dimension marketDimension = dataSource.getDimension("market");
-        dimensionMapper.registerDimension(dataSource.getName(), marketDimension);
+        dimensionMapper.registerDimension(dataSource.getName(), marketDimension, Cardinality.Int);
 
         for (int i = 0; i < 10; i++) {
             dimensionMapper.mapString(dataSource.getName(), marketDimension.getName(), "market" + i);
@@ -316,8 +316,8 @@ public class UnEnumOperatorTest extends BenchmarkTestBase {
         UnEnumOperator unenum = new UnEnumOperator("unenum", executionContext, catalog, dimensionMapper);
         unenum.configure(new IUnEnumConfig() {
             @Override
-            public IDataSource getDataSource() {
-                return dataSource;
+            public String getDataSource() {
+                return dataSource.getName();
             }
 
             @Override
