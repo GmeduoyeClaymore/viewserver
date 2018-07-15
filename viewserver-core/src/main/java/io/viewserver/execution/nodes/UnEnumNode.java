@@ -16,7 +16,6 @@
 
 package io.viewserver.execution.nodes;
 
-import io.viewserver.datasource.IDataSource;
 import io.viewserver.execution.ParameterHelper;
 import io.viewserver.messages.config.IOperatorConfig;
 import io.viewserver.operators.unenum.IUnEnumConfig;
@@ -31,12 +30,12 @@ import java.util.List;
  * Created by bemm on 03/11/2014.
  */
 public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
-    private IDataSource dataSource;
+    private String dataSourceName;
     private List<String> dimensions = new ArrayList<>();
 
-    public UnEnumNode(String name, IDataSource dataSource) {
+    public UnEnumNode(String name, String dataSourceName) {
         super(name, "UnEnum");
-        this.dataSource = dataSource;
+        this.dataSourceName = dataSourceName;
     }
 
     public UnEnumNode withDimensions(String... dimensions) {
@@ -53,8 +52,8 @@ public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
     public Object getConfig(ParameterHelper parameterHelper) {
         return new IUnEnumConfig() {
             @Override
-            public IDataSource getDataSource() {
-                return dataSource;
+            public String getDataSource() {
+                return dataSourceName;
             }
 
             @Override
@@ -71,10 +70,10 @@ public class UnEnumNode extends GraphNodeBase<UnEnumNode> {
 
     @Override
     protected String getConfigForOperatorName(ParameterHelper parameterHelper) {
-        if(dataSource == null){
+        if(dataSourceName == null){
             return null;
         }
-        return String.format("unenum:%s:%s", dataSource.getName(), StringUtils.join(dimensions, ','));
+        return String.format("unenum:%s:%s", dataSourceName, StringUtils.join(dimensions, ','));
     }
 
     @Override

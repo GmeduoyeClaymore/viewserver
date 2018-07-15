@@ -39,7 +39,7 @@ import java.util.Collection;
 public class ProjectionOperatorTest {
     @Test
     public void canAddRows() throws Exception {
-        IExecutionContext executionContext = new ExecutionContext(1);
+        IExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -85,7 +85,7 @@ public class ProjectionOperatorTest {
 
     @Test
     public void canUpdateRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -140,7 +140,7 @@ public class ProjectionOperatorTest {
 
     @Test
     public void canRemoveRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -190,7 +190,7 @@ public class ProjectionOperatorTest {
 
     @Test
     public void canUseRegexes() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 

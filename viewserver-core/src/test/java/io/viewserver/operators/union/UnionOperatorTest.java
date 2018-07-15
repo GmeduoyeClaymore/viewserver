@@ -56,7 +56,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canAddRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -103,7 +103,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canUpdateRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -166,7 +166,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canRemoveRows() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 
@@ -219,7 +219,7 @@ public class UnionOperatorTest {
 
     @Test
     public void canAddAndRemoveProducers() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
 
         Catalog catalog = new Catalog(executionContext);
@@ -301,7 +301,7 @@ public class UnionOperatorTest {
     @Test
     @Ignore
     public void tearDownBehaviour() throws Throwable {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
 
         Catalog catalog = new Catalog(executionContext);
 
@@ -466,7 +466,7 @@ public class UnionOperatorTest {
 
     @Test
     public void throwsWhenAdditionalSchemaMissingColumns() throws Exception {
-        ExecutionContext executionContext = new ExecutionContext(1);
+        ExecutionContext executionContext = new ExecutionContext();
         executionContext.setReactor(new TestReactor());
         Catalog catalog = new Catalog(executionContext);
 

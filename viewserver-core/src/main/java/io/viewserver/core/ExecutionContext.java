@@ -58,7 +58,6 @@ public class ExecutionContext implements IExecutionContext{
     private final Configurator configurator;
     private IExpressionParser expressionParser;
     private boolean paused;
-    private int numberThreads;
     public static boolean blockThreadAssertion = false;
 
     public static void AssertUpdateThread(){
@@ -70,11 +69,7 @@ public class ExecutionContext implements IExecutionContext{
         }
     }
 
-    public ExecutionContext(){
-        this(1);
-    }
-    public ExecutionContext(int numberThreads) {
-        this.numberThreads = numberThreads;
+    public ExecutionContext() {
         this.functionRegistry = new FunctionRegistry();
         this.expressionParser = new AntlrExpressionParser(functionRegistry);
         this.summaryRegistry = new SummaryRegistry();
@@ -83,6 +78,17 @@ public class ExecutionContext implements IExecutionContext{
         this.operatorFactoryRegistry = new OperatorFactoryRegistry(dimensionMapper, this.spreadColumnRegistry, functionRegistry,() -> new ChunkedColumnStorage(1024), summaryRegistry);
         this.configurator = new Configurator(operatorFactoryRegistry);
         this.metadataRegistry = new MetadataRegistry();
+    }
+
+    public ExecutionContext(MetadataRegistry metadataRegistry, SummaryRegistry summaryRegistry, SpreadFunctionRegistry spreadColumnRegistry, DimensionMapper dimensionMapper, FunctionRegistry functionRegistry, OperatorFactoryRegistry operatorFactoryRegistry, Configurator configurator, IExpressionParser expressionParser) {
+        this.metadataRegistry = metadataRegistry;
+        this.summaryRegistry = summaryRegistry;
+        this.spreadColumnRegistry = spreadColumnRegistry;
+        this.dimensionMapper = dimensionMapper;
+        this.functionRegistry = functionRegistry;
+        this.operatorFactoryRegistry = operatorFactoryRegistry;
+        this.configurator = configurator;
+        this.expressionParser = expressionParser;
     }
 
     @Override

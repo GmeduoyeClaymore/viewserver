@@ -20,9 +20,7 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.core.NullableBool;
-import io.viewserver.datasource.Dimension;
-import io.viewserver.datasource.IDataSource;
-import io.viewserver.datasource.IDimensionMapper;
+import io.viewserver.datasource.*;
 import io.viewserver.operators.*;
 import io.viewserver.schema.column.*;
 
@@ -32,11 +30,11 @@ import java.util.List;
  * Created by bemm on 22/10/2014.
  */
 public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
-    private IDataSource dataSource;
     private final IDimensionMapper dimensionMapper;
     private Input input;
     private Output output;
     private List<String> dimensions;
+    private String dataSourceName;
 
     public UnEnumOperator(String name, IExecutionContext executionContext, ICatalog catalog, IDimensionMapper dimensionMapper) {
         super(name, executionContext, catalog);
@@ -60,7 +58,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
     @Override
     protected IUnEnumConfig mergePendingConfig(IUnEnumConfig pendingConfig, IUnEnumConfig newConfig) {
-        if (pendingConfig.getDataSource() != null && !pendingConfig.getDataSource().getName().equals(newConfig.getDataSource().getName())) {
+        if (pendingConfig.getDataSource() != null && !pendingConfig.getDataSource().equals(newConfig.getDataSource())) {
             throw new IllegalStateException("Cannot merge configs with conflicting data sources");
         }
         return pendingConfig;
@@ -68,7 +66,7 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
     @Override
     protected void processConfig(IUnEnumConfig config) {
-        this.dataSource = config.getDataSource();
+        this.dataSourceName = config.getDataSource();
         this.dimensions = config.getDimensions();
     }
 
@@ -79,10 +77,13 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
         @Override
         protected void onColumnAdd(ColumnHolder columnHolder) {
-            Dimension dimension = dataSource == null ? null : dataSource.getDimension(columnHolder.getName());
-            if (dimension != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
-                    && (dimensions == null || dimensions.isEmpty() || dimensions.contains(dimension.getName()))) {
-                ColumnType type = dimension.getContentType().getColumnType();
+            String dimension = columnHolder.getName();
+            String dataSourceName = UnEnumOperator.this.dataSourceName;
+            Object lookup = dimensionMapper.getLookup(dataSourceName,dimension);
+            if (lookup != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
+                    && (dimensions == null || dimensions.isEmpty() || dimensions.contains(dimension))) {
+                ColumnType type = dimensionMapper.getContentType(dataSourceName,dimension).getColumnType();
+
                 if (type == ColumnType.Bool) {
                     type = ColumnType.NullableBool;
                 }
@@ -90,34 +91,32 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
 
                 createMetaData(outHolder, type);
 
-                switch (type) {
+               switch (type) {
                     case NullableBool: {
-                        outHolder.setColumn(new UnEnumColumnNullableBool(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnNullableBool(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                     case Byte: {
-                        outHolder.setColumn(new UnEnumColumnByte(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnByte(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                     case Short: {
-                        outHolder.setColumn(new UnEnumColumnShort(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnShort(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                     case Int: {
-                        outHolder.setColumn(new UnEnumColumnInt(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnInt(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                     case Long: {
-                        outHolder.setColumn(new UnEnumColumnLong(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnLong(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                     case String: {
-                        outHolder.setColumn(new UnEnumColumnString(columnHolder, outHolder, dataSource.getName(), dimension, dimensionMapper));
+                        outHolder.setColumn(new UnEnumColumnString(columnHolder, outHolder, dataSourceName, dimensionMapper));
                         break;
                     }
                 }
-
-
                 output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
                 return;
             } else {

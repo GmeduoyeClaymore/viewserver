@@ -10,7 +10,7 @@ public class ExecutionContextTest {
 
     @Test
     public void Committing_execution_context_causes_each_input_operator_to_increment_its_internal_version(){
-        ExecutionContext context = new ExecutionContext(1);
+        ExecutionContext context = new ExecutionContext();
         context.commit();
     }
 

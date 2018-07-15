@@ -70,7 +70,7 @@ public class ValidationUtils {
 
 
     public static  ValidationOperatorRow toFlattenedRow(Map<String,String> row, String keyColumnName){
-        validateRowHasKey(row, keyColumnName);
+        //validateRowHasKey(row, keyColumnName);
         HashMap<String,Object>  values = getValues(row,0);
         return new ValidationOperatorRow(values,new HashMap<>(),ValidationAction.Add);
     }
@@ -112,6 +112,9 @@ public class ValidationUtils {
             String idString = row.get(part);
             if("".equals(idString) || idString == null){
                 throw new RuntimeException("Row " + row + " does not contain a field named " + keyColumnName);
+            }
+            if("".equals(idString)){
+                idString = "_EMPTY_" + part + "_";
             }
         }
     }

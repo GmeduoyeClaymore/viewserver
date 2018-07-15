@@ -17,6 +17,8 @@
 package io.viewserver.operators.unenum;
 
 import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
 import io.viewserver.datasource.Dimension;
 import io.viewserver.datasource.IDimensionMapper;
 import io.viewserver.schema.column.*;
@@ -25,17 +27,21 @@ import io.viewserver.schema.column.*;
  * Created by paulrg on 15/01/2015.
  */
 public class UnEnumColumnNullableBool implements IColumnNullableBool {
+    private final ContentType contentType;
+    private final Cardinality cardinality;
     private ColumnHolder sourceHolder;
     private ColumnHolder outHolder;
     private String dataSource;
-    private Dimension dimension;
+    private String dimension;
     private IDimensionMapper dimensionMapper;
 
-    public UnEnumColumnNullableBool(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
+    public UnEnumColumnNullableBool(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, IDimensionMapper dimensionMapper) {
         this.sourceHolder = sourceHolder;
         this.outHolder = outHolder;
         this.dataSource = dataSource;
-        this.dimension = dimension;
+        this.dimension = sourceHolder.getName();
+        this.contentType = dimensionMapper.getContentType(dataSource,this.dimension);
+        this.cardinality = dimensionMapper.getCardinality(dataSource,this.dimension);
         this.dimensionMapper = dimensionMapper;
     }
 
@@ -51,7 +57,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
 
     @Override
     public ColumnType getType() {
-        return dimension.getContentType().getColumnType();
+        return contentType.getColumnType();
     }
 
     @Override
@@ -62,7 +68,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
             return NullableBool.Null;
         }
 
-        return dimensionMapper.lookupNullableBool(dataSource, dimension.getName(), id);
+        return dimensionMapper.lookupNullableBool(dataSource, dimension, id);
     }
 
     @Override
@@ -76,13 +82,13 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
         if (id == -1) {
             return NullableBool.Null;
         }
-        return dimensionMapper.lookupNullableBool(dataSource, dimension.getName(), id);
+        return dimensionMapper.lookupNullableBool(dataSource, dimension, id);
     }
 
     private int getPreviousLookupId(int row) {
         int id = -1;
         ColumnMetadata metadata = sourceHolder.getMetadata();
-        switch (dimension.getCardinality()) {
+        switch (UnEnumColumnNullableBool.this.cardinality) {
             case Boolean: {
                 if (sourceHolder instanceof IColumnNullableBool) {
                     id = ((IColumnNullableBool)sourceHolder).getPreviousNullableBool(row).getNumericValue();
@@ -125,7 +131,7 @@ public class UnEnumColumnNullableBool implements IColumnNullableBool {
     private int getLookupId(int row) {
         int id = -1;
         ColumnMetadata metadata = sourceHolder.getMetadata();
-        switch (dimension.getCardinality()) {
+        switch (UnEnumColumnNullableBool.this.cardinality) {
             case Boolean: {
                 if (sourceHolder instanceof IColumnNullableBool) {
                     id = ((IColumnNullableBool)sourceHolder).getNullableBool(row).getNumericValue();

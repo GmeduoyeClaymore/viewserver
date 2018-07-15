@@ -20,26 +20,29 @@ package io.viewserver.operators.unenum;
 
 import io.viewserver.core.NullableBool;
 import io.viewserver.core._KeyType_;
-import io.viewserver.datasource.Dimension;
-import io.viewserver.datasource.IDataSource;
-import io.viewserver.datasource.IDimensionMapper;
+import io.viewserver.datasource.*;
 import io.viewserver.schema.column.*;
 
 /**
  * Created by paulrg on 15/01/2015.
  */
 public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn, IUnEnumColumn {
+    private final String dimensionName;
+    private final Cardinality cardinality;
     private ColumnHolder sourceHolder;
     private ColumnHolder outHolder;
     private String dataSource;
-    private Dimension dimension;
+
+    private ContentType contentType;
     private IDimensionMapper dimensionMapper;
 
-    public UnEnumColumn_KeyName_(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, Dimension dimension, IDimensionMapper dimensionMapper) {
+    public UnEnumColumn_KeyName_(ColumnHolder sourceHolder, ColumnHolder outHolder, String dataSource, IDimensionMapper dimensionMapper) {
         this.sourceHolder = sourceHolder;
         this.outHolder = outHolder;
         this.dataSource = dataSource;
-        this.dimension = dimension;
+        this.dimensionName = sourceHolder.getName();
+        this.contentType = dimensionMapper.getContentType(dataSource,this.dimensionName);
+        this.cardinality = dimensionMapper.getCardinality(dataSource,this.dimensionName);
         this.dimensionMapper = dimensionMapper;
     }
 
@@ -55,7 +58,7 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
 
     @Override
     public ColumnType getType() {
-        return dimension.getContentType().getColumnType();
+        return contentType.getColumnType();
     }
 
     @Override
@@ -67,19 +70,19 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
             return metadata != null ?((ColumnMetadata_KeyName_)metadata).getNullValue() : (_KeyType_)ColumnType._KeyName_.getDefaultValue();
         }
 
-        return dimensionMapper.lookup_KeyName_(dataSource, dimension.getName(), id);
+        return dimensionMapper.lookup_KeyName_(dataSource, sourceHolder.getName(),id);
     }
 
     @Override
     public _KeyType_ getPrevious_KeyName_(int row) {
         int id = getPreviousLookupId(row);
-        return dimensionMapper.lookup_KeyName_(dataSource, dimension.getName(), id);
+        return dimensionMapper.lookup_KeyName_(dataSource, sourceHolder.getName(),id);
     }
 
     private int getPreviousLookupId(int row) {
         int id = getLookupId(row);
         ColumnMetadata metadata = sourceHolder.getMetadata();
-        switch (dimension.getCardinality()) {
+        switch (this.cardinality) {
             case Boolean: {
                 id = ((IColumnBool)sourceHolder).getPreviousBool(row) ? 1 : 0;
                 break;
@@ -118,7 +121,7 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
     private int getLookupId(int row) {
         int id = -1;
         ColumnMetadata metadata = sourceHolder.getMetadata();
-        switch (dimension.getCardinality()) {
+        switch (this.cardinality) {
             case Boolean: {
                 id = NullableBool.fromBoolean(((IColumnBool) sourceHolder).getBool(row)).getNumericValue();
                 break;

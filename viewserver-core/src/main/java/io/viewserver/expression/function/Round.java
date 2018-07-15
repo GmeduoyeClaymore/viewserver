@@ -31,8 +31,9 @@ public class Round implements IUserDefinedFunction, IExpressionInt, IExpressionL
 
     @Override
     public void setParameters(IExpression... parameters) {
-        if (parameters.length < 1 || !(parameters[0] instanceof IExpressionFloat || parameters[0] instanceof IExpressionDouble)) {
-            throw new IllegalArgumentException("round expression requires a double or long column");
+        if (parameters.length < 1 || !(parameters[0] instanceof IExpressionFloat
+                || parameters[0] instanceof IExpressionDouble  || parameters[0] instanceof IExpressionInt)) {
+            throw new IllegalArgumentException("round expression requires a int,double or long column");
         }
         roundExpression =  parameters[0];
         if (parameters.length > 1) {
@@ -79,7 +80,9 @@ public class Round implements IUserDefinedFunction, IExpressionInt, IExpressionL
     }
 
     private double getRoundedValue(int row) {
-        if(roundExpression instanceof IExpressionDouble){
+        if(roundExpression instanceof IExpressionInt) {
+            return ((IExpressionInt)roundExpression).getInt(row);
+        } else if(roundExpression instanceof IExpressionDouble){
             double lVal = ((IExpressionDouble)roundExpression).getDouble(row);
             return Math.round(lVal * multiplier) / (double)multiplier;
         } else {

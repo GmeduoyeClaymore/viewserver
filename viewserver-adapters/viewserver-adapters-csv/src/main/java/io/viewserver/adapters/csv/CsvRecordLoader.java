@@ -16,10 +16,9 @@
 
 package io.viewserver.adapters.csv;
 
-import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.IRecordLoader;
-import io.viewserver.datasource.OperatorCreationConfig;
-import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.datasource.*;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.table.KeyedTable;
 import javolution.io.UTF8StreamReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -68,15 +67,15 @@ public class CsvRecordLoader implements IRecordLoader {
     }
 
     @Override
-    public rx.Observable<IRecord> getRecords(String query) {
-        return  rx.Observable.create(subscriber -> {
-        try{
-            InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
-            this.getRecordsFromInputStream(stream, c -> subscriber.onNext(c));
-            subscriber.onCompleted();
-        }catch (Exception ex){
-            subscriber.onError(ex);
-        }}, Emitter.BackpressureMode.BUFFER);
+    public int loadRecords(IOperator operator) {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
+        int[] counter = new int[1];
+        counter[0] = 0;
+        this.getRecordsFromInputStream(stream, c -> {
+            RecordUtils.addRecordToTableOperator((KeyedTable)operator,c);
+            counter[0]++;
+        });
+        return counter[0];
     }
 
     protected CSVFormat getCsvFormat(){

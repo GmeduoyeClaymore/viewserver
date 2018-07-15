@@ -19,7 +19,10 @@ package io.viewserver.adapters.jdbc;
 import io.viewserver.adapters.common.IWritableDataQueryProvider;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.datasource.*;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.rx.RxUtils;
 import io.viewserver.operators.table.ITableRow;
+import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.IRowFlags;
 import io.viewserver.util.ViewServerException;
@@ -91,20 +94,15 @@ public class JdbcRecordLoader implements IWritableRecordLoader {
     }
 
     @Override
-    public Observable<IRecord> getRecords(String query) {
+    public int loadRecords(IOperator operator) {
         final int[] recordCount = new int[1];
-        return  rx.Observable.create(subscriber -> {
-            try{
-                executeQuery(dataQueryProvider.getSnapshotQuery(), (resultSet) -> {
-                    while (resultSet.next()) {
-                        subscriber.onNext(getRecord(resultSet));
-                        recordCount[0] = resultSet.getRow();
-                    }
-                });
-                subscriber.onCompleted();
-            }catch (Exception ex){
-                subscriber.onError(ex);
-            }}, Emitter.BackpressureMode.BUFFER);
+        executeQuery(dataQueryProvider.getSnapshotQuery(), (resultSet) -> {
+            while (resultSet.next()) {
+                RecordUtils.addRecordToTableOperator((KeyedTable) operator, getRecord(resultSet));
+                recordCount[0] = resultSet.getRow();
+            }
+        });
+        return recordCount[0];
     }
 
     private IRecord getRecord(ResultSet resultSet){
