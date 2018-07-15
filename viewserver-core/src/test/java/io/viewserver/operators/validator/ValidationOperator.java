@@ -87,8 +87,8 @@ public class ValidationOperator extends OperatorBase{
 
     public void validateRows(ITransform<String> transform, List<ValidationOperatorRow> expectedRows, List<String> columns, String keyColumnName, boolean flatten) {
         System.out.println(this.getName() + " validating rows");
-        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName, true, false);
-        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName, false,flatten);
+        DataTable expectedTable = convertRowsToTable(transform,expectedRows,columns, null, keyColumnName, true, false, flatten);
+        DataTable actual = convertRowsToTable(transform,this.validationRows,columns, expectedRows, keyColumnName, false,flatten, flatten);
         try {
             expectedTable.diff(actual);
         }catch (Throwable throwable){
@@ -132,7 +132,7 @@ public class ValidationOperator extends OperatorBase{
         return DataTable.create(columns);
     }
 
-    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn, boolean rowsAreFromCucumber, boolean flatten) {
+    private DataTable convertRowsToTable(ITransform<String> transform,List<ValidationOperatorRow> actionsToConvert,List<String> columns, List referenceActions, String keyColumn, boolean rowsAreFromCucumber, boolean flatten, boolean flattenKey) {
 
         for(ValidationOperatorRow row : actionsToConvert){
             if(ValidationAction.Remove.equals(row.getValidationAction())){
@@ -151,7 +151,7 @@ public class ValidationOperator extends OperatorBase{
             }
         }
 
-        List<HashMap<String,Object>> rows = getRows(actionsToConvert, c-> ((ValidationOperatorRow)c).getRowId(keyColumn,flatten));
+        List<HashMap<String,Object>> rows = getRows(actionsToConvert, c-> ((ValidationOperatorRow)c).getRowId(keyColumn,flattenKey));
         if(columns == null){
             columns = rows.size() > 0 ? new ArrayList<>(rows.get(0).keySet()) : new ArrayList<>();
         }

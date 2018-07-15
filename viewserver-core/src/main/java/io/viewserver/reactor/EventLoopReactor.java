@@ -37,7 +37,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     public static final byte CONTROL_REFRESH = 0;
     public static final byte CONTROL_WAKEUP = 1;
     public static final byte CONTROL_SHUTDOWN = 2;
-    private static final int LOOP_FREQUENCY = 3000;
+    private static final int LOOP_FREQUENCY = 1000;
     private final PriorityBlockingQueue<LoopTask> loopTasks;
     private final PriorityBlockingQueue<LoopTask> loopTasksCopy;
     private final String name;
