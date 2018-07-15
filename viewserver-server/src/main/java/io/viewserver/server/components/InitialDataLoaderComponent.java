@@ -4,7 +4,6 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.IOperator;
-import io.viewserver.operators.rx.RxUtils;
 import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnHolderUtils;
@@ -49,8 +48,8 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             logger.info("Loader {} loaders waiting for table", loaderEntry.getKey());
-            Observable<KeyedTable> operator = getKeyedTable(loaderEntry.getKey(), schemaConfig, creationConfig);
-            this.subscriptions.add(operator.subscribe(kt -> onKeyedTable(kt,loaderEntry.getValue())));
+            Observable<IOperator> operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
+            this.subscriptions.add(operator.subscribe(kt -> onOperator(kt,loaderEntry.getValue())));
             readyObservables.add(loaderEntry.getValue().readyObservable());
         }
         FuncN<?> onCompletedAll = new FuncN<Object>() {
@@ -64,9 +63,9 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 
-    private void onKeyedTable(KeyedTable table, IRecordLoader recordLoader){
-        logger.info("Successfully got table " + table.getPath() + " that we were waiting for");
-        this.subscriptions.add(recordLoader.getRecords(null).subscribeOn(RxUtils.executionContextScheduler(this.executionContext,0)).subscribe(rec-> addRecordToTableOperator(table,rec), err -> logger.error("Issue loading record", err)));
+    private void onOperator(IOperator operator, IRecordLoader recordLoader){
+        logger.info("Successfully operator table " + operator.getPath() + " that we were waiting for");
+        recordLoader.loadRecords(operator);
     }
 
     @Override
@@ -77,18 +76,9 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         recordLoaderCollection.close();
     }
 
-    private void addRecordToTableOperator(KeyedTable keyedTable, IRecord rec) {
-        try{
-            RecordUtils.addRecordToTableOperator(keyedTable, rec);
-        }catch (Exception ex){
-            logger.error("Problem loading record",ex);
-        }
+    private Observable<IOperator> getOperator(String tableOperator, SchemaConfig schemaConfig, OperatorCreationConfig creationConfig) {
 
-    }
-
-    private Observable<KeyedTable> getKeyedTable(String tableOperator, SchemaConfig schemaConfig, OperatorCreationConfig creationConfig) {
-
-        KeyedTable operator = getOperator(this.serverCatalog.getOperatorByPath(tableOperator));
+        IOperator operator = this.serverCatalog.getOperatorByPath(tableOperator);
         if(operator != null){
             logger.info("Already got so just returning - " + tableOperator);
             return Observable.just(operator);
@@ -97,7 +87,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
             logger.info("Waiting for table - " + tableOperator);
             return this.serverCatalog.waitForOperatorAtThisPath(tableOperator).map(c-> {
                 logger.info("Found table - " + tableOperator);
-                return getOperator(c);
+                return c;
             });
         }
         if(creationConfig.getOperator().equals(CreationStrategy.CREATE)){
@@ -120,15 +110,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
         throw new RuntimeException("Unable to resolve operator named " + tableOperator + " change the creation config to allow creation maybe ?? or work out why this operator isnt there anymore");
     }
 
-    private KeyedTable getOperator(IOperator operator) {
-        if(operator == null){
-            return null;
-        }
-        if(! (operator instanceof  KeyedTable)){
-            throw new RuntimeException(String.format("Operator " + operator.getPath() + " is not a keyed table"));
-        }
-        return (KeyedTable) operator;
-    }
+
 
     private KeyedTable createTable(SchemaConfig schemaConfig, ICatalog serverCatalog, String operatorNameToCreate) {
         TableKeyDefinition tableKeyDefinition = new TableKeyDefinition(new ArrayList<>(schemaConfig.getKeyColumns()).toArray(new String[schemaConfig.getKeyColumns().size()]));

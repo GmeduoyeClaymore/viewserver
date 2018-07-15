@@ -10,10 +10,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import com.mongodb.client.model.changestream.OperationType;
 import com.mongodb.client.model.changestream.UpdateDescription;
-import io.viewserver.datasource.IRecord;
-import io.viewserver.datasource.IRecordLoader;
-import io.viewserver.datasource.OperatorCreationConfig;
-import io.viewserver.datasource.SchemaConfig;
+import io.viewserver.datasource.*;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.table.KeyedTable;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.joda.time.DateTime;
@@ -37,7 +36,6 @@ public class MongoRecordLoader implements IRecordLoader{
     private ListeningExecutorService service;
     private HashMap<String,MongoDocumentChangeRecord> recordsById;
     private PublishSubject updateObservable = PublishSubject.create();
-    private PublishSubject recordStream = PublishSubject.create();
     private ReplaySubject ready = ReplaySubject.create(1);
     private boolean mongoListenerAdded;
     private BsonDocument resumeToken;
@@ -46,6 +44,7 @@ public class MongoRecordLoader implements IRecordLoader{
     private long lastConnectionRetryTime = 0;
     private long connectionLostTime = 0;
     private boolean isClosed;
+    private IOperator recordTarget;
 
     public MongoRecordLoader(MongoConnectionFactory connectionFactory, String tableName, SchemaConfig config, OperatorCreationConfig creationConfig, String serverName) {
         this.connectionFactory = connectionFactory;
@@ -68,12 +67,13 @@ public class MongoRecordLoader implements IRecordLoader{
         return config;
     }
 
-    public Observable<IRecord> getRecords(String query) {
+    public int loadRecords(IOperator operator) {
         if(!mongoListenerAdded){
             scheduleAddMongoListener();
             mongoListenerAdded = true;
         }
-        return recordStream;
+        this.recordTarget = operator;
+        return -1;
     }
 
     public Observable readyObservable(){
@@ -216,7 +216,7 @@ public class MongoRecordLoader implements IRecordLoader{
                 if(logger.isDebugEnabled()){
                     logger.debug("{} received record {}", tableName, rec.asString());
                 }
-                recordStream.onNext(rec);
+                RecordUtils.addRecordToTableOperator((KeyedTable)recordTarget,rec);
             }
             recordsById.clear();
         }

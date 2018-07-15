@@ -17,11 +17,12 @@
 package io.viewserver.datasource;
 
 import io.viewserver.messages.command.ITableEditCommand;
+import io.viewserver.operators.IOperator;
 import rx.Observable;
 
 public interface IRecordLoader {
     SchemaConfig getSchemaConfig();
-    Observable<IRecord> getRecords(String query);
+    int loadRecords(IOperator operator);
     OperatorCreationConfig getCreationConfig();
     default Observable readyObservable(){
         return Observable.just(true);

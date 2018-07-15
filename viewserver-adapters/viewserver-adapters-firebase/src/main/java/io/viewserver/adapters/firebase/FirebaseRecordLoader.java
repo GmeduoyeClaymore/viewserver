@@ -3,6 +3,8 @@ package io.viewserver.adapters.firebase;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.cloud.firestore.*;
 import io.viewserver.datasource.*;
+import io.viewserver.operators.IOperator;
+import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,35 +42,34 @@ public class FirebaseRecordLoader implements IRecordLoader{
         return config;
     }
 
-    public Observable<IRecord> getRecords(String query) {
-        return  rx.Observable.create(subscriber -> {
-            try{
-                logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
-                EventListener<QuerySnapshot> listener = (snapshot, e) -> {
-                    if (e != null) {
-                        logger.error(String.format("Listener failed for %s table", tableName), e);
-                        return;
-                    }
+    public int loadRecords(IOperator query) {
+        try{
+            logger.info(String.format("Adding snapshot listener for Firebase table %s", tableName));
+            EventListener<QuerySnapshot> listener = (snapshot, e) -> {
+                if (e != null) {
+                    logger.error(String.format("Listener failed for %s table", tableName), e);
+                    return;
+                }
 
-                    for (DocumentChange dc : snapshot.getDocumentChanges()) {
-                        try {
-                            if (snapshotComplete) {
-                                logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
-                            }
-                            //TODO - deal with removes
-                            DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
-                            subscriber.onNext(changeRecord);
-                        } catch (Exception ex) {
-                            logger.error(String.format("There was an error updating a record in the %s table", tableName), ex
-                            );
+                for (DocumentChange dc : snapshot.getDocumentChanges()) {
+                    try {
+                        if (snapshotComplete) {
+                            logger.info(String.format("%s updates received from Firebase for table %s", snapshot.getDocumentChanges().size(), tableName));
                         }
+                        //TODO - deal with removes
+                        DocumentChangeRecord changeRecord = new DocumentChangeRecord(config, dc.getDocument());
+                        RecordUtils.addRecordToTableOperator((KeyedTable) query,changeRecord);
+                    } catch (Exception ex) {
+                        logger.error(String.format("There was an error updating a record in the %s table", tableName), ex
+                        );
                     }
-                };
-                this.listenerRegistration = getCollection().addSnapshotListener(listener);
-            }catch (Exception ex){
-                subscriber.onError(ex);
-            }}, Emitter.BackpressureMode.BUFFER);
-
+                }
+            };
+            this.listenerRegistration = getCollection().addSnapshotListener(listener);
+        }catch (Exception ex){
+          throw new RuntimeException(ex);
+        }
+        return -1;
     }
 
 

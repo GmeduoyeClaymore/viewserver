@@ -1,31 +1,45 @@
 package io.viewserver.adapters;
 
 import com.fasterxml.jackson.databind.Module;
-import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.ChangeStreamIterable;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.changestream.ChangeStreamDocument;
 import io.viewserver.adapters.common.Record;
 import io.viewserver.adapters.mongo.MongoConnectionFactory;
 import io.viewserver.adapters.mongo.MongoRecordLoader;
 import io.viewserver.adapters.mongo.MongoTableUpdater;
+import io.viewserver.catalog.Catalog;
+import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.datasource.*;
+import io.viewserver.operators.rx.EventType;
+import io.viewserver.operators.rx.OperatorEvent;
+import io.viewserver.operators.table.KeyedTable;
+import io.viewserver.operators.table.TableKeyDefinition;
+import io.viewserver.reactor.IReactor;
+import io.viewserver.reactor.IReactorCommandWheel;
+import io.viewserver.reactor.ITask;
+import io.viewserver.reactor.SimpleReactorCommandWheel;
+import io.viewserver.schema.column.ColumnHolderUtils;
+import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
 import io.viewserver.util.dynamic.DynamicJsonBackedObject;
 import io.viewserver.util.dynamic.DynamicSerializationModule;
 import io.viewserver.util.dynamic.JSONBackedObjectFactory;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.bson.Document;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import rx.Observable;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -50,7 +64,7 @@ public class MongoRecordLoaderTest {
     private String tableName;
     private SchemaConfig config;
     private MongoTableUpdater tableUpdater;
-    private Observable<IRecord> recordObservable;
+    private KeyedTable table;
 
     public void setup() {
         connectionFactory = new MongoConnectionFactory(clientURI, "test");
@@ -70,7 +84,11 @@ public class MongoRecordLoaderTest {
         db.createCollection(tableName);
 
         MongoRecordLoader loader = new MongoRecordLoader(connectionFactory, tableName, config, new OperatorCreationConfig(CreationStrategy.FAIL,CreationStrategy.FAIL),"main");
-        recordObservable = loader.getRecords(null);
+        ExecutionContext executionContext = new ExecutionContext();
+        executionContext.setReactor(new TestReactor());
+        table = new KeyedTable(tableName, executionContext, new Catalog(executionContext), ColumnHolderUtils.getSchema(config), new ChunkedColumnStorage(1024),new TableKeyDefinition("id"));
+        table.initialise(100);
+        loader.loadRecords(table);
 
         tableUpdater = new MongoTableUpdater(connectionFactory);
     }
@@ -81,7 +99,7 @@ public class MongoRecordLoaderTest {
 
         setup();
         CountDownLatch latch = new CountDownLatch(1);
-        recordObservable.timeout(10, TimeUnit.SECONDS).subscribe(
+        getTableOutput().timeout(10, TimeUnit.SECONDS).subscribe(
                 rec -> {
                     System.out.println(rec);
                     latch.countDown();
@@ -95,6 +113,10 @@ public class MongoRecordLoaderTest {
         Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
     }
 
+    private Observable<OperatorEvent> getTableOutput() {
+        return table.getOutput().observable().filter(c->c.getEventType().equals(EventType.ROW_ADD));
+    }
+
 
     @Test
     @Ignore
@@ -103,10 +125,10 @@ public class MongoRecordLoaderTest {
         setup();
         AtomicReference<String> name = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(2);
-        recordObservable.timeout(10, TimeUnit.SECONDS).subscribe(
+        getTableOutput().timeout(10, TimeUnit.SECONDS).subscribe(
                 rec -> {
                     System.out.println(rec);
-                    name.set(rec.getString("name"));
+                    name.set((String) ((HashMap)rec.getEventData()).get("name"));
                     latch.countDown();
                 },
                 err -> {
@@ -125,7 +147,7 @@ public class MongoRecordLoaderTest {
 
         setup();
         CountDownLatch latch = new CountDownLatch(1);
-        recordObservable.timeout(10, TimeUnit.SECONDS).subscribe(
+        getTableOutput().timeout(10, TimeUnit.SECONDS).subscribe(
                 rec -> {
                     System.out.println(rec);
                     latch.countDown();
@@ -146,7 +168,7 @@ public class MongoRecordLoaderTest {
 
         setup();
         CountDownLatch latch = new CountDownLatch(1);
-        recordObservable.timeout(10, TimeUnit.SECONDS).subscribe(
+        getTableOutput().timeout(10, TimeUnit.SECONDS).subscribe(
                 rec -> {
                     System.out.println(rec);
                     latch.countDown();
@@ -172,3 +194,5 @@ public class MongoRecordLoaderTest {
 
 
 }
+
+
