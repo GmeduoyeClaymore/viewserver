@@ -16,6 +16,7 @@
 
 package io.viewserver.messages.protobuf;
 
+import gnu.trove.set.hash.TIntHashSet;
 import io.viewserver.messages.IMessage;
 import io.viewserver.messages.command.IAuthenticateCommand;
 import io.viewserver.messages.command.ICommand;
@@ -32,6 +33,7 @@ import java.util.List;
  * Created by bemm on 02/12/15.
  */
 public class Tests {
+
     @Test
     public void test() {
         final MessageMessage.MessageDto.Builder messageDtoBuilder = MessageMessage.MessageDto.newBuilder();

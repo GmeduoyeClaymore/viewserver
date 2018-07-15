@@ -20,7 +20,6 @@ import cucumber.api.Scenario;
 import cucumber.api.java.Before;
 import io.viewserver.client.ClientSubscription;
 import io.viewserver.client.CommandResult;
-import io.viewserver.collections.BoolHashSet;
 import io.viewserver.core.JacksonSerialiser;
 import io.viewserver.execution.Options;
 import io.viewserver.execution.ReportContext;
@@ -44,7 +43,6 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -59,7 +57,7 @@ import java.util.stream.Collectors;
 
 public class ViewServerClientSteps {
     private final int timeout = 20;
-    private final TimeUnit timeUnit = TimeUnit.MINUTES;
+    private final TimeUnit timeUnit = TimeUnit.SECONDS;
     private ViewServerClientContext clientContext;
     private static final Logger logger = LoggerFactory.getLogger(ViewServerClientSteps.class);
     private String keyColumn;
@@ -201,6 +199,24 @@ public class ViewServerClientSteps {
         }
 
         Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
+    }
+
+    @When("^\"(.*)\" subscribed to operator \"([^\"]*)\"$")
+    public void I_subscribe_to_operator(String clientName, String operatorName) throws Exception {
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+
+        CountDownLatch subscribeLatch = new CountDownLatch(1);
+        Options options = new Options();
+        options.setOffset(0);
+        options.setLimit(100);
+        trySubscribeOperator(clientName, operatorName,options, subscribeLatch);
+        try {
+            subscribeLatch.await(timeout, timeUnit);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Assert.assertNotNull("Could not detect successful subscription to " + operatorName + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription(operatorName));
     }
 
     @When("^\"([^\"]*)\" subscribed to report \"([^\"]*)\" with parameters$")
@@ -408,13 +424,14 @@ public class ViewServerClientSteps {
 
     private void trySubscribeOperator(String clientName, String operatorName,Options options, CountDownLatch subscribeLatch) {
         ClientConnectionContext connectionContext = clientContext.get(clientName);
+        final TestSubscriptionEventHandler testSubscriptionEventHandler = new TestSubscriptionEventHandler();
         ListenableFuture<ClientSubscription> subFuture = connectionContext.subscribe(operatorName, options,
-                new TestSubscriptionEventHandler());
+                testSubscriptionEventHandler);
 
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override
             public void onSuccess(ClientSubscription clientSubscription) {
-                connectionContext.addSubscription(operatorName, clientSubscription, new TestSubscriptionEventHandler());
+                connectionContext.addSubscription(operatorName, clientSubscription, testSubscriptionEventHandler);
                 subscribeLatch.countDown();
             }
 
@@ -451,27 +468,42 @@ public class ViewServerClientSteps {
 
         }
         I_subscribe_to_report(clientName,reportName);
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportName,keyColumn,records,true), 5, 500, 0,false);
+        repeat("Receiving data " + records, () -> the_following_data_is_received_on_report(clientName,reportName,keyColumn,records,true), 5, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\"$")
     public void the_following_data_is_received_eventually(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,false), 10, 500, 0,false);
+        repeat("Receiving data " + records, () -> the_following_data_is_received_on_report(clientName,reportId,keyColumn,records,false), 10, 500, 0,false);
+    }
+
+    @Then("^\"([^\"]*)\" the following data is received eventually on operator \"([^\"]*)\"$")
+    public void the_following_data_is_received_eventually_on_operator(String clientName, String reportId, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_receieved_on_operator(clientName,reportId,keyColumn,records,false), 10, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\" snapshot$")
-    public void the_following_data_is_received_eventually_events(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,true), 10, 500, 0,false);
+    public void the_following_data_is_received_eventually_on_report_snapshot(String clientName, String reportId, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received_on_report(clientName,reportId,keyColumn,records,true), 10, 500, 0,false);
+    }
+
+    @Then("^\"([^\"]*)\" the following data is received eventually on operator \"([^\"]*)\" snapshot$")
+    public void the_following_data_is_received_eventually_on_operator_snapshot(String clientName, String reportId, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_receieved_on_operator(clientName,reportId,keyColumn,records,true), 10, 500, 0,false);
     }
 
     @Then("^\"([^\"]*)\" the following data is received terminally on report \"([^\"]*)\"$")
     public void the_following_data_is_received_terminally(String clientName, String reportId, DataTable records) {
-        repeat("Receiving data " + records, () -> the_following_data_is_received(clientName,reportId,keyColumn,records,false), 5, 400, 0, true);
+        repeat("Receiving data " + records, () -> the_following_data_is_received_on_report(clientName,reportId,keyColumn,records,false), 5, 400, 0, true);
     }
 
     @Then("^\"([^\"]*)\" the following schema is received eventually on report \"([^\"]*)\"$")
-    public void the_following_schema_is_received_eventually(String clientName, String reportId, List<Map<String, String>> records) {
-        repeat("Receiving schema " + records, () -> the_following_schema_is_received(clientName,reportId,records), 5, 500, 0, false);
+    public void the_following_schema_is_received_on_report_eventually(String clientName, String reportId, List<Map<String, String>> records) {
+        repeat("Receiving schema " + records, () -> the_following_schema_is_received_on_report(clientName,reportId,records), 5, 500, 0, false);
+    }
+
+    @Then("^\"([^\"]*)\" the following schema is received eventually on operator \"([^\"]*)\"$")
+    public void the_following_schema_is_received_on_operator_eventually(String clientName, String reportId, List<Map<String, String>> records) {
+        repeat("Receiving schema " + records, () -> the_following_schema_is_received_on_operator(clientName,reportId,records), 5, 500, 0, false);
     }
 
     @Then("^\"([^\"]*)\" the following notifications are received$")
@@ -502,10 +534,20 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following schema is received on report \"([^\"]*)\"$")
-    public void the_following_schema_is_received(String clientName,String reportId, List<Map<String, String>> records) {
+    public void the_following_schema_is_received_on_report(String clientName,String reportId, List<Map<String, String>> records) {
+        String report = "report";
+        the_following_schema(clientName, reportId, records, report);
+    }
+
+    @Then("^\"([^\"]*)\" the following schema is received on operator \"([^\"]*)\"$")
+    public void the_following_schema_is_received_on_operator(String clientName,String reportId, List<Map<String, String>> records) {
+        the_following_schema(clientName, reportId, records, "");
+    }
+
+    private void the_following_schema(String clientName, String reportId, List<Map<String, String>> records, String suffix) {
         try {
             ClientConnectionContext connectionContext = clientContext.get(clientName);
-            String name = "report" + reportId;
+            String name = suffix + reportId;
             TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
 
             if(eventHandler == null){
@@ -529,11 +571,27 @@ public class ViewServerClientSteps {
     }
 
     @Then("^\"([^\"]*)\" the following data is received on report \"([^\"]*)\" with row key \"([^\"]*)\"$")
-    public void the_following_data_is_received(String clientName,String reportId,String keyColumn, DataTable records,boolean flatten) {
+    public void the_following_data_is_received_on_report(String clientName, String reportId, String keyColumn, DataTable records, boolean flatten) {
+
+        String operatorNameSuffix = "report";
+
+        the_following_data_is_received(clientName, reportId, keyColumn, records, flatten, operatorNameSuffix);
+    }
+
+    @Then("^\"([^\"]*)\" the following data is received on operator \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    public void the_following_data_is_receieved_on_operator(String clientName, String reportId, String keyColumn, DataTable records, boolean flatten) {
+
+        String operatorNameSuffix = "";
+
+        the_following_data_is_received(clientName, reportId, keyColumn, records, flatten, operatorNameSuffix);
+    }
+
+    private void the_following_data_is_received(String clientName, String reportId, String keyColumn, DataTable records, boolean flatten, String operatorNameSuffix) {
         try {
+
             logger.info("Asserting data for \"{}\" subscribing to report {}",clientName,reportId);
             ClientConnectionContext connectionContext = clientContext.get(clientName);
-            String name = "report" + reportId;
+            String name = operatorNameSuffix + reportId;
             TestSubscriptionEventHandler eventHandler = connectionContext.getSubscriptionEventHandler(name);
 
             if(eventHandler == null){

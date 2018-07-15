@@ -8,4 +8,7 @@ public interface IRecordLoaderCollection {
     Map<String,IRecordLoader> getDataLoaders() ;
 
     void close();
+
+    default void start(){
+    }
 }

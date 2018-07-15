@@ -3,6 +3,8 @@ package io.viewserver.server.components;
 import io.viewserver.authentication.*;
 import io.viewserver.command.*;
 import io.viewserver.sql.ExecuteSqlCommandHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
@@ -10,6 +12,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
 
     protected final AuthenticationHandlerRegistry authenticationHandlerRegistry = new AuthenticationHandlerRegistry();
     private IBasicServerComponents basicServerComponents;
+    private Logger  logger = LoggerFactory.getLogger(BasicSubscriptionComponent.class);
 
 
     public BasicSubscriptionComponent(IBasicServerComponents basicServerComponents) {
@@ -18,7 +21,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
     }
 
     public Observable start() {
-
+        logger.info("Starting basic subscription component");
         // commands we can receive
         register("authenticate", new AuthenticateCommandHandler(authenticationHandlerRegistry));
         register("unsubscribe", new UnsubscribeHandler(basicServerComponents.getSubscriptionManager()));
@@ -28,6 +31,7 @@ public class BasicSubscriptionComponent implements IBasicSubscriptionComponent{
         register("tableEdit", new TableEditCommandHandler(basicServerComponents.getTableFactoryRegistry()));
         register("executeSql", new ExecuteSqlCommandHandler(basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), basicServerComponents.getExecutionContext().getSummaryRegistry()));
         this.registerAuthenticationHandlers();
+        logger.info("Finished basic subscription component");
         return Observable.just(true);
     }
 

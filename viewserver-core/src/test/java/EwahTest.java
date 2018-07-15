@@ -16,6 +16,9 @@
 
 import com.googlecode.javaewah.EWAHCompressedBitmap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.set.hash.TIntHashSet;
+import io.viewserver.collections.IntHashSet;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
@@ -25,6 +28,8 @@ import java.util.Random;
  * Created by bemm on 26/09/2014.
  */
 public class EwahTest {
+
+
     /*
     Cardinality 10:
 Populate column took 43757498ns

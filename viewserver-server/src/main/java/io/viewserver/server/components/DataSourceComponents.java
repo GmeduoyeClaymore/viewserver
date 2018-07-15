@@ -38,8 +38,10 @@ public class DataSourceComponents implements IDataSourceServerComponents{
 
     @Override
     public Observable start() {
+        log.info("Started data source components");
         dataSourceRegistry = new DataSourceRegistry(basicServerComponents.getServerCatalog(), basicServerComponents.getExecutionContext());
         dataSourceRegistry.getRegistered().subscribe(c-> {
+                    log.info("Detected source {} has been registered",c.getName());
                     Set<String> dependencies = this.getDependencies(c);
                     List<String> dependeciesToWaitFor = dependencies.stream().filter(dep -> !this.isBuilt(dataSourceRegistry.get(dep))).collect(Collectors.toList());
                     if(dependeciesToWaitFor.size() > 0){

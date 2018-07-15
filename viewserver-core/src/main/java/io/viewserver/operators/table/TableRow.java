@@ -29,6 +29,9 @@ public class TableRow implements ITableRow {
 
     public TableRow(int rowId, Schema schema) {
         this.rowId = rowId;
+        if(rowId < 0){
+            throw new RuntimeException("Row id must be greater than zero");
+        }
         this.schema = schema;
     }
 
@@ -38,6 +41,9 @@ public class TableRow implements ITableRow {
     }
 
     public void setRowId(int rowId) {
+        if(rowId < 0){
+            throw new RuntimeException("Row id must be greater than zero");
+        }
         this.rowId = rowId;
     }
 

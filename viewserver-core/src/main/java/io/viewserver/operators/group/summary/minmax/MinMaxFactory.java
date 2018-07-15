@@ -60,6 +60,9 @@ public class MinMaxFactory implements ISummaryFactory {
         @Override
         public void initialise(ISummaryContext context) {
             ColumnHolder valueColumnHolder = context.getInboundSchema().getColumnHolder(target);
+            if(valueColumnHolder == null){
+                throw new RuntimeException(String.format("Unable to find column %s in schema %s",target,context.getInboundSchema()));
+            }
             switch (valueColumnHolder.getType()) {
                 case Byte: {
                     this.internalSummary = new MinMaxByte(name, target, isMinimum, heapSize);

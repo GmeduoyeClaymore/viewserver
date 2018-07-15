@@ -41,8 +41,8 @@ public class ValidationOperatorRow {
                 sb.append(",");
             }
             String idString = values.get(part) + "";
-            if("".equals(idString) || idString == null){
-                throw new RuntimeException("Row does not contain a field named " + part);
+            if("".equals(idString)){
+                idString = "_EMPTY_" + part + "_";
             }
             sb.append(idString);
         }

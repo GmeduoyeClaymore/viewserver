@@ -20,6 +20,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -42,6 +43,7 @@ public class BusinessDayCalculatorTest {
     }
 
     @Test
+    @Ignore
     public void testDatesOverLastWeek() {
         DateMidnight now = DateMidnight.now(DateTimeZone.UTC);
 

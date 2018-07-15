@@ -36,11 +36,19 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
 
     @Override
     public Observable start() {
+        logger.info("Starting initial data loader");
+        if(recordLoaderCollection.getDataLoaders().isEmpty()){
+            logger.info("Returning straight away as no record loaders are found");
+            return Observable.just(true);
+        }
+
         List<Observable<Object>> readyObservables = new ArrayList<>();
+        logger.info("Found {} loaders", recordLoaderCollection.getDataLoaders().entrySet().size());
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
             IRecordLoader recordLoader = loaderEntry.getValue();
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
+            logger.info("Loader {} loaders waiting for table", loaderEntry.getKey());
             Observable<KeyedTable> operator = getKeyedTable(loaderEntry.getKey(), schemaConfig, creationConfig);
             this.subscriptions.add(operator.subscribe(kt -> onKeyedTable(kt,loaderEntry.getValue())));
             readyObservables.add(loaderEntry.getValue().readyObservable());
@@ -52,6 +60,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
+        recordLoaderCollection.start();
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 

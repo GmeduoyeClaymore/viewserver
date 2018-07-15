@@ -124,5 +124,12 @@ public class Schema {
         }
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Schema{" +
+                "columnHolders=" + columnHolders +
+                '}';
+    }
 }
 
