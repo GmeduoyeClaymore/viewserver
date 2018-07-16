@@ -66,6 +66,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
         storage.initialise(capacity, output.schema, output.getCurrentChanges());
 
         initialised = true;
+        register();
     }
 
     public IOutput getOutput() {

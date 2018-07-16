@@ -28,6 +28,7 @@ import java.util.List;
 public class SchemaConfig implements ISchemaConfig {
     private List<Column> columns;
     private List<String> keyColumns;
+    private int initialSize = 8;
 
     public SchemaConfig() {
         columns = new ArrayList<>();
@@ -55,9 +56,19 @@ public class SchemaConfig implements ISchemaConfig {
         return this;
     }
 
+    public SchemaConfig withInitialSize(int initialSize) {
+        this.initialSize = initialSize;
+        return this;
+    }
+
     @Override
     public List<String> getKeyColumns() {
         return keyColumns;
+    }
+
+    @Override
+    public int getInitialSize() {
+        return initialSize;
     }
 
     public SchemaConfig setKeyColumns(List<String> keyColumns) {

@@ -79,10 +79,10 @@ public class UnEnumOperator extends ConfigurableOperatorBase<IUnEnumConfig> {
         protected void onColumnAdd(ColumnHolder columnHolder) {
             String dimension = columnHolder.getName();
             String dataSourceName = UnEnumOperator.this.dataSourceName;
-            Object lookup = dimensionMapper.getLookup(dataSourceName,dimension);
-            if (lookup != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
+            ContentType contentType = dimensionMapper.getContentType(dataSourceName, dimension);
+            if (contentType != null && !(columnHolder.getColumn() instanceof IUnEnumColumn)
                     && (dimensions == null || dimensions.isEmpty() || dimensions.contains(dimension))) {
-                ColumnType type = dimensionMapper.getContentType(dataSourceName,dimension).getColumnType();
+                ColumnType type = contentType.getColumnType();
 
                 if (type == ColumnType.Bool) {
                     type = ColumnType.NullableBool;
