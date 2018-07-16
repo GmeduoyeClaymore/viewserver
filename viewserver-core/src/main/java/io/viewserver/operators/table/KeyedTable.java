@@ -76,7 +76,6 @@ public class KeyedTable extends Table {
         }
 
         super.initialise(capacity);
-        register();
     }
 
     public HashMap<String, Object> getRowObject(TableKey key){

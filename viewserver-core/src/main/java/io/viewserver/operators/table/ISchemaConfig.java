@@ -10,4 +10,6 @@ public interface ISchemaConfig {
     List<Column> getColumns();
 
     List<String> getKeyColumns();
+
+    int getInitialSize();
 }

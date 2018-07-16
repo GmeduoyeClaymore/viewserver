@@ -30,4 +30,6 @@ public interface ISchemaConfig<T> extends IOperatorConfig<T> {
     ISchemaConfig<T> setColumns(List<Column> columns);
     ISchemaConfig<T> setKeyColumns(List<String> keyColumns);
 
+    int getInitialSize();
+
 }

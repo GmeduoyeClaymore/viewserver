@@ -66,6 +66,11 @@ public class TableNode extends GraphNodeBase<TableNode> {
             public List<String> getKeyColumns() {
                 return parameterise(config.getKeyColumns(),parameterHelper);
             }
+
+            @Override
+            public int getInitialSize() {
+                return config.getInitialSize();
+            }
         };
     }
 

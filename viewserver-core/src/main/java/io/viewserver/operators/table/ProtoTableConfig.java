@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class ProtoTableConfig implements ISchemaConfig{
 
+    private final int initialSize;
     private List<String> keycolumns;
     private List<Column> columns;
 
@@ -14,6 +15,7 @@ public class ProtoTableConfig implements ISchemaConfig{
         List<Column> columns = schemaConfig.getColumns();
         this.columns = columns.stream().map(c -> new Column(c.getName(),c.getType())).collect(Collectors.toList());
         keycolumns = schemaConfig.getKeyColumns();
+        initialSize = schemaConfig.getInitialSize();
     }
 
 
@@ -30,6 +32,11 @@ public class ProtoTableConfig implements ISchemaConfig{
     @Override
     public List<String> getKeyColumns() {
         return keycolumns;
+    }
+
+    @Override
+    public int getInitialSize() {
+        return initialSize;
     }
 
 
