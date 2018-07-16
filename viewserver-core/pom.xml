@@ -21,10 +21,10 @@
     <parent>
         <groupId>io.viewserver</groupId>
         <artifactId>viewserver-engine</artifactId>
-     <version>1.0.53-SNAPSHOT</version>
+     <version>1.0.54-SNAPSHOT</version>
     </parent>
     <artifactId>viewserver-core</artifactId>
- <version>1.0.53-SNAPSHOT</version>
+ <version>1.0.54-SNAPSHOT</version>
 
     <pluginRepositories>
         <pluginRepository>
