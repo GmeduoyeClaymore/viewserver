@@ -1,6 +1,7 @@
 package io.viewserver.server.components;
 
 import io.viewserver.catalog.ICatalog;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.*;
 import io.viewserver.operators.IOperator;
@@ -8,6 +9,7 @@ import io.viewserver.operators.table.KeyedTable;
 import io.viewserver.operators.table.TableKeyDefinition;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.chunked.ChunkedColumnStorage;
+import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -18,16 +20,18 @@ import rx.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
+public class DataLoaderComponent implements IInitialDataLoaderComponent {
     private IRecordLoaderCollection recordLoaderCollection;
-    private static final Logger logger = LoggerFactory.getLogger(InitialDataLoaderComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataLoaderComponent.class);
     private IExecutionContext executionContext;
     private ICatalog serverCatalog;
     private List<Subscription> subscriptions;
-
-    public InitialDataLoaderComponent(IExecutionContext executionContext, ICatalog serverCatalog, IRecordLoaderCollection recordLoaderCollection) {
+    private Executor backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("dataLoader"));
+    public DataLoaderComponent(IExecutionContext executionContext, ICatalog serverCatalog, IRecordLoaderCollection recordLoaderCollection) {
         this.executionContext = executionContext;
         this.serverCatalog = serverCatalog;
         this.recordLoaderCollection = recordLoaderCollection;
@@ -69,7 +73,7 @@ public class InitialDataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
-        Observable.zip(operatorObservables, onAllOperatorsInPlace).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).subscribe(
+        Observable.zip(operatorObservables, onAllOperatorsInPlace).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).subscribe(
                 res -> recordLoaderCollection.start()
         );
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
