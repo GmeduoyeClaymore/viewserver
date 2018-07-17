@@ -1,6 +1,5 @@
 package io.viewserver.controller;
 
-import com.sun.jmx.snmp.ThreadContext;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.network.PeerSession;
 import rx.Scheduler;
@@ -11,7 +10,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 
 /**
  * Created by Gbemiga on 13/12/17.

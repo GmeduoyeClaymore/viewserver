@@ -422,7 +422,9 @@ public class GroupByOperator extends ConfigurableOperatorBase<IGroupByConfig> {
             List<ColumnHolder> columnHolders = output.getSchema().getColumnHolders();
             int count = columnHolders.size();
             for (int i = 0; i < count; i++) {
-                ((IGrowableColumn) columnHolders.get(i).getColumn()).ensureCapacity(capacity);
+                if(columnHolders.get(i).getColumn() instanceof IGrowableColumn){
+                    ((IGrowableColumn) columnHolders.get(i).getColumn()).ensureCapacity(capacity);
+                }
             }
         }
 
