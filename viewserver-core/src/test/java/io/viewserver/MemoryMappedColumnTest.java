@@ -43,7 +43,6 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Created by bemm on 27/10/15.
  */
-@Ignore("Doesnt work with java 1.8")
 public class MemoryMappedColumnTest {
     @Test
     public void test() throws Throwable {
@@ -60,7 +59,8 @@ public class MemoryMappedColumnTest {
             schema.addColumn(colNames[i], ColumnType.Int);
         }
 
-        MemoryMappedColumnStorage storage = new MemoryMappedColumnStorage(Paths.get(System.getProperty("java.io.tmpdir"), "testtable"));
+        String property = System.getProperty("java.io.tmpdir");
+        MemoryMappedColumnStorage storage = new MemoryMappedColumnStorage(Paths.get(property, "testtable"));
 //        ChunkedColumnStorage storage = new ChunkedColumnStorage(1024);
         Table table = new Table("table", executionContext, catalog, schema, storage);
         table.initialise(100000000);

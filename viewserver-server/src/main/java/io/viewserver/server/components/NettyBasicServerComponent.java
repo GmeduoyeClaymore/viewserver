@@ -60,15 +60,19 @@ public class NettyBasicServerComponent extends  BasicServerComponents {
             serverReactor = this.initReactor(serverNetwork);
             serverReactor.start();
             serverReactor.scheduleTask(() -> {
-                Runtime runtime = Runtime.getRuntime();
-                log.info("Memory used: {}; Free memory: {}; Max memory: {}", humanReadableByteCount(runtime.totalMemory() - runtime.freeMemory(),true),
-                        humanReadableByteCount(runtime.freeMemory(),true), humanReadableByteCount(runtime.maxMemory(),true));
+                printMemoryUsage();
             }, 1, 3 * 60 * 1000);
             return ListenableFutureObservable.from(this.getExecutionContext().submit(() -> latch.countDown(), 5), Runnable::run) ;
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public static void printMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+        log.info("Memory used: {}; Free memory: {}; Max memory: {}", humanReadableByteCount(runtime.totalMemory() - runtime.freeMemory(),true),
+                humanReadableByteCount(runtime.freeMemory(),true), humanReadableByteCount(runtime.maxMemory(),true));
     }
 
     public static String humanReadableByteCount(long bytes, boolean si) {
