@@ -201,12 +201,14 @@ public class ViewServerClientSteps {
         Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
     }
 
-    @When("^\"(.*)\" subscribed to dimension \"([^\"]*)\" from data source \"([^\"]*)\"$")
-    public void I_subscribe_to_report(String clientName, String dimensionName, String dataSourceName){
-        logger.info(String.format("Client %s subscribing to dimension %s from data source %s",dimensionName,dataSourceName));
+    @When("^\"(.*)\" subscribed to dimension \"([^\"]*)\" of report \"([^\"]*)\" with data source \"([^\"]*)\" with parameters$")
+    public void I_subscribe_to_dimension_of_report(String clientName, String dimensionName,String reportId,String dataSourceName, DataTable parameters){
+        logger.info(String.format("Client %s subscribing to dimension %s from data source %s",clientName,dimensionName,dataSourceName));
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
-
+        clientConnectionContext.getReportContext().setReportName(reportId);
         CountDownLatch subscribeLatch = new CountDownLatch(1);
+        report_parameters(clientName,parameters);
+        dimension_filters(clientName,parameters);
         trySubscribeDimension(clientName,dimensionName,dataSourceName, subscribeLatch);
         try {
             subscribeLatch.await(timeout, timeUnit);
@@ -418,7 +420,7 @@ public class ViewServerClientSteps {
     private void trySubscribeDimension(String clientName, String dimensionName, String dataSourceName, CountDownLatch subscribeLatch) {
         TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
-        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToReport(eventHandler);
+        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToDimension(dimensionName,dataSourceName,eventHandler);
 
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override
@@ -526,6 +528,12 @@ public class ViewServerClientSteps {
     public void the_following_data_is_received_eventually_for_dimension(String clientName, String dimensionName,String dataSourceName, DataTable records) {
         repeat("Receiving data " + records, () -> the_following_data_is_received_for_dimension(clientName,dimensionName,dataSourceName,keyColumn,records,false), 10, 500, 0,false);
     }
+
+    @Then("^\"([^\"]*)\" the following data is received eventually on dimension \"([^\"]*)\" data source \"([^\"]*)\" snapshot$")
+    public void the_following_data_is_received_eventually_for_dimension_snapshot(String clientName, String dimensionName,String dataSourceName, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received_for_dimension(clientName,dimensionName,dataSourceName,keyColumn,records,true), 10, 500, 0,false);
+    }
+
 
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\" snapshot$")
     public void the_following_data_is_received_eventually_on_report_snapshot(String clientName, String reportId, DataTable records) {

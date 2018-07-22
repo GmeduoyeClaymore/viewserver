@@ -614,7 +614,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
         if (benchmarks != null) {
             benchmarks.startBenchmark("subscribing");
         }
-        Future<ClientSubscription> subscription = client.subscribeToDimension(dimension, reportContext, options,
+        Future<ClientSubscription> subscription = client.subscribeToDimension(dimension,"", reportContext, options,
                 getSubscriptionEventHandler(benchmarks, snapshotLatch));
         snapshotLatch.await();
 

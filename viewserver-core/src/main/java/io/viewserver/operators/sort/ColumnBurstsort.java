@@ -52,7 +52,7 @@ public class ColumnBurstsort {
     /**
      * Size of the alphabet that is supported.
      */
-    private static final short ALPHABET = 256;
+    private static final short ALPHABET = 256; // Added support for double byte characters
     /**
      * Initial size for new buckets.
      */

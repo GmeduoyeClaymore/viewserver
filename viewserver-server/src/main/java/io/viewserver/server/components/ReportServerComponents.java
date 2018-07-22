@@ -30,7 +30,7 @@ public class ReportServerComponents implements IReportServerComponents {
         systemReportExecutor = new SystemReportExecutor(basicServerComponents.getExecutionContext().getDimensionMapper(), basicServerComponents.getExecutionPlanRunner(), getDataSourceRegistry(), reportRegistry);
 
         register("subscribeReport", new SubscribeReportHandler(basicServerComponents.getExecutionContext().getDimensionMapper(), getDataSourceRegistry(), reportRegistry, basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), reportContextRegistry, systemReportExecutor));
-        register("subscribeDimension", new SubscribeDimensionHandler(basicServerComponents.getExecutionContext().getDimensionMapper(), getDataSourceRegistry(), reportRegistry, basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner()));
+        register("subscribeDimension", new SubscribeDimensionHandler(basicServerComponents.getExecutionContext().getDimensionMapper(), getDataSourceRegistry(), reportRegistry, basicServerComponents.getSubscriptionManager(), basicServerComponents.getConfigurator(), basicServerComponents.getExecutionPlanRunner(), reportContextRegistry));
         return Observable.just(true);
     }
 

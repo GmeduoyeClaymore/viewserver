@@ -95,6 +95,7 @@ public class ClientConnectionContext{
         return this.client.subscribeToDimension(
                 dimensionName,
                 dataSourceName,
+                getReportContext(),
                 getOptions(),
                 eventHandler);
     }

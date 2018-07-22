@@ -25,9 +25,9 @@ import io.viewserver.execution.*;
 import io.viewserver.execution.context.DimensionExecutionPlanContext;
 import io.viewserver.execution.plan.SystemDimensionExecutionPlan;
 import io.viewserver.messages.command.ISubscribeDimensionCommand;
-import io.viewserver.messages.common.ValueLists;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
+import io.viewserver.report.ReportContextRegistry;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
 import org.slf4j.Logger;
@@ -38,19 +38,33 @@ import org.slf4j.LoggerFactory;
  */
 public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDimensionCommand> {
     private static final Logger log = LoggerFactory.getLogger(SubscribeDimensionHandler.class);
-
-    public SubscribeDimensionHandler(DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, Configurator configurator, IExecutionPlanRunner executionPlanRunner) {
+    private ReportContextRegistry reportContextRegistry;
+    public SubscribeDimensionHandler(DimensionMapper dimensionMapper, IDataSourceRegistry dataSourceRegistry, ReportRegistry reportRegistry, SubscriptionManager subscriptionManager, Configurator configurator, IExecutionPlanRunner executionPlanRunner, ReportContextRegistry reportContextRegistry) {
         super(ISubscribeDimensionCommand.class, dimensionMapper, dataSourceRegistry, reportRegistry, subscriptionManager, configurator, executionPlanRunner);
+        this.reportContextRegistry = reportContextRegistry;
     }
 
     @Override
     protected void handleCommand(Command command, ISubscribeDimensionCommand data, IPeerSession peerSession, CommandResult commandResult) {
         try {
             IDataSource dataSource = getDataSource(data.getDataSourceName());
+            if(data.getDataSourceName() == null){
+                throw new Exception(String.format("Data source name must be specified"));
+            }
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
+            if(reportContext == null){
+                throw new Exception(String.format("Report context must be specified"));
+            }
+            ReportDefinition reportDefinition = getReportDefinition(reportContext);
+            if(reportDefinition == null){
+                throw new Exception(String.format("Unable to find report definition for name %s",reportContext.getReportName()));
+            }
+
             if(dataSource.getDimension(data.getDimension()) == null){
                 throw new Exception(String.format("Dimension %s does not exist in the dataSource %s", data.getDimension(), dataSource.getName()));
             }
+
+            ICatalog catalog = reportContextRegistry.getOrCreateCatalogForContext(reportContext);
 
             Options options = Options.fromMessage(data.getOptions());
 
@@ -64,26 +78,26 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             dimensionExecutionPlanContext.setOptions(options);
             dimensionExecutionPlanContext.setDataSource(dataSource);
             dimensionExecutionPlanContext.setDimension(data.getDimension());
+            dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(reportDefinition,dimensionExecutionPlanContext.getReportContext()));
+
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeDimensionHandler", commandResult);
             CommandResult systemPlanResult = multiCommandResult.getResultForDependency("System execution plan");
             CommandResult userPlanResult = multiCommandResult.getResultForDependency("User execution plan");
-
-            final ICatalog graphNodesCatalog = getGraphNodesCatalog(peerSession);
 
             // run system dimension execution plan
             SystemDimensionExecutionPlan systemDimensionExecutionPlan = new SystemDimensionExecutionPlan(dimensionMapper);
             executionPlanRunner.executePlan(systemDimensionExecutionPlan,
                     dimensionExecutionPlanContext,
                     peerSession.getExecutionContext(),
-                    graphNodesCatalog,
+                    catalog,
                     systemPlanResult);
 
 
             //for sorting, paging etc
             String inputOperator = dimensionExecutionPlanContext.getInputOperator();
             if (inputOperator.charAt(0) != '/') {
-                inputOperator = graphNodesCatalog.getOperatorByPath(inputOperator).getPath();
+                inputOperator = catalog.getOperatorByPath(inputOperator).getPath();
                 dimensionExecutionPlanContext.setInput(inputOperator, dimensionExecutionPlanContext.getInputOutputName());
             }
             this.runUserExecutionPlan(dimensionExecutionPlanContext, options, command.getId(), peerSession, userPlanResult);
