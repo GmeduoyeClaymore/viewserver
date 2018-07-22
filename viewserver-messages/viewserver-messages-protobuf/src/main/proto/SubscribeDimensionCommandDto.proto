@@ -25,6 +25,7 @@ message SubscribeDimensionCommandDto {
     required ReportContextDto context = 1;
     required string dimension = 2;
     required OptionsDto options = 3;
+    required string dataSourceName = 4;
 }
 
 extend CommandDto {

@@ -30,9 +30,8 @@ import io.viewserver.messages.protobuf.dto.SubscribeDimensionCommandMessage;
 public class SubscribeDimensionCommand extends PoolableMessage<SubscribeDimensionCommand>
     implements ISubscribeDimensionCommand<SubscribeDimensionCommand>, ICommandExtension<SubscribeDimensionCommand> {
     private SubscribeDimensionCommandMessage.SubscribeDimensionCommandDtoOrBuilder subscribeDimensionDto;
-    private ReportContext reportContext;
     private Options options;
-
+    private ReportContext reportContext;
     SubscribeDimensionCommand() {
         super(ISubscribeDimensionCommand.class);
     }
@@ -42,10 +41,6 @@ public class SubscribeDimensionCommand extends PoolableMessage<SubscribeDimensio
         subscribeDimensionDto = (SubscribeDimensionCommandMessage.SubscribeDimensionCommandDtoOrBuilder) dto;
     }
 
-    @Override
-    public void build(CommandMessage.CommandDto.Builder commandDtoBuilder) {
-        commandDtoBuilder.setExtension(SubscribeDimensionCommandMessage.subscribeDimensionCommand, getBuilder().buildPartial());
-    }
 
     @Override
     public IReportContext getReportContext() {
@@ -65,6 +60,12 @@ public class SubscribeDimensionCommand extends PoolableMessage<SubscribeDimensio
         return this;
     }
 
+
+    @Override
+    public void build(CommandMessage.CommandDto.Builder commandDtoBuilder) {
+        commandDtoBuilder.setExtension(SubscribeDimensionCommandMessage.subscribeDimensionCommand, getBuilder().buildPartial());
+    }
+    
     @Override
     public String getDimension() {
         return subscribeDimensionDto.getDimension();
@@ -73,6 +74,16 @@ public class SubscribeDimensionCommand extends PoolableMessage<SubscribeDimensio
     @Override
     public ISubscribeDimensionCommand<SubscribeDimensionCommand> setDimension(String dimension) {
         getSubscribeDimensionDtoBuilder().setDimension(dimension);
+        return this;
+    }
+    @Override
+    public String getDataSourceName() {
+        return subscribeDimensionDto.getDataSourceName();
+    }
+
+    @Override
+    public ISubscribeDimensionCommand<SubscribeDimensionCommand> setDataSourceName(String dataSourceName) {
+        getSubscribeDimensionDtoBuilder().setDataSourceName(dataSourceName);
         return this;
     }
 

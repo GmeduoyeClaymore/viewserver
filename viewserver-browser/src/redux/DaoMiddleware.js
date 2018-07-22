@@ -1,8 +1,8 @@
 
 import {REGISTER_DAO_ACTION, UNREGISTER_DAO_ACTION, UPDATE_STATE, UPDATE_OPTIONS, UPDATE_COMMAND_STATUS, INVOKE_DAO_COMMAND, UPDATE_TOTAL_SIZE} from 'common/dao/ActionConstants';
-import RxDataSink from 'common/dataSinks/RxDataSink';
-import Logger from 'common/Logger';
-import {Rx} from 'common/rx'
+import RxDataSink from './common/dataSinks/RxDataSink';
+import Logger from './common/Logger';
+import {Rx} from './common/rx'
 import * as RxConstants from 'common/rx';
 
 const DAO_SUBSCRIPTIONS = {};

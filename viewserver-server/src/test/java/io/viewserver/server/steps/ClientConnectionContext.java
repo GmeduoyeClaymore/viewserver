@@ -91,6 +91,14 @@ public class ClientConnectionContext{
                 eventHandler);
     }
 
+    public ListenableFuture<ClientSubscription> subscribeToDimension(String dimensionName, String dataSourceName,TestSubscriptionEventHandler eventHandler) {
+        return this.client.subscribeToDimension(
+                dimensionName,
+                dataSourceName,
+                getOptions(),
+                eventHandler);
+    }
+
     public void setResult(String controllerName, String action, String result) {
         if(result != null){
             this.viewServerClientContext.getContextParams().put(name + "_" + controllerName + "_" + action + "_result", result.replaceAll("^\"|\"$",""));

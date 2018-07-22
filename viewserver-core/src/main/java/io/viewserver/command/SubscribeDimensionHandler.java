@@ -25,6 +25,7 @@ import io.viewserver.execution.*;
 import io.viewserver.execution.context.DimensionExecutionPlanContext;
 import io.viewserver.execution.plan.SystemDimensionExecutionPlan;
 import io.viewserver.messages.command.ISubscribeDimensionCommand;
+import io.viewserver.messages.common.ValueLists;
 import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 import io.viewserver.report.ReportDefinition;
@@ -45,10 +46,8 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
     @Override
     protected void handleCommand(Command command, ISubscribeDimensionCommand data, IPeerSession peerSession, CommandResult commandResult) {
         try {
+            IDataSource dataSource = getDataSource(data.getDataSourceName());
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
-            ReportDefinition reportDefinition = getReportDefinition(reportContext);
-            IDataSource dataSource = getDataSource(reportDefinition.getDataSource());
-
             if(dataSource.getDimension(data.getDimension()) == null){
                 throw new Exception(String.format("Dimension %s does not exist in the dataSource %s", data.getDimension(), dataSource.getName()));
             }
@@ -61,10 +60,10 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             DimensionExecutionPlanContext dimensionExecutionPlanContext = new DimensionExecutionPlanContext();
             dimensionExecutionPlanContext.setInput(dataSource.getFinalOutput());
             dimensionExecutionPlanContext.setReportContext(reportContext);
+            dimensionExecutionPlanContext.setDataSourceName(data.getDataSourceName());
             dimensionExecutionPlanContext.setOptions(options);
             dimensionExecutionPlanContext.setDataSource(dataSource);
             dimensionExecutionPlanContext.setDimension(data.getDimension());
-            dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(reportDefinition,dimensionExecutionPlanContext.getReportContext()));
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeDimensionHandler", commandResult);
             CommandResult systemPlanResult = multiCommandResult.getResultForDependency("System execution plan");

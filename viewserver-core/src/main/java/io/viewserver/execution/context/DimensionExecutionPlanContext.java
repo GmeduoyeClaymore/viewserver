@@ -16,8 +16,17 @@
 
 package io.viewserver.execution.context;
 
-public class DimensionExecutionPlanContext extends ReportContextExecutionPlanContext{
+public class DimensionExecutionPlanContext extends ReportExecutionPlanContext{
     private String dimension;
+    private String dataSourceName;
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
     public String getDimension() {
         return dimension;

@@ -22,9 +22,9 @@ import io.viewserver.messages.IPoolableMessage;
  * Created by bemm on 03/12/15.
  */
 public interface ISubscribeDimensionCommand<T> extends IPoolableMessage<T> {
-    IReportContext getReportContext();
+    String getDataSourceName();
 
-    ISubscribeDimensionCommand<T> setReportContext(IReportContext reportContext);
+    ISubscribeDimensionCommand<T> setDataSourceName(String dataSourceName);
 
     String getDimension();
 
@@ -33,4 +33,9 @@ public interface ISubscribeDimensionCommand<T> extends IPoolableMessage<T> {
     IOptions getOptions();
 
     ISubscribeDimensionCommand<T> setOptions(IOptions options);
+
+    IReportContext getReportContext();
+
+    ISubscribeDimensionCommand<T> setReportContext(IReportContext reportContext);
+
 }
