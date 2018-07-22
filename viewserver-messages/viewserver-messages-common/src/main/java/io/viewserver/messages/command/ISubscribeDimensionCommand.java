@@ -22,9 +22,6 @@ import io.viewserver.messages.IPoolableMessage;
  * Created by bemm on 03/12/15.
  */
 public interface ISubscribeDimensionCommand<T> extends IPoolableMessage<T> {
-    String getDataSourceName();
-
-    ISubscribeDimensionCommand<T> setDataSourceName(String dataSourceName);
 
     String getDimension();
 

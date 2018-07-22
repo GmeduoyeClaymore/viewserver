@@ -46,7 +46,7 @@ public class UserUnEnumStep implements IExecutionPlanStep<OptionsExecutionPlanCo
     @Override
     public void execute(OptionsExecutionPlanContext optionsExecutionPlanContext) {
 
-        UnEnumNode userUnEnum = new UserUnEnumNode("userUnEnum:" + commandId, optionsExecutionPlanContext.getDataSource() == null ? "global" : optionsExecutionPlanContext.getDataSource().getName())
+        UnEnumNode userUnEnum = new UserUnEnumNode("userUnEnum:" + commandId, "global")
                 .withMetadata("isUserExecutionPlanNode", true)
                 .withConnection(optionsExecutionPlanContext.getInputOperator(), optionsExecutionPlanContext.getInputOutputName(), Constants.IN);
 

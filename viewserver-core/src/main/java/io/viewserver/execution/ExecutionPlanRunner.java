@@ -100,6 +100,10 @@ public class ExecutionPlanRunner implements IExecutionPlanRunner {
                 for (int j = 0; j < connectionCount; j++) {
                     IConfiguratorSpec.Connection connection = connections.get(j);
                     String inOperator = connection.getOperator();
+
+                    if(inOperator == null){
+                        throw new RuntimeException(String.format("Connection %s has no input operator. If you have used #input ensure that a dataSource is set in reportContext or definition",connection));
+                    }
                     // if it's a root operator, we don't hash the name
                     if (inOperator.charAt(0) == '/') {
                         continue;

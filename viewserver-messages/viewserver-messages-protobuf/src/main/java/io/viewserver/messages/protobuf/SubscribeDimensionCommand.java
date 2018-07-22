@@ -76,16 +76,6 @@ public class SubscribeDimensionCommand extends PoolableMessage<SubscribeDimensio
         getSubscribeDimensionDtoBuilder().setDimension(dimension);
         return this;
     }
-    @Override
-    public String getDataSourceName() {
-        return subscribeDimensionDto.getDataSourceName();
-    }
-
-    @Override
-    public ISubscribeDimensionCommand<SubscribeDimensionCommand> setDataSourceName(String dataSourceName) {
-        getSubscribeDimensionDtoBuilder().setDataSourceName(dataSourceName);
-        return this;
-    }
 
     @Override
     public IOptions getOptions() {

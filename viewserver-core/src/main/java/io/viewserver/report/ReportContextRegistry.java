@@ -94,7 +94,6 @@ public class ReportContextRegistry extends KeyedTable implements ICatalog {
             addRow(tableKey, row -> {
                 row.setString(COL_ID, hash);
                 row.setString(COL_REPORT_NAME, reportContext.getReportName());
-                row.setString(COL_MULTI_CONTEXT_MODE, reportContext.getMultiContextMode());
                 row.setString(COL_REPORT_CONTEXT, reportContextJson);
                 row.setString(COL_PATH, reportCatalog.getPath());
                 row.setLong(COL_FIRST_RUN, now);

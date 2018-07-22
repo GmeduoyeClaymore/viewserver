@@ -254,6 +254,11 @@ public class ViewServerClientSteps {
             clientContext.get(clientName).getReportContext().getParameterValues().clear();
         }
     }
+    @Given("^\"(.*)\" report dataSource \"(.*)\"$")
+    public void report_parameters(String clientName, String dataSourceName) {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        ctxt.getReportContext().setDataSourceName(dataSourceName);
+    }
 
     @And("^\"(.*)\" dimension filters$")
     public void dimension_filters(String clientName, DataTable filters) {
@@ -420,7 +425,8 @@ public class ViewServerClientSteps {
     private void trySubscribeDimension(String clientName, String dimensionName, String dataSourceName, CountDownLatch subscribeLatch) {
         TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
-        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToDimension(dimensionName,dataSourceName,eventHandler);
+        clientConnectionContext.getReportContext().setDataSourceName(dataSourceName);
+        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToDimension(dimensionName,eventHandler);
 
         Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
             @Override

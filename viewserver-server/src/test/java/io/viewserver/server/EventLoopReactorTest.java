@@ -268,7 +268,6 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
             @Override
             public void run(final Benchmarks benchmarks) throws Exception {
                 ReportContext reportContext = new ReportContext();
-                reportContext.setMultiContextMode("join");
 
                 ReportContext childContext1 = new ReportContext();
                 childContext1.setReportName("simple");
@@ -292,9 +291,9 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 //                childContext1.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "Bygrave Capital"));
 //
 //                childContext2.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "BNP Asst Mgmt"));
-
+/*
                 reportContext.getChildContexts().add(childContext1);
-                reportContext.getChildContexts().add(childContext2);
+                reportContext.getChildContexts().add(childContext2);*/
 
                 Options options = new Options();
                 options.setOffset(0);
@@ -311,8 +310,8 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
             @Override
             public void run(final Benchmarks benchmarks) throws Exception {
                 ReportContext reportContext = new ReportContext();
-                reportContext.setMultiContextMode("uniontranspose");
-
+            /*    reportContext.setMultiContextMode("uniontranspose");
+*/
                 ReportContext childContext1 = new ReportContext();
                 childContext1.setReportName("simple");
                 childContext1.getParameterValues().put("aggregators", ValueLists.valueListOf("client"));
@@ -328,9 +327,9 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 
                 childContext2.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "BNP Asst Mgmt"));
 
-                reportContext.getChildContexts().add(childContext1);
+             /*   reportContext.getChildContexts().add(childContext1);
                 reportContext.getChildContexts().add(childContext2);
-
+*/
                 Options options = new Options();
                 options.setOffset(0);
                 options.setLimit(10);
@@ -346,7 +345,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
             @Override
             public void run(final Benchmarks benchmarks) throws Exception {
                 ReportContext reportContext = new ReportContext();
-                reportContext.setMultiContextMode("uniongroup");
+                //reportContext.setMultiContextMode("uniongroup");
 
                 ReportContext childContext1 = new ReportContext();
                 childContext1.setReportName("simple");
@@ -363,8 +362,8 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
 
                 childContext2.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "BNP Asst Mgmt"));
 
-                reportContext.getChildContexts().add(childContext1);
-                reportContext.getChildContexts().add(childContext2);
+              /*  reportContext.getChildContexts().add(childContext1);
+                reportContext.getChildContexts().add(childContext2);*/
 
                 Options options = new Options();
                 options.setOffset(0);
@@ -408,7 +407,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
                 inquiriesContext2.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "BNP Asst Mgmt"));
                 hitRateContext2.getDimensionValues().add(new ReportContext.DimensionValue("client", false, "BNP Asst Mgmt"));
 
-                ReportContext joinContext1 = new ReportContext();
+              /*  ReportContext joinContext1 = new ReportContext();
                 joinContext1.setMultiContextMode("join");
                 joinContext1.getChildContexts().add(inquiriesContext1);
                 joinContext1.getChildContexts().add(hitRateContext1);
@@ -421,13 +420,13 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
                 ReportContext topContext = new ReportContext();
                 topContext.setMultiContextMode("uniontranspose");
                 topContext.getChildContexts().add(joinContext1);
-                topContext.getChildContexts().add(joinContext2);
+                topContext.getChildContexts().add(joinContext2);*/
 
                 Options options = new Options();
                 options.setOffset(0);
                 options.setLimit(10);
 
-                subscribeReport(topContext, options, benchmarks, true, true);
+             /*   subscribeReport(topContext, options, benchmarks, true, true);*/
             }
         }, 1);
     }
@@ -614,7 +613,7 @@ public class EventLoopReactorTest extends BenchmarkTestBase {
         if (benchmarks != null) {
             benchmarks.startBenchmark("subscribing");
         }
-        Future<ClientSubscription> subscription = client.subscribeToDimension(dimension,"", reportContext, options,
+        Future<ClientSubscription> subscription = client.subscribeToDimension(dimension, reportContext, options,
                 getSubscriptionEventHandler(benchmarks, snapshotLatch));
         snapshotLatch.await();
 

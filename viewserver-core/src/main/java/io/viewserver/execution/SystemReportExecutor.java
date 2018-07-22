@@ -61,7 +61,8 @@ public class SystemReportExecutor {
         ReportContextExecutionPlanContext activeExecutionPlanContext;
 
         ReportDefinition reportDefinition = getReportDefinition(reportContext);
-        IDataSource dataSource = reportDefinition.getDataSource() == null ? null : getDataSource(reportDefinition.getDataSource());
+        String name = reportContext.getDataSourceName() == null || "".equals(reportContext.getDataSourceName()) ? reportDefinition.getDataSource() : reportContext.getDataSourceName();
+        IDataSource dataSource = name == null ? null : getDataSource(name);
 
         activeExecutionPlanContext = buildReportExecutionPlanContext(reportContext, dataSource, reportDefinition);
         activeExecutionPlan = new SystemReportExecutionPlan(dimensionMapper, reportRegistry);
@@ -103,9 +104,6 @@ public class SystemReportExecutor {
     }
 
     protected ReportDefinition getReportDefinition(ReportContext reportContext) {
-        if (!reportContext.getChildContexts().isEmpty()) {
-            reportContext = reportContext.getChildContexts().get(0);
-        }
         if(reportContext.getReportName() == null){
             throw new InvalidReportContextException("Report id must be set in the report context");
         }

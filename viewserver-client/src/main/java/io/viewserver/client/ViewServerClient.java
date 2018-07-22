@@ -294,17 +294,16 @@ public class ViewServerClient implements AutoCloseable {
         return future;
     }
 
-    public ListenableFuture<ClientSubscription> subscribeToDimension(String dimension, String dataSourceName, ReportContext reportContext,Options options, ISubscriptionEventHandler eventHandler) {
-        return subscribeToDimension(dimension, dataSourceName, reportContext,options, eventHandler, defaultSubscriptionFactory);
+    public ListenableFuture<ClientSubscription> subscribeToDimension(String dimension,  ReportContext reportContext,Options options, ISubscriptionEventHandler eventHandler) {
+        return subscribeToDimension(dimension, reportContext,options, eventHandler, defaultSubscriptionFactory);
     }
 
-    public <TSubscription> ListenableFuture<TSubscription> subscribeToDimension(String dimension, String dataSourceName,ReportContext reportContext, Options options,
+    public <TSubscription> ListenableFuture<TSubscription> subscribeToDimension(String dimension, ReportContext reportContext, Options options,
                                                            ISubscriptionEventHandler<TSubscription> eventHandler,
                                                            ISubscriptionFactory<TSubscription> subscriptionFactory) {
         ISubscribeDimensionCommand subscribeCommand = MessagePool.getInstance().get(ISubscribeDimensionCommand.class)
                 .setDimension(dimension)
-                .setReportContext(reportContext.toMessage())
-                .setDataSourceName(dataSourceName);
+                .setReportContext(reportContext.toMessage());
         if (options != null) {
             subscribeCommand.setOptions(options.toMessage());
         }

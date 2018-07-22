@@ -47,10 +47,7 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
     @Override
     protected void handleCommand(Command command, ISubscribeDimensionCommand data, IPeerSession peerSession, CommandResult commandResult) {
         try {
-            IDataSource dataSource = getDataSource(data.getDataSourceName());
-            if(data.getDataSourceName() == null){
-                throw new Exception(String.format("Data source name must be specified"));
-            }
+
             ReportContext reportContext = ReportContext.fromMessage(data.getReportContext());
             if(reportContext == null){
                 throw new Exception(String.format("Report context must be specified"));
@@ -58,6 +55,15 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             ReportDefinition reportDefinition = getReportDefinition(reportContext);
             if(reportDefinition == null){
                 throw new Exception(String.format("Unable to find report definition for name %s",reportContext.getReportName()));
+            }
+
+            ParameterHelper parameterHelper = new ParameterHelper(reportDefinition, reportContext);
+
+            String name = reportContext.getDataSourceName() == null || "".equals(reportContext.getDataSourceName()) ? reportDefinition.getDataSource() : reportContext.getDataSourceName();
+            IDataSource dataSource = name == null ? null : getDataSource(name);
+
+            if(reportContext.getDataSourceName() == null){
+                throw new Exception(String.format("Data source name must be specified"));
             }
 
             if(dataSource.getDimension(data.getDimension()) == null){
@@ -74,11 +80,11 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
             DimensionExecutionPlanContext dimensionExecutionPlanContext = new DimensionExecutionPlanContext();
             dimensionExecutionPlanContext.setInput(dataSource.getFinalOutput());
             dimensionExecutionPlanContext.setReportContext(reportContext);
-            dimensionExecutionPlanContext.setDataSourceName(data.getDataSourceName());
+            dimensionExecutionPlanContext.setDataSourceName(reportContext.getDataSourceName());
             dimensionExecutionPlanContext.setOptions(options);
             dimensionExecutionPlanContext.setDataSource(dataSource);
             dimensionExecutionPlanContext.setDimension(data.getDimension());
-            dimensionExecutionPlanContext.setParameterHelper(new ParameterHelper(reportDefinition,dimensionExecutionPlanContext.getReportContext()));
+            dimensionExecutionPlanContext.setParameterHelper(parameterHelper);
 
 
             MultiCommandResult multiCommandResult = MultiCommandResult.wrap("SubscribeDimensionHandler", commandResult);

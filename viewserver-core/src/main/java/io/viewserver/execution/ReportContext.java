@@ -36,9 +36,8 @@ public class ReportContext implements IParameterHolder {
     private String reportName;
     private final Map<String, ValueLists.IValueList> parameterValues = new HashMap<>();
     private final List<DimensionValue> dimensionValues = new ArrayList<>();
-    private List<ReportContext> childContexts = new ArrayList<>();
     private String output;
-    private String multiContextMode;
+    private String dataSourceName;
 
     public ReportContext() {
     }
@@ -51,10 +50,6 @@ public class ReportContext implements IParameterHolder {
             DimensionValue dimensionValue = original.dimensionValues.get(i);
             this.dimensionValues.add(new DimensionValue(dimensionValue.name, dimensionValue.exclude, dimensionValue.values.copy()));
         }
-        count = original.childContexts.size();
-        for (int i = 0; i < count; i++) {
-            childContexts.add(new ReportContext(childContexts.get(i)));
-        }
         output = original.output;
     }
 
@@ -63,6 +58,15 @@ public class ReportContext implements IParameterHolder {
         ValueLists.IValueList copy = parameterValue.getValue().copy();
         setParameterValue(key, copy);
     };
+
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
     public void setParameterValue(String key, ValueLists.IValueList copy) {
         parameterValues.put(key, copy);
@@ -84,10 +88,6 @@ public class ReportContext implements IParameterHolder {
         return dimensionValues;
     }
 
-    public List<ReportContext> getChildContexts() {
-        return childContexts;
-    }
-
     public String getOutput() {
         return output;
     }
@@ -96,22 +96,11 @@ public class ReportContext implements IParameterHolder {
         this.output = output;
     }
 
-    public String getMultiContextMode() {
-        return multiContextMode;
-    }
-
-    public void setMultiContextMode(String multiContextMode) {
-        this.multiContextMode = multiContextMode;
-    }
-
     @Override
     public ValueLists.IValueList getParameterValue(String name) {
         ValueLists.IValueList values = parameterValues.get(name);
         if (values != null) {
             return values;
-        }
-        if (!childContexts.isEmpty()) {
-            return childContexts.get(0).getParameterValue(name);
         }
         return null;
     }
@@ -124,6 +113,7 @@ public class ReportContext implements IParameterHolder {
     public static ReportContext fromMessage(IReportContext reportContextMessage) {
         ReportContext reportContext = new ReportContext();
         reportContext.reportName = reportContextMessage.getReportId();
+        reportContext.setDataSourceName(reportContextMessage.getDataSourceName());
 
         List<IReportContext.IParameterValue> parameterValues = reportContextMessage.getParameterValues();
         int count = parameterValues.size();
@@ -148,26 +138,6 @@ public class ReportContext implements IParameterHolder {
                     getValues(filter.getValue()).copy()));
         }
 
-        List<IReportContext> childContexts = reportContextMessage.getChildContexts();
-        count = childContexts.size();
-        for (int i = 0; i < count; i++) {
-            reportContext.childContexts.add(ReportContext.fromMessage(childContexts.get(i)));
-        }
-
-        reportContext.output = reportContextMessage.getOutput();
-
-        if (reportContext.childContexts.size() > 0) {
-            final String multiContextMode = reportContextMessage.getMultiContextMode();
-            if (multiContextMode != null) {
-                reportContext.setMultiContextMode(multiContextMode);
-            } else if ("comparisonTranspose".equals(reportContext.output)) {
-                // handle legacy contexts
-                reportContext.setMultiContextMode("uniontranspose");
-            } else {
-                // handle legacy contexts
-                reportContext.setMultiContextMode("uniongroup");
-            }
-        }
 
         return reportContext;
     }
@@ -203,19 +173,6 @@ public class ReportContext implements IParameterHolder {
             }
             valueMessage.release();
             dimensionValueMessage.release();
-        }
-
-        count = childContexts.size();
-        for (int i = 0; i < count; i++) {
-            message.getChildContexts().add(childContexts.get(i).toMessage());
-        }
-
-        if (output != null) {
-            message.setOutput(output);
-        }
-
-        if (multiContextMode != null) {
-            message.setMultiContextMode(multiContextMode);
         }
 
         return message;

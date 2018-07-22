@@ -34,15 +34,13 @@ public interface IReportContext<T> extends IRecyclableMessage<T> {
 
     List<IDimensionValue> getDimensionValues();
 
-    List<IReportContext> getChildContexts();
-
     String getOutput();
     IReportContext<T> setOutput(String output);
 
     List<IDimensionValue> getExcludedFilters();
 
-    String getMultiContextMode();
-    IReportContext<T> setMultiContextMode(String multiContextMode);
+    String getDataSourceName();
+    IReportContext<T> setDataSourceName(String dataSourceName);
 
     interface IValue<T> extends IPoolableMessage<T> {
         ColumnType getType();

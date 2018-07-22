@@ -91,10 +91,9 @@ public class ClientConnectionContext{
                 eventHandler);
     }
 
-    public ListenableFuture<ClientSubscription> subscribeToDimension(String dimensionName, String dataSourceName,TestSubscriptionEventHandler eventHandler) {
+    public ListenableFuture<ClientSubscription> subscribeToDimension(String dimensionName,TestSubscriptionEventHandler eventHandler) {
         return this.client.subscribeToDimension(
                 dimensionName,
-                dataSourceName,
                 getReportContext(),
                 getOptions(),
                 eventHandler);
