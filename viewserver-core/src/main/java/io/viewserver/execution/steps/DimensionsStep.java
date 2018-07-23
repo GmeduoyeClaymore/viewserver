@@ -19,6 +19,7 @@ package io.viewserver.execution.steps;
 import io.viewserver.core.NullableBool;
 import io.viewserver.datasource.*;
 import io.viewserver.execution.InvalidReportContextException;
+import io.viewserver.execution.ParameterHelper;
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
 import io.viewserver.execution.nodes.IndexOutputNode;
@@ -55,7 +56,9 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
 
 
         reportExecutionPlanContext.addNodes(indexNode);
-        reportExecutionPlanContext.setInput(indexNode.getName(), reportExecutionPlanContext.getParameterHelper().substituteParameterValues(indexNode.getConfigForOutputName()));
+        ParameterHelper parameterHelper = reportExecutionPlanContext.getParameterHelper();
+        String output = parameterHelper.substituteParameterValues(indexNode.getConfigForOutputName());
+        reportExecutionPlanContext.setInput(indexNode.getName(), output);
     }
 
 

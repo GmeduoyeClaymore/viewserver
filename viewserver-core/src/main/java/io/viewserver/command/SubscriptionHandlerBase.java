@@ -78,10 +78,4 @@ public abstract class SubscriptionHandlerBase<TCommand> extends CommandHandlerBa
         operator.getOutput(executionPlanContext.getInputOutputName()).plugIn(serialiser.getInput());
     }
 
-
-
-    protected ICatalog getGraphNodesCatalog(IPeerSession peerSession) {
-        final ICatalog systemCatalog = peerSession.getSystemCatalog();
-        return systemCatalog.getChild("graphNodes");
-    }
 }

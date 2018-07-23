@@ -48,7 +48,7 @@ public class DimensionValuesStep implements IExecutionPlanStep<DimensionExecutio
 
         for (ReportContext.DimensionValue dimensionFilter : reportContext.getDimensionValues()) {
             Dimension dimension = dataSource.getDimension(dimensionFilter.getName());
-            queryHolders[i++] = new QueryHolderConfig(dimension,dimensionFilter.isExclude(), dimensionFilter.getValues() );
+            queryHolders[i++] = new QueryHolderConfig(dimension,dimensionFilter.isExclude(), dimensionFilter.getValues().toArray() );
         }
 
         IndexOutputNode indexNode = new IndexOutputNode(IDataSourceRegistry.getOperatorPath(dataSource, DataSource.INDEX_NAME))

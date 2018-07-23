@@ -29,13 +29,15 @@ public class BasicServer {
     private Logger logger;
     private String serverName = "basicServer";
     Executor backgroundExecutor;
+    private int serverStartTimeout;
 
 
     public interface Callable<V> {
         V call() ;
     }
 
-    public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent,IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IInitialDataLoaderComponent initialDataLoaderComponent) {
+    public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent,IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IInitialDataLoaderComponent initialDataLoaderComponent, int serverStartTimeout) {
+        this.serverStartTimeout = serverStartTimeout;
         this.backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
         this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));
 
@@ -102,7 +104,7 @@ public class BasicServer {
                         logger.info(String.format("COMPLETED FINISHED WAITING for server components"));
                         return true;
                     };
-                    Observable.zip(observables, onCompletedAll).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(20, TimeUnit.SECONDS,Observable.error(new RuntimeException("Server not started after 20 seconds. Something's gone wrong !! Could be connection to the database ??"))).subscribe(
+                    Observable.zip(observables, onCompletedAll).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(serverStartTimeout, TimeUnit.SECONDS,Observable.error(new RuntimeException(String.format("Server not started after %s seconds. Something's gone wrong !! Could be connection to the database ??",serverStartTimeout)))).subscribe(
                             res -> {
                                 basicServerComponents.listen();
                                 emitter.onNext(true);

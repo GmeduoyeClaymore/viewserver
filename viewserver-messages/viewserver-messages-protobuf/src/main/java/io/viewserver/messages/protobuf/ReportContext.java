@@ -119,32 +119,6 @@ public class ReportContext extends PoolableMessage<ReportContext>
         return dimensionValuesList;
     }
 
-    @Override
-    public List<IReportContext> getChildContexts() {
-        if (childContextsList == null) {
-            childContextsList = new RecyclingList<IReportContext, ReportContextMessage.ReportContextDto>(
-                    IReportContext.class
-            ) {
-                @Override
-                protected void doAdd(Object dto) {
-                    final ReportContextMessage.ReportContextDto.Builder builder = getReportContextDtoBuilder();
-                    dtoList = builder.getChildContextsList();
-                    if (dto instanceof ReportContextMessage.ReportContextDto) {
-                        builder.addChildContexts((ReportContextMessage.ReportContextDto) dto);
-                    } else {
-                        builder.addChildContexts((ReportContextMessage.ReportContextDto.Builder) dto);
-                    }
-                }
-
-                @Override
-                protected void doClear() {
-                    getReportContextDtoBuilder().clearChildContexts();
-                }
-            };
-        }
-        childContextsList.setDtoList(reportContextDto != null ? reportContextDto.getChildContextsList() : null);
-        return childContextsList;
-    }
 
     @Override
     public String getOutput() {
@@ -184,15 +158,16 @@ public class ReportContext extends PoolableMessage<ReportContext>
     }
 
     @Override
-    public String getMultiContextMode() {
-        return reportContextDto.hasMultiContextMode() ? reportContextDto.getMultiContextMode() : null;
+    public String getDataSourceName() {
+        return reportContextDto.getDataSourceName();
     }
 
     @Override
-    public IReportContext<ReportContext> setMultiContextMode(String multiContextMode) {
-        getReportContextDtoBuilder().setMultiContextMode(multiContextMode);
+    public IReportContext<ReportContext> setDataSourceName(String dataSourceName) {
+        getReportContextDtoBuilder().setDataSourceName(dataSourceName);
         return this;
     }
+
 
     @Override
     protected void doRelease() {

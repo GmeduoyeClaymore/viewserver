@@ -201,6 +201,25 @@ public class ViewServerClientSteps {
         Assert.assertNotNull("Could not detect successful subscription to " + reportId + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription("report" + reportId));
     }
 
+    @When("^\"(.*)\" subscribed to dimension \"([^\"]*)\" of report \"([^\"]*)\" with data source \"([^\"]*)\" with parameters$")
+    public void I_subscribe_to_dimension_of_report(String clientName, String dimensionName,String reportId,String dataSourceName, DataTable parameters){
+        logger.info(String.format("Client %s subscribing to dimension %s from data source %s",clientName,dimensionName,dataSourceName));
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+        clientConnectionContext.getReportContext().setReportName(reportId);
+        CountDownLatch subscribeLatch = new CountDownLatch(1);
+        report_parameters(clientName,parameters);
+        dimension_filters(clientName,parameters);
+        trySubscribeDimension(clientName,dimensionName,dataSourceName, subscribeLatch);
+        try {
+            subscribeLatch.await(timeout, timeUnit);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        Assert.assertNotNull("Could not detect successful subscription to dimension " + dimensionName + " dataSource " + dataSourceName + " after " + timeout + " " + timeUnit, clientConnectionContext.getSubscription(String.format("dimension_%s_%s",dataSourceName,dimensionName)));
+    }
+
+
     @When("^\"(.*)\" subscribed to operator \"([^\"]*)\"$")
     public void I_subscribe_to_operator(String clientName, String operatorName) throws Exception {
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
@@ -234,6 +253,11 @@ public class ViewServerClientSteps {
         }else{
             clientContext.get(clientName).getReportContext().getParameterValues().clear();
         }
+    }
+    @Given("^\"(.*)\" report dataSource \"(.*)\"$")
+    public void report_parameters(String clientName, String dataSourceName) {
+        ClientConnectionContext ctxt = clientContext.get(clientName);
+        ctxt.getReportContext().setDataSourceName(dataSourceName);
     }
 
     @And("^\"(.*)\" dimension filters$")
@@ -398,6 +422,31 @@ public class ViewServerClientSteps {
         }
     }
 
+    private void trySubscribeDimension(String clientName, String dimensionName, String dataSourceName, CountDownLatch subscribeLatch) {
+        TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
+        ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
+        clientConnectionContext.getReportContext().setDataSourceName(dataSourceName);
+        ListenableFuture<ClientSubscription> subFuture = clientConnectionContext.subscribeToDimension(dimensionName,eventHandler);
+
+        Futures.addCallback(subFuture, new FutureCallback<ClientSubscription>() {
+            @Override
+            public void onSuccess(ClientSubscription clientSubscription) {
+                clientConnectionContext.addSubscription(String.format("dimension_%s_%s",dataSourceName,dimensionName), clientSubscription, eventHandler);
+                subscribeLatch.countDown();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                trySubscribeDimension(clientName,dimensionName,dataSourceName,subscribeLatch);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     private void trySubscribe(String clientName, String reportId, CountDownLatch subscribeLatch) {
         TestSubscriptionEventHandler eventHandler = new TestSubscriptionEventHandler();
         ClientConnectionContext clientConnectionContext = clientContext.get(clientName);
@@ -481,6 +530,17 @@ public class ViewServerClientSteps {
         repeat("Receiving data " + records, () -> the_following_data_is_receieved_on_operator(clientName,reportId,keyColumn,records,false), 10, 500, 0,false);
     }
 
+    @Then("^\"([^\"]*)\" the following data is received eventually on dimension \"([^\"]*)\" data source \"([^\"]*)\"$")
+    public void the_following_data_is_received_eventually_for_dimension(String clientName, String dimensionName,String dataSourceName, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received_for_dimension(clientName,dimensionName,dataSourceName,keyColumn,records,false), 10, 500, 0,false);
+    }
+
+    @Then("^\"([^\"]*)\" the following data is received eventually on dimension \"([^\"]*)\" data source \"([^\"]*)\" snapshot$")
+    public void the_following_data_is_received_eventually_for_dimension_snapshot(String clientName, String dimensionName,String dataSourceName, DataTable records) {
+        repeat("Receiving data " + records, () -> the_following_data_is_received_for_dimension(clientName,dimensionName,dataSourceName,keyColumn,records,true), 10, 500, 0,false);
+    }
+
+
     @Then("^\"([^\"]*)\" the following data is received eventually on report \"([^\"]*)\" snapshot$")
     public void the_following_data_is_received_eventually_on_report_snapshot(String clientName, String reportId, DataTable records) {
         repeat("Receiving data " + records, () -> the_following_data_is_received_on_report(clientName,reportId,keyColumn,records,true), 10, 500, 0,false);
@@ -506,32 +566,11 @@ public class ViewServerClientSteps {
         repeat("Receiving schema " + records, () -> the_following_schema_is_received_on_operator(clientName,reportId,records), 5, 500, 0, false);
     }
 
-    @Then("^\"([^\"]*)\" the following notifications are received$")
-    public void the_following_data_notifications_are_received(String clientName,  DataTable records) {
-        the_following_data_notifications_are_received_with_key_column(clientName, "fromUserId",records);
+    @Then("^\"([^\"]*)\" the following schema is received eventually on dimension \"([^\"]*)\" of data source \"([^\"]*)\"$")
+    public void the_following_schema_is_received_on_dimension_eventually(String clientName, String dimensionName, String dataSourceName, List<Map<String, String>> records) {
+        repeat("Receiving schema " + records, () -> the_following_schema_is_received_on_dimension(clientName,dimensionName,dataSourceName,records), 5, 500, 0, false);
     }
 
-    @Then("^\"([^\"]*)\" the following notifications are received with key column \"([^\"]*)\"$")
-    public void the_following_data_notifications_are_received_with_key_column(String clientName,String keyColumn, DataTable records) {
-        ClientConnectionContext connectionContext = clientContext.get(clientName);
-        connectionContext.getOptions().addSortColumn("sentTime", false);
-        subscribedToReportWithParameters(clientName,"notificationsReport", null);
-        String originalKeyCol = this.keyColumn;
-        keycolumnIs(keyColumn);
-        the_following_data_is_received_eventually(clientName, "notificationsReport", records);
-        this.keyColumn = originalKeyCol;
-        connectionContext.getOptions().getColumnsToSort().clear();
-    }
-
-
-    @Then("^\"([^\"]*)\" the following notifications are received terminally$")
-    public void the_following_data_notifications_are_received_terminally(String clientName,  DataTable records) {
-        subscribedToReportWithParameters(clientName,"notificationsReport", null);
-        String originalKeyCol = this.keyColumn;
-        keycolumnIs("fromUserId");
-        the_following_data_is_received_terminally(clientName, "notificationsReport", records);
-        this.keyColumn = originalKeyCol;
-    }
 
     @Then("^\"([^\"]*)\" the following schema is received on report \"([^\"]*)\"$")
     public void the_following_schema_is_received_on_report(String clientName,String reportId, List<Map<String, String>> records) {
@@ -542,6 +581,11 @@ public class ViewServerClientSteps {
     @Then("^\"([^\"]*)\" the following schema is received on operator \"([^\"]*)\"$")
     public void the_following_schema_is_received_on_operator(String clientName,String reportId, List<Map<String, String>> records) {
         the_following_schema(clientName, reportId, records, "");
+    }
+
+    @Then("^\"([^\"]*)\" the following schema is received on dimension \"([^\"]*)\" of data source \"([^\"]*)\"$")
+    public void the_following_schema_is_received_on_dimension(String clientName,String dimensionName,String dataSourceName, List<Map<String, String>> records) {
+        the_following_schema(clientName, String.format("%s_%s",dataSourceName,dimensionName), records, "dimension_");
     }
 
     private void the_following_schema(String clientName, String reportId, List<Map<String, String>> records, String suffix) {
@@ -584,6 +628,13 @@ public class ViewServerClientSteps {
         String operatorNameSuffix = "";
 
         the_following_data_is_received(clientName, reportId, keyColumn, records, flatten, operatorNameSuffix);
+    }
+    @Then("^\"([^\"]*)\" the following data is received on dimension \"([^\"]*)\" with datasource \"([^\"]*)\" with row key \"([^\"]*)\"$")
+    public void the_following_data_is_received_for_dimension(String clientName, String dimensionName, String dataSourceName, String keyColumn, DataTable records, boolean flatten) {
+
+        String operatorNameSuffix = "dimension_";
+
+        the_following_data_is_received(clientName, String.format("%s_%s",dataSourceName,dimensionName), keyColumn, records, flatten, operatorNameSuffix);
     }
 
     private void the_following_data_is_received(String clientName, String reportId, String keyColumn, DataTable records, boolean flatten, String operatorNameSuffix) {

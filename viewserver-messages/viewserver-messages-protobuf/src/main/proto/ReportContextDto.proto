@@ -61,8 +61,7 @@ message ReportContextDto {
     optional string reportId = 1;
     repeated ParameterValue parameters = 2;
     repeated Dimension dimensions = 3;
-    repeated ReportContextDto childContexts = 4;
     optional string output = 5;
     repeated Dimension excludedFilters = 6;
-    optional string multiContextMode = 7;
+    optional string dataSourceName = 7;
 }
