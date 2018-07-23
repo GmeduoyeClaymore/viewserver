@@ -113,7 +113,7 @@ public class ViewServerClientContext {
                                 }
                             }
                         }catch (Throwable ex2){
-                           log.error("Problem with authention",err);
+                           log.error("Problem with authentication",err);
                         }
                         return Observable.error(new AuthenticationException(err.getMessage()));
                     },

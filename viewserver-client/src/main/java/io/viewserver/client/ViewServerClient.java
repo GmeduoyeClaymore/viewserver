@@ -249,7 +249,7 @@ public class ViewServerClient implements AutoCloseable {
         authenticateCommandDto.setClientVersion(clientVersion);
 
         ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto);
-        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor()).timeout(5,TimeUnit.SECONDS, Observable.error(new RuntimeException("No response to authenticate command in 5 seconds")));
+        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor()).timeout(20,TimeUnit.SECONDS, Observable.error(new RuntimeException("No response to authenticate command in 20 seconds")));
     }
 
     public ListenableFuture<ClientSubscription> subscribe(String operator, Options options, ISubscriptionEventHandler<ClientSubscription> eventHandler) {
