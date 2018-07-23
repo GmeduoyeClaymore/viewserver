@@ -50,6 +50,7 @@ public class ReportContext implements IParameterHolder {
             DimensionValue dimensionValue = original.dimensionValues.get(i);
             this.dimensionValues.add(new DimensionValue(dimensionValue.name, dimensionValue.exclude, dimensionValue.values.copy()));
         }
+        dataSourceName = original.getDataSourceName();
         output = original.output;
     }
 
@@ -174,6 +175,7 @@ public class ReportContext implements IParameterHolder {
             valueMessage.release();
             dimensionValueMessage.release();
         }
+        message.setDataSourceName(getDataSourceName());
 
         return message;
     }
