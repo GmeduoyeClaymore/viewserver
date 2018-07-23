@@ -19,12 +19,12 @@
     <parent>
         <artifactId>viewserver-adapters</artifactId>
         <groupId>io.viewserver</groupId>
-     <version>1.0.57-SNAPSHOT</version>
+     <version>1.0.58-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-adapters-sqlserver</artifactId>
- <version>1.0.57-SNAPSHOT</version>
+ <version>1.0.58-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
