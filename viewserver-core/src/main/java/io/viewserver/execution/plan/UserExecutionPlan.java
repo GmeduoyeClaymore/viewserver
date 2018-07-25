@@ -37,8 +37,8 @@ public class UserExecutionPlan implements IExecutionPlan<OptionsExecutionPlanCon
                 new UserParametersStep(),
                 new UserFilterStep(commandId),
                 new UserProjectionStep(commandId),
-                new UserUnEnumStep(commandId)
-                //new SortAndPageStep(commandId)
+                new UserUnEnumStep(commandId),
+                new SortAndPageStep(commandId)
 
                 );
     }
