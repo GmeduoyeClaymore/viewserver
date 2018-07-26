@@ -82,36 +82,7 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
 
     @Override
     protected IIndexConfig mergePendingConfig(IIndexConfig pendingConfig, IIndexConfig newConfig) {
-        return new IIndexConfig() {
-            @Override
-            public String getDataSourceName() {
-                return pendingConfig.getDataSourceName();
-            }
-
-            @Override
-            public String[] getIndices() {
-                ArrayList<String> indices = new ArrayList<>();
-                if (pendingConfig.getIndices() != null) {
-                    indices.addAll(Arrays.asList(pendingConfig.getIndices()));
-                }
-                if (newConfig.getIndices() != null) {
-                    indices.addAll(Arrays.asList(newConfig.getIndices()));
-                }
-                return indices.toArray(new String[indices.size()]);
-            }
-
-            @Override
-            public OutputConfig[] getOutputs() {
-                ArrayList<OutputConfig> outputs = new ArrayList<>();
-                if (pendingConfig.getOutputs() != null) {
-                    outputs.addAll(Arrays.asList(pendingConfig.getOutputs()));
-                }
-                if (newConfig.getOutputs() != null) {
-                    outputs.addAll(Arrays.asList(newConfig.getOutputs()));
-                }
-                return outputs.toArray(new OutputConfig[outputs.size()]);
-            }
-        };
+        return newConfig;
     }
 
 
