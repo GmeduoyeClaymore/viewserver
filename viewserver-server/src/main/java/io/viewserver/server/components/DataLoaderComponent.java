@@ -49,6 +49,7 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
         List<Observable<Object>> readyObservables = new ArrayList<>();
         List<Observable<IOperator>> operatorObservables = new ArrayList<>();
         logger.info("Found {} loaders", recordLoaderCollection.getDataLoaders().entrySet().size());
+        List<String> pendingLoaders = new ArrayList<>(recordLoaderCollection.getDataLoaders().keySet());
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
             IRecordLoader recordLoader = loaderEntry.getValue();
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
@@ -57,7 +58,7 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
             Observable<IOperator> operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
             operatorObservables.add(operator);
             this.subscriptions.add(operator.subscribe(kt -> onOperator(kt,loaderEntry.getValue())));
-            readyObservables.add(loaderEntry.getValue().readyObservable());
+            readyObservables.add(loaderEntry.getValue().readyObservable().map(res -> logReady(res,loaderEntry.getKey(),pendingLoaders)));
         }
         FuncN<?> onCompletedAll = new FuncN<Object>() {
             @Override
@@ -77,6 +78,14 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
                 res -> recordLoaderCollection.start()
         );
         return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
+    }
+
+    private Object logReady(Object res, String key, List<String> pendingLoaders) {
+        synchronized (pendingLoaders){
+            pendingLoaders.remove(key);
+            logger.info("Completed {} still waiting for {}\n",key,String.join("\n",pendingLoaders));
+        }
+        return res;
     }
 
     private void onOperator(IOperator operator, IRecordLoader recordLoader){

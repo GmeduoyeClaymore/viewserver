@@ -92,12 +92,16 @@ public class BasicServer {
         return Observable.create(
                 emitter -> {
                     List<Observable<Object>> observables = new ArrayList<>();
+                    List<String> componentsByName = new ArrayList<>();
+
                     this.componentFactories.forEach(c-> {
                         IServerComponent component = c.call();
                         components.add(component);
+                        String name = component.getClass().getName();
+                        componentsByName.add(name);
                         Observable start = component.start();
                         if(start != null) {
-                            observables.add(start);
+                            observables.add(start.map(res -> logCompleted(res,name,componentsByName)));
                         }
                     });
                     FuncN<?> onCompletedAll = (FuncN<Object>) objects -> {
@@ -118,6 +122,14 @@ public class BasicServer {
                 Emitter.BackpressureMode.BUFFER
         );
 
+    }
+
+    private Object logCompleted(Object result,String componentName,List<String> remainingComponents) {
+        synchronized (remainingComponents){
+            remainingComponents.remove(componentName);
+            logger.info("Completed {}. Still waiting for\n{}",componentName, String.join("\n",remainingComponents));
+        }
+        return result;
     }
 
     public void stop(){

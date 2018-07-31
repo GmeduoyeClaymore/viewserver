@@ -175,7 +175,9 @@ public class ReportContext implements IParameterHolder {
             valueMessage.release();
             dimensionValueMessage.release();
         }
-        message.setDataSourceName(getDataSourceName());
+        if(getDataSourceName() != null){
+            message.setDataSourceName(getDataSourceName());
+        }
 
         return message;
     }

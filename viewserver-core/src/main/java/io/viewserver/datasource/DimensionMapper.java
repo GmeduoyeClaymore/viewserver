@@ -195,7 +195,7 @@ public class DimensionMapper extends DimensionMapperBase {
         }
     }
 
-    private void fireDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
+    protected void fireDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
     }
 
 

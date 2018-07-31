@@ -54,7 +54,6 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
 
     @Override
     protected void processConfig(ISpreadConfig config) {
-
         if(config.spreadFunctionName() == null){
             throw new RuntimeException("Spread function should be defined");
         }
@@ -65,11 +64,6 @@ public class SpreadOperator  extends ConfigurableOperatorBase<ISpreadConfig> {
         this.sourceColumn = config.getInputColumnName();
         this.retainSourceRow = config.retainSourceRow();
         this.removeInputColumn = config.removeInputColumn();
-        for(Map.Entry<String,ColumnHolder> entry : spreadColumnsByName.entrySet()){
-            output.getSchema().removeColumn(entry.getValue().getColumnId());
-        }
-
-        spreadColumnsByName.clear();
     }
 
 
