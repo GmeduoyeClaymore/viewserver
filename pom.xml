@@ -20,7 +20,7 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
-    <version>1.0.63-SNAPSHOT</version>
+    <version>1.0.64-SNAPSHOT</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/GmeduoyeClaymore/viewserver.git</connection>
