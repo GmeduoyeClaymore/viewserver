@@ -2,11 +2,10 @@ package io.viewserver.datasource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.Observable;
+import rx.functions.FuncN;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,6 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
 
     public CompositeRecordLoaderCollection(Callable<IRecordLoaderCollection>... collectionFactories){
         this.collectionFactories = collectionFactories;
-
     }
 
     @Override
@@ -51,8 +49,8 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
 
 
     @Override
-    public void start() {
-        collections.forEach(c-> c.start());
+    public Observable start() {
+        return ObservableUtils.zip(collections.stream().map(c-> (Observable<Object>)c.start()).collect(Collectors.toList()));
     }
 
     @Override
@@ -70,3 +68,4 @@ public class CompositeRecordLoaderCollection  implements IRecordLoaderCollection
         }
     }
 }
+

@@ -46,6 +46,12 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
         }
     }
 
+    @Override
+    public void onDataClear() {
+        this.setAllowDataReset(true);
+        super.onDataClear();
+    }
+
     public ITableStorage getStorage() {
         return storage;
     }
