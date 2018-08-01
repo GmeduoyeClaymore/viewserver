@@ -74,10 +74,10 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
-        Observable.zip(operatorObservables, onAllOperatorsInPlace).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).subscribe(
+        Observable started = ObservableUtils.zip(operatorObservables).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).flatMap(
                 res -> recordLoaderCollection.start()
         );
-        return Observable.zip(readyObservables, onCompletedAll).take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
+        return started.take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
     }
 
     private Object logReady(Object res, String key, List<String> pendingLoaders) {

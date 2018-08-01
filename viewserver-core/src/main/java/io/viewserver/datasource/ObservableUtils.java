@@ -6,14 +6,14 @@ import rx.functions.FuncN;
 import java.util.Collection;
 
 public class ObservableUtils {
-    public static Observable<Object> zip(Collection<Observable<Object>> observables){
+    public static <T> Observable<T> zip(Collection<Observable<T>> observables){
         if(observables.isEmpty()){
-            return Observable.just(true);
+            return Observable.just(null);
         }
-        FuncN<?> onCompletedAll = (FuncN<Object>) objects -> {
-            return true;
+        FuncN<T> onCompletedAll = (FuncN<T>) objects -> {
+            return null;
         };
-        FuncN<?> onCompletedAll1 = onCompletedAll;
+        FuncN<T> onCompletedAll1 = onCompletedAll;
         return Observable.zip(observables, onCompletedAll1);
     }
 }
