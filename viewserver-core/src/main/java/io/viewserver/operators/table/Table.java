@@ -50,6 +50,8 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     public void onDataClear() {
         this.setAllowDataReset(true);
         super.onDataClear();
+        nextRowId = 0;
+        freeRowIds.clear();
     }
 
     public ITableStorage getStorage() {
