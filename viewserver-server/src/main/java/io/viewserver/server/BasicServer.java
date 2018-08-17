@@ -23,7 +23,7 @@ public class BasicServer {
     private IControllerComponents controllerComponents;
     private IDataSourceServerComponents dataSourceServerComponents;
     private IReportServerComponents reportServerComponents;
-    private IInitialDataLoaderComponent initialDataLoaderComponent;
+    private IDataLoaderComponent initialDataLoaderComponent;
     private List<Callable<IServerComponent>> componentFactories = new ArrayList<>();
     private List<IServerComponent> components = new ArrayList<>();
     private Logger logger;
@@ -36,7 +36,7 @@ public class BasicServer {
         V call() ;
     }
 
-    public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent,IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IInitialDataLoaderComponent initialDataLoaderComponent, int serverStartTimeout) {
+    public BasicServer(IBasicSubscriptionComponent basicSubscriptionComponent, IBasicServerComponents basicServerComponents, IControllerComponents controllerComponents, IDataSourceServerComponents dataSourceServerComponents, IReportServerComponents reportServerComponents, IDataLoaderComponent initialDataLoaderComponent, int serverStartTimeout) {
         this.serverStartTimeout = serverStartTimeout;
         this.backgroundExecutor = Executors.newFixedThreadPool(1,new NamedThreadFactory("basicServer"));
         this.logger = LoggerFactory.getLogger(String.format("%s-%s",BasicServer.class,serverName));

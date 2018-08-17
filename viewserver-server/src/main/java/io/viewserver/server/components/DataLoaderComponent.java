@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class DataLoaderComponent implements IInitialDataLoaderComponent {
+public class DataLoaderComponent implements IDataLoaderComponent {
     private IRecordLoaderCollection recordLoaderCollection;
     private static final Logger logger = LoggerFactory.getLogger(DataLoaderComponent.class);
     private IExecutionContext executionContext;
@@ -46,7 +46,7 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
         }
 
         List<Observable<Object>> readyObservables = new ArrayList<>();
-        List<Observable<IOperator>> operatorObservables = new ArrayList<>();
+        List<Observable<Object>> operatorObservables = new ArrayList<>();
         logger.info("Found {} loaders", recordLoaderCollection.getDataLoaders().entrySet().size());
         List<String> pendingLoaders = new ArrayList<>(recordLoaderCollection.getDataLoaders().keySet());
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
@@ -54,9 +54,9 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             logger.info("Loader {} loaders waiting for table", loaderEntry.getKey());
-            Observable<IOperator> operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
+            Observable operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
             operatorObservables.add(operator);
-            this.subscriptions.add(operator.subscribe(kt -> onOperator(kt,loaderEntry.getValue())));
+            this.subscriptions.add(operator.subscribe(kt -> onOperator((IOperator)kt,loaderEntry.getValue())));
             readyObservables.add(loaderEntry.getValue().readyObservable().map(res -> logReady(res,loaderEntry.getKey(),pendingLoaders)));
         }
         FuncN<?> onCompletedAll = new FuncN<Object>() {
@@ -73,7 +73,7 @@ public class DataLoaderComponent implements IInitialDataLoaderComponent {
                 return true;
             }
         };
-        Observable started = ObservableUtils.zip(operatorObservables).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).flatMap(
+        Observable started = ObservableUtils.zip(this.getStartupStrategy().equals(StartupStrategy.WhenOperatorsReady) ? operatorObservables : readyObservables).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).flatMap(
                 res -> recordLoaderCollection.start()
         );
         return started.take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
