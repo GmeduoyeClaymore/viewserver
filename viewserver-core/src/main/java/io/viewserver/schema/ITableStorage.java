@@ -29,6 +29,8 @@ public interface ITableStorage {
 
     void ensureCapacity(int capacity, Schema schema);
 
+    boolean requiresGrowth(int requiredCapacity);
+
     public interface Factory {
         ITableStorage createStorage();
     }

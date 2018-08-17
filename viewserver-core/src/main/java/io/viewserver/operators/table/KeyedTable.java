@@ -45,7 +45,7 @@ import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 public class KeyedTable extends Table {
 
     protected TableKeyDefinition tableKeyDefinition;
-    private TObjectIntHashMap<Object> keys = new TObjectIntHashMap<>(8, 0.75f, -1);
+    protected TObjectIntHashMap<Object> keys = new TObjectIntHashMap<>(8, 0.75f, -1);
     private PublishSubject<Object> keysAdded;
 
     public KeyedTable(String name, IExecutionContext executionContext, ICatalog catalog, Schema schema, ITableStorage storage, TableKeyDefinition tableKeyDefinition) {

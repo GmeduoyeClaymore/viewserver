@@ -84,10 +84,10 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     @Override
     public int addRow(ITableRowUpdater updater) {
         int row = getFreeRowId();
-        storage.ensureCapacity(row + 1, output.schema);
+        updater.ensureCapacity(storage,row, output.schema);
         tableRow.setRowId(row);
         updater.setValues(tableRow);
-        output.handleAdd(row);
+        updater.processAdd(output,row);
         return row;
     }
 
@@ -106,8 +106,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     public void updateRow(int row, ITableRowUpdater updater) {
         tableRow.setRowId(row);
         updater.setValues(tableRow);
-        output.handleUpdate(row);
-
+        updater.processUpdate(output,row);
     }
 
     @Override

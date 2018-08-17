@@ -70,7 +70,7 @@ public abstract class ColumnStorageBase implements ITableStorage {
 
     @Override
     public void ensureCapacity(int requiredCapacity, Schema schema) {
-        if (requiredCapacity >= capacity) {
+        if (requiresGrowth(requiredCapacity)) {
             capacity = growthPolicy.getNewSize(capacity, requiredCapacity);
             List<ColumnHolder> columnHolders = schema.getColumnHolders();
             int count = columnHolders.size();
@@ -84,4 +84,11 @@ public abstract class ColumnStorageBase implements ITableStorage {
             columnFactory.initialise(capacity);
         }
     }
+
+    @Override
+    public boolean requiresGrowth(int requiredCapacity) {
+        return requiredCapacity >= capacity;
+    }
+
+
 }

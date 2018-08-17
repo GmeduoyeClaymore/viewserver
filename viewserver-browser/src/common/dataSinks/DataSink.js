@@ -55,7 +55,9 @@ export default class DataSink {
     this.idRows[rowId] = row;
     this.rows.push(row);
     this.dirtyRows.push(rowId);
-    Logger.fine(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    if(Logger.isFineEnabled()){
+      Logger.fine(`Row added - ${rowId} -  + ${JSON.stringify(row)}`);
+    }
   }
 
   onRowUpdated(rowId, row){
@@ -64,7 +66,9 @@ export default class DataSink {
       Logger.info('Row not updated as couldnt get index for row ' + rowId);
     }
     this.rows[rowIndex] = Object.assign(this.rows[rowIndex], row);
-    Logger.info('Row updated - ' + JSON.stringify(row));
+    if(Logger.isFineEnabled()){
+      Logger.fine('Row updated - ' + JSON.stringify(row));
+    }
   }
 
   onRowRemoved(rowId){

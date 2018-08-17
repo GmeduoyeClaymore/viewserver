@@ -87,6 +87,9 @@ public class BasicServer {
     public void registerComponent(Callable<IServerComponent> component) {
         this.componentFactories.add(component);
     }
+    public void registerComponent(Callable<IServerComponent> component, int position) {
+        this.componentFactories.add(position,component);
+    }
 
     public Observable start(){
         return Observable.create(

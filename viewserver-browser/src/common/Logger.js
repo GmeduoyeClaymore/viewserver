@@ -22,7 +22,7 @@ export default class Logger {
     }
   };
 
-  static LogLevel = 4;
+  static LogLevel = 2;
 
   static log(logLevel, message, json){
     if (logLevel.level <= Logger.LogLevel) {
@@ -61,5 +61,14 @@ export default class Logger {
   }
   static fine(message, json){
     Logger.log(Logger.LogLevels.Fine, message, json);
+  }
+  static isFineEnabled(){
+    return Logger.LogLevels.Fine <= Logger.LogLevel;
+  }
+  static isDebugEnabled(){
+    return Logger.LogLevels.Debug <= Logger.LogLevel;
+  }
+  static isInfoEnabled(){
+    return Logger.LogLevels.Info <= Logger.LogLevel;
   }
 }

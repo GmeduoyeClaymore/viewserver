@@ -115,13 +115,25 @@ public class Record implements IRecord {
 
     @Override
     public Short getShort(String columnName) {
-        return (Short)values.get(columnName);
+        try {
+            Object o = values.get(columnName);
+            if(o == null){
+                return null;
+            }
+            return o instanceof Short ? (Short)o : (Short)ConvertUtils.convert(o, Short.class);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public Integer  getInt(String columnName) {
         try {
-            return (Integer) values.get(columnName);
+            Object o = values.get(columnName);
+            if(o == null){
+                return null;
+            }
+            return o instanceof Integer ? (Integer)o : (Integer)ConvertUtils.convert(o, Integer.class);
         }catch (Exception ex){
             throw new RuntimeException(ex);
         }
@@ -129,17 +141,42 @@ public class Record implements IRecord {
 
     @Override
     public Long getLong(String columnName) {
-        return (Long)values.get(columnName);
+        try {
+            Object o = values.get(columnName);
+            if(o == null){
+                return null;
+            }
+            return o instanceof Long ? (Long)o : (Long)ConvertUtils.convert(o, Long.class);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public Float getFloat(String columnName) {
-        return (Float)values.get(columnName);
+
+        try {
+            Object o = values.get(columnName);
+            if(o == null){
+                return null;
+            }
+            return o instanceof Float ? (Float)o : (Float)ConvertUtils.convert(o, Float.class);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public Double getDouble(String columnName) {
-        return (Double)values.get(columnName);
+        try {
+            Object o = values.get(columnName);
+            if(o == null){
+                return null;
+            }
+            return o instanceof Double ? (Double)o : (Double)ConvertUtils.convert(o, Double.class);
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

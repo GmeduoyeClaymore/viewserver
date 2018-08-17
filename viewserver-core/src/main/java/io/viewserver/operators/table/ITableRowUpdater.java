@@ -16,6 +16,10 @@
 
 package io.viewserver.operators.table;
 
+import io.viewserver.operators.IOutput;
+import io.viewserver.schema.ITableStorage;
+import io.viewserver.schema.Schema;
+
 /**
  * Created by bemm on 29/09/2014.
  */
@@ -25,4 +29,15 @@ public interface ITableRowUpdater {
     }
 
     void setValues(ITableRow row);
+
+    default void processAdd(IOutput output, int row){
+        output.handleAdd(row);
+    }
+    default void processUpdate(IOutput output, int row){
+        output.handleUpdate(row);
+    }
+
+    default void ensureCapacity(ITableStorage storage, int row, Schema schema){
+        storage.ensureCapacity(row+1,schema);
+    }
 }
