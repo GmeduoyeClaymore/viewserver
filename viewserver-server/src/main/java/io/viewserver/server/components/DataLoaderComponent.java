@@ -49,40 +49,40 @@ public class DataLoaderComponent implements IDataLoaderComponent {
         List<Observable<Object>> operatorObservables = new ArrayList<>();
         logger.info("Found {} loaders", recordLoaderCollection.getDataLoaders().entrySet().size());
         List<String> pendingLoaders = new ArrayList<>(recordLoaderCollection.getDataLoaders().keySet());
+        List<String> pendingOperators = new ArrayList<>(recordLoaderCollection.getDataLoaders().keySet());
         for(Map.Entry<String,IRecordLoader> loaderEntry : recordLoaderCollection.getDataLoaders().entrySet()){
             IRecordLoader recordLoader = loaderEntry.getValue();
             SchemaConfig schemaConfig = recordLoader.getSchemaConfig();
             OperatorCreationConfig creationConfig = recordLoader.getCreationConfig();
             logger.info("Loader {} loaders waiting for table", loaderEntry.getKey());
             Observable operator = getOperator(loaderEntry.getKey(), schemaConfig, creationConfig);
-            operatorObservables.add(operator);
+            operatorObservables.add(operator.map(res -> logReady(res,loaderEntry.getKey(),pendingOperators, "Operator Registered")));
             this.subscriptions.add(operator.subscribe(kt -> onOperator((IOperator)kt,loaderEntry.getValue())));
-            readyObservables.add(loaderEntry.getValue().readyObservable().map(res -> logReady(res,loaderEntry.getKey(),pendingLoaders)));
+            readyObservables.add(loaderEntry.getValue().readyObservable().map(res -> logReady(res,loaderEntry.getKey(),pendingLoaders, "Loader Ready")));
         }
-        FuncN<?> onCompletedAll = new FuncN<Object>() {
-            @Override
-            public Object call(Object... objects) {
-                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders - %s",readyObservables.size()));
-                return true;
-            }
-        };
-        FuncN<?> onAllOperatorsInPlace = new FuncN<Object>() {
-            @Override
-            public Object call(Object... objects) {
-                logger.info(String.format("COMPLETED FINISHED WAITING Record loaders - %s",readyObservables.size()));
-                return true;
-            }
-        };
+
         Observable started = ObservableUtils.zip(this.getStartupStrategy().equals(StartupStrategy.WhenOperatorsReady) ? operatorObservables : readyObservables).observeOn(Schedulers.from(backgroundExecutor)).take(1).timeout(30,TimeUnit.SECONDS,Observable.error(new RuntimeException("All Operators for loading not registered in 30 seconds"))).flatMap(
-                res -> recordLoaderCollection.start()
+                res -> {
+                    logger.info("Starting record loader collection");
+                    return recordLoaderCollection.start();
+                }
         );
-        return started.take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor()));
+        return started.take(1).observeOn(Schedulers.from(executionContext.getReactor().getExecutor())).map(
+                c -> {
+                    logger.info("DataLoaderComponent Has Successfully Started");
+                    return c;
+                }
+        );
     }
 
-    private Object logReady(Object res, String key, List<String> pendingLoaders) {
+    private Object logReady(Object res, String key, List<String> pendingLoaders, String logLabel) {
         synchronized (pendingLoaders){
             pendingLoaders.remove(key);
-            logger.info("Completed {} still waiting for {}\n",key,String.join("\n",pendingLoaders));
+            if(pendingLoaders.size() > 0){
+                logger.info(logLabel + " {} \nStill waiting for {}\n",key,String.join("\n",pendingLoaders));
+            }else{
+                logger.info(logLabel + " {} \nALL DONE !!!",key);
+            }
         }
         return res;
     }

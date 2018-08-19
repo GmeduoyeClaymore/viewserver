@@ -130,7 +130,11 @@ public class BasicServer {
     private Object logCompleted(Object result,String componentName,List<String> remainingComponents) {
         synchronized (remainingComponents){
             remainingComponents.remove(componentName);
-            logger.info("Completed {}. Still waiting for\n{}",componentName, String.join("\n",remainingComponents));
+            if(remainingComponents.size() > 0){
+                logger.info("Completed {}. \nStill waiting for\n{}",componentName, String.join("\n",remainingComponents));
+            }else{
+                logger.info("Completed {}. \nALL COMPONENTS COMPLETED !!!",componentName);
+            }
         }
         return result;
     }

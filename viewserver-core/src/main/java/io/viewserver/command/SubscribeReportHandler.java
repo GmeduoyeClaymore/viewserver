@@ -19,6 +19,7 @@ package io.viewserver.command;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.controller.ControllerContext;
+import io.viewserver.controller.ControllerUtils;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.*;
@@ -109,6 +110,9 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
         if(definition.hasParameter("@catalogName")) {
             stringList.add(peerSession.getCatalogName());
             reportContext.setParameterValue("@catalogName", stringList);
+        }
+        if(reportContext.getDimensionValues() != null && reportContext.getDimensionValues().size() > 0){
+            reportContext.setParameterValue("@dimensionValues", ValueLists.valueListOf(ControllerUtils.toString(reportContext.getDimensionValues())));
         }
 
         Set<String> paramNames = ControllerContext.getParamNames(peerSession);

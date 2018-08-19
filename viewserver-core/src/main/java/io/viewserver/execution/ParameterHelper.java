@@ -41,6 +41,9 @@ public class ParameterHelper {
     public ParameterHelper(ReportDefinition definition, IParameterHolder parameterHolder) {
         this.definition = definition;
         this.parameterHolder = parameterHolder;
+        if(parameterHolder instanceof ReportContext){
+            this.reportContext = (ReportContext) parameterHolder;
+        }
         validate(definition,parameterHolder);
     }
 

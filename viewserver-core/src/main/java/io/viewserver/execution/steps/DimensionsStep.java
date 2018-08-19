@@ -26,6 +26,8 @@ import io.viewserver.execution.nodes.IndexOutputNode;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.operators.index.IndexOperator;
 import io.viewserver.operators.index.QueryHolderConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -33,6 +35,7 @@ import static io.viewserver.datasource.DataSourceHelper.getQueryHolders;
 
 public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanContext> {
     private DimensionMapper dimensionMapper;
+    private Logger logger = LoggerFactory.getLogger(DimensionsStep.class);
 
     public DimensionsStep(DimensionMapper dimensionMapper) {
         this.dimensionMapper = dimensionMapper;
@@ -43,8 +46,14 @@ public class DimensionsStep implements IExecutionPlanStep<ReportExecutionPlanCon
         ReportContext reportContext = reportExecutionPlanContext.getReportContext();
         IDataSource dataSource = reportExecutionPlanContext.getDataSource();
 
+        if(dataSource == null){
+            logger.info("Bailing because dataSource is null");
+            return;
+        }
+
         List<ReportContext.DimensionValue> dimensionValues = reportContext.getDimensionValues();
         if (dimensionValues.size() == 0) {
+            logger.info("Bailing because no dimension values");
             return;
         }
 

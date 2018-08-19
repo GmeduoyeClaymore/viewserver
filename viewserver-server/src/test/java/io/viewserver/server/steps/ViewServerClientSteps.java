@@ -266,7 +266,7 @@ public class ViewServerClientSteps {
             ClientConnectionContext ctxt = clientContext.get(clientName);
             ctxt.getReportContext().getDimensionValues().clear();
             setValuesFromDataTable(filters, (name, valuesList, excluded) ->
-                    ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name, valuesList, excluded)), c -> c.getCells().get(0).startsWith("dimension_"));
+                    ctxt.getReportContext().getDimensionValues().add(new ReportContext.DimensionValue(name.substring("dimension_".length()), valuesList, excluded)), c -> c.getCells().get(0).startsWith("dimension_"));
         }else{
             clientContext.get(clientName).getReportContext().getDimensionValues().clear();
         }
