@@ -16,6 +16,7 @@
 
 package io.viewserver.execution;
 
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.messages.command.IReportContext;
 import io.viewserver.messages.common.ValueLists;
 import io.viewserver.report.DefaultDimensionValues;
@@ -34,21 +35,23 @@ public class ParameterHelper {
     private ReportDefinition definition;
     private ReportContext reportContext;
     private IParameterHolder parameterHolder;
+    private DimensionMapper dimensionMapper;
 
     public ParameterHelper() {
     }
 
-    public ParameterHelper(ReportDefinition definition, IParameterHolder parameterHolder) {
+    public ParameterHelper(ReportDefinition definition, IParameterHolder parameterHolder, DimensionMapper dimensionMapper) {
         this.definition = definition;
         this.parameterHolder = parameterHolder;
+        this.dimensionMapper = dimensionMapper;
         if(parameterHolder instanceof ReportContext){
             this.reportContext = (ReportContext) parameterHolder;
         }
         validate(definition,parameterHolder);
     }
 
-    public ParameterHelper(ReportDefinition definition, ReportContext reportContext, IParameterHolder parameterHolder) {
-        this(definition, parameterHolder);
+    public ParameterHelper(ReportDefinition definition, ReportContext reportContext, IParameterHolder parameterHolder, DimensionMapper dimensionMapper) {
+        this(definition, parameterHolder, dimensionMapper);
         this.definition = definition;
         this.reportContext = reportContext;
 
@@ -75,6 +78,10 @@ public class ParameterHelper {
 
     public ValueLists.IValueList getParameterValues(String parameterName) {
         return parameterHolder.getParameterValue(parameterName);
+    }
+
+    public DimensionMapper getDimensionMapper() {
+        return dimensionMapper;
     }
 
     public ReportContext getReportContext() {

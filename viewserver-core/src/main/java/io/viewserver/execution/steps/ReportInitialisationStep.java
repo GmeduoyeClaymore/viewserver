@@ -44,7 +44,7 @@ public class ReportInitialisationStep implements IExecutionPlanStep<ReportExecut
     public void execute(ReportExecutionPlanContext reportExecutionPlanContext) {
         ReportContext reportContext = reportExecutionPlanContext.getReportContext();
         ReportDefinition definition = reportRegistry.getReportById(reportContext.getReportName());
-        reportExecutionPlanContext.setParameterHelper(new ParameterHelper(definition, reportContext));
+        reportExecutionPlanContext.setParameterHelper(new ParameterHelper(definition, reportContext, reportExecutionPlanContext.getExecutionContext().getDimensionMapper()));
 
         IGraphDefinition reportDefinition = reportExecutionPlanContext.getGraphDefinition();
         final List<IGraphNode> graphNodes = reportDefinition.getNodes();

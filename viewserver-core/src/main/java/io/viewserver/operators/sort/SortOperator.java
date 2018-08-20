@@ -148,12 +148,13 @@ public class SortOperator extends ConfigurableOperatorBase<ISortConfig> {
             super.onSchema();
 
             ISortConfig config = pendingConfig != null ? pendingConfig : (isReset ? SortOperator.this.config : null);
-            if (config != null) {
+            if (config != null && output.getSchema() != null && output.getSchema().getWidth() > 0) {
                 SortOperator.SortDescriptor pendingSortDescriptor = config.getSortDescriptor();
                 if (sortDescriptor == null || !sortDescriptor.equals(pendingSortDescriptor)) {
                     //if sort column has not been defined (ie for standard subscription) then sort by the first column by default
                     if (pendingSortDescriptor.columnsToSort.isEmpty()) {
-                        pendingSortDescriptor.columnsToSort.add(new SortColumn(output.getSchema().getColumnHolder(0).getName()));
+                        ColumnHolder columnHolder = output.getSchema().getColumnHolder(0);
+                        pendingSortDescriptor.columnsToSort.add(new SortColumn(columnHolder.getName()));
                     }
 
                     if (sortColumnHolders == null || sortColumnHolders.length != pendingSortDescriptor.columnsToSort.size()) {

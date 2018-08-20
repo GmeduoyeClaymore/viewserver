@@ -57,7 +57,7 @@ public class SubscribeDimensionHandler extends ReportContextHandler<ISubscribeDi
                 throw new Exception(String.format("Unable to find report definition for name %s",reportContext.getReportName()));
             }
 
-            ParameterHelper parameterHelper = new ParameterHelper(reportDefinition, reportContext);
+            ParameterHelper parameterHelper = new ParameterHelper(reportDefinition, reportContext, peerSession.getExecutionContext().getDimensionMapper());
 
             String name = reportContext.getDataSourceName() == null || "".equals(reportContext.getDataSourceName()) ? reportDefinition.getDataSource() : reportContext.getDataSourceName();
             IDataSource dataSource = name == null ? null : getDataSource(name);
