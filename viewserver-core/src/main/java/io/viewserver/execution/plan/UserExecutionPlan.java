@@ -35,9 +35,9 @@ public class UserExecutionPlan implements IExecutionPlan<OptionsExecutionPlanCon
     public List<IExecutionPlanStep<OptionsExecutionPlanContext>> getSteps() {
         return Arrays.asList(
                 new UserParametersStep(),
-                new UserFilterStep(commandId),
                 new UserProjectionStep(commandId),
                 new UserUnEnumStep(commandId),
+                new UserFilterStep(commandId),
                 new SortAndPageStep(commandId)
 
                 );

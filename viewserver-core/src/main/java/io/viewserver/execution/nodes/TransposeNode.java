@@ -79,7 +79,7 @@ public class TransposeNode extends GraphNodeBase<TransposeNode> {
 
             @Override
             public String getPivotColumn() {
-                return pivotColumn;
+                return parameterHelper.substituteParameterValues(pivotColumn);
             }
 
             @Override

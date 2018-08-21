@@ -54,7 +54,7 @@ public class DimensionMapper extends DimensionMapperBase {
         return stringHashSet;
     }
 
-    public int map(String namespace, String  dimensionName, ContentType dimensionContentType, Object value){
+    public synchronized int map(String namespace, String  dimensionName, ContentType dimensionContentType, Object value){
         switch (dimensionContentType) {
             case Bool: {
                 return mapBool(namespace, dimensionName, (value instanceof String) ? Boolean.valueOf(value.toString()) : (boolean) value);
@@ -84,7 +84,7 @@ public class DimensionMapper extends DimensionMapperBase {
         }
     }
 
-    public int mapString(String namespace, String dimensionName, String value) {
+    public synchronized int mapString(String namespace, String dimensionName, String value) {
         if(value == null || "".equals(value)){
             return -1;
         }
@@ -106,7 +106,7 @@ public class DimensionMapper extends DimensionMapperBase {
         return ((StringHashSet)lookup).get(id);
     }
 
-    public int mapByte(String namespace, String dimensionName, byte value) {
+    public synchronized int mapByte(String namespace, String dimensionName, byte value) {
         ByteHashSet lookup = (ByteHashSet) getLookup(namespace, dimensionName, ContentType.Byte, Cardinality.Byte);
         int index = lookup.addByte(value);
         if (index < 0) {
@@ -122,7 +122,7 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((ByteHashSet)lookup).get(id));
     }
 
-    public int mapShort(String namespace, String dimensionName, short value) {
+    public synchronized int mapShort(String namespace, String dimensionName, short value) {
         ShortHashSet lookup = (ShortHashSet) getLookup(namespace, dimensionName, ContentType.Short, Cardinality.Short);
         int index = lookup.addShort(value);
         if (index < 0) {
@@ -138,7 +138,7 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((ShortHashSet)lookup).get(id));
     }
 
-    public int mapInt(String namespace, String dimensionName, int value) {
+    public synchronized int mapInt(String namespace, String dimensionName, int value) {
         IntHashSet lookup = (IntHashSet) getLookup(namespace, dimensionName, ContentType.Int, Cardinality.Int);
         int index = lookup.addInt(value);
         if (index < 0) {
@@ -154,7 +154,7 @@ public class DimensionMapper extends DimensionMapperBase {
         return(((IntHashSet)lookup).get(id));
     }
 
-    public int mapLong(String namespace, String dimensionName, long value) {
+    public synchronized int mapLong(String namespace, String dimensionName, long value) {
         LongHashSet lookup = (LongHashSet) getLookup(namespace, dimensionName, ContentType.Long, Cardinality.Int);
         int index = lookup.addLong(value);
         if (index < 0) {
@@ -166,7 +166,7 @@ public class DimensionMapper extends DimensionMapperBase {
     }
 
     @Override
-    protected long lookupLong(Object lookup, int id) {
+    protected synchronized long lookupLong(Object lookup, int id) {
         return(((LongHashSet)lookup).get(id));
     }
 
@@ -195,7 +195,7 @@ public class DimensionMapper extends DimensionMapperBase {
         }
     }
 
-    protected void fireDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
+    protected synchronized void fireDimensionValueMapped(String namespace, String dimensionName, int id, Object value) {
     }
 
 
