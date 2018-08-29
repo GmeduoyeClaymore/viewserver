@@ -133,7 +133,7 @@ public class ViewServerClient implements AutoCloseable {
             networkAdapter.setNetworkMessageWheel(networkMessageWheel);
             network = new Network(commandHandlerRegistry, executionContext, catalog, networkAdapter);
             network.setDisconnectOnTimeout(true);
-            network.setTimeoutInterval(5000);
+            network.setTimeoutInterval(getTimeoutInterval());
             reactor = this.initReactor(network);
 
             reactor.start();
@@ -147,6 +147,10 @@ public class ViewServerClient implements AutoCloseable {
         } catch (Throwable e) {
             log.error("Fatal error happened during startup", e);
         }
+    }
+
+    protected int getTimeoutInterval() {
+        return 5000;
     }
 
     private void onConnectionError(Throwable throwable) {
@@ -249,7 +253,7 @@ public class ViewServerClient implements AutoCloseable {
         authenticateCommandDto.setClientVersion(clientVersion);
 
         ListenableFuture<CommandResult> authenticationFuture = sendCommand(AuthenticationHandlerRegistry.AUTHENTICATE_COMMAND, authenticateCommandDto);
-        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor()).timeout(20,TimeUnit.SECONDS, Observable.error(new RuntimeException("No response to authenticate command in 20 seconds")));
+        return ListenableFutureObservable.from(authenticationFuture, executionContext.getReactor().getExecutor()).timeout(120,TimeUnit.SECONDS, Observable.error(new RuntimeException("No response to authenticate command in 20 seconds")));
     }
 
     public ListenableFuture<ClientSubscription> subscribe(String operator, Options options, ISubscriptionEventHandler<ClientSubscription> eventHandler) {

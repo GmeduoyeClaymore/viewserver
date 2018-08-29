@@ -84,7 +84,12 @@ public class ViewServerClientContext {
     public Observable<ClientConnectionContext> create(String name, String url, String authName, String token) throws AuthenticationException{
         TestViewServerClient client = null;
         try {
-            client = new TestViewServerClient(name, replaceParams(url));
+            client = new TestViewServerClient(name, replaceParams(url)){
+                @Override
+                protected int getTimeoutInterval() {
+                    return 120000;
+                }
+            };
             log.info("MILESTONE - Creating client {} connecting to URL {}",name, url);
             synchronized (this.clientReferences) {
                 this.clientReferences.add(client);

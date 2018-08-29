@@ -669,7 +669,11 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         private boolean applyRemoves(int value, TIntArrayList removes) {
             if (removes.size() > 0) {
                 EWAHCompressedBitmap index = indices.get(value);
-                indices.put(value, index.andNot(EWAHCompressedBitmap.bitmapOf(RadixSort.sort2(removes.toArray()))));
+                try {
+                    indices.put(value, index.andNot(EWAHCompressedBitmap.bitmapOf(RadixSort.sort2(removes.toArray()))));
+                }catch (Exception ex){
+                    log.info("Problem applying removes {}",ex);
+                }
                 removes.resetQuick();
             }
             return true;

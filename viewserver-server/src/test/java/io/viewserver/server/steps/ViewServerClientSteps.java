@@ -92,7 +92,7 @@ public class ViewServerClientSteps {
 
     @And("^a client named \"([^\"]*)\" connected to \"([^\"]*)\" with authentication \"([^\"]*)\" and clientVersion \"([^\"]*)\"$")
     public void a_connected_client_with_authentication(String name, String url, String authName, String clientVersion) {
-        int timeout = 30;
+        int timeout = 120;
         CountDownLatch latch = new CountDownLatch(1);
         this.latches.add(latch);
         AtomicReference<Throwable> errResult = new AtomicReference<>(null);

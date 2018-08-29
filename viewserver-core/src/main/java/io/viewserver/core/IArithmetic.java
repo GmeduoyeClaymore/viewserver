@@ -44,6 +44,15 @@ public interface IArithmetic {
 
     public static class ArithmeticByte {
         public byte add(byte x, byte y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             int result = x + y;
             if (((x ^ result) & (y ^ result)) < 0) {
                 throw new ArithmeticException("byte overflow");
@@ -52,6 +61,15 @@ public interface IArithmetic {
         }
 
         public byte subtract(byte x, byte y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             int result = x - y;
             if (((x ^ result) & (y ^ result)) < 0) {
                 throw new ArithmeticException("byte overflow");
@@ -70,6 +88,15 @@ public interface IArithmetic {
 
     public static class ArithmeticShort {
         public short add(short x, short y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             int result = x + y;
             if (((x ^ result) & (y ^ result)) < 0) {
                 throw new ArithmeticException("short overflow");
@@ -78,6 +105,15 @@ public interface IArithmetic {
         }
 
         public short subtract(short x, short y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             int result = x - y;
             if (((x ^ result) & (y ^ result)) < 0) {
                 throw new ArithmeticException("short overflow");
@@ -96,10 +132,28 @@ public interface IArithmetic {
 
     public static class ArithmeticInt {
         public int add(int x, int y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             return Math.addExact(x, y);
         }
 
         public int subtract(int x, int y) {
+            if(y == -1 && x == -1){
+                return -1;
+            }
+            if(y == -1){
+                return x;
+            }
+            if(x == -1){
+                return y;
+            }
             return Math.subtractExact(x, y);
         }
 
@@ -114,6 +168,15 @@ public interface IArithmetic {
         }
 
         public long subtract(long x, long y) {
+            if(y == -1l && x == -1l){
+                return -1l;
+            }
+            if(y == -1l){
+                return x;
+            }
+            if(x == -1l){
+                return y;
+            }
             return Math.subtractExact(x, y);
         }
 
@@ -124,10 +187,28 @@ public interface IArithmetic {
 
     public static class ArithmeticFloat {
         public float add(float x, float y) {
+            if(y == -1f && x == -1f){
+                return -1;
+            }
+            if(y == -1f){
+                return x;
+            }
+            if(x == -1f){
+                return y;
+            }
             return x + y;
         }
 
         public float subtract(float x, float y) {
+            if(y == -1f && x == -1f){
+                return -1;
+            }
+            if(y == -1f){
+                return x;
+            }
+            if(x == -1f){
+                return y;
+            }
             return x - y;
         }
 
@@ -138,10 +219,28 @@ public interface IArithmetic {
 
     public static class ArithmeticDouble {
         public double add(double x, double y) {
+            if(y == -1d && x == -1d){
+                return -1d;
+            }
+            if(y == -1d){
+                return x;
+            }
+            if(x == -1d){
+                return y;
+            }
             return x + y;
         }
 
         public double subtract(double x, double y) {
+            if(y == -1d && x == -1d){
+                return -1d;
+            }
+            if(y == -1d){
+                return x;
+            }
+            if(x == -1d){
+                return y;
+            }
             return x - y;
         }
 
