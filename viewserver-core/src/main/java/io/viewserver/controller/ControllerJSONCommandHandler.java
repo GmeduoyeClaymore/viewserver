@@ -8,7 +8,9 @@ import io.viewserver.network.Command;
 import io.viewserver.network.IPeerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.functions.Func1;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -28,10 +30,15 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
     }
 
     private ControllerCatalog controllerCatalog;
+    private Func1<IPeerSession, ControllerContext> contextFactory;
 
     public ControllerJSONCommandHandler(Class<IGenericJSONCommand> clazz, ControllerCatalog controllerCatalog) {
+        this(clazz,controllerCatalog,ControllerContext::create);
+    }
+    public ControllerJSONCommandHandler(Class<IGenericJSONCommand> clazz, ControllerCatalog controllerCatalog, Func1<IPeerSession,ControllerContext> contextFactory) {
         super(clazz);
         this.controllerCatalog = controllerCatalog;
+        this.contextFactory = contextFactory;
     }
 
     public String trim(String param){
@@ -69,7 +76,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                 throw new RuntimeException("Unable to find action named \"" + data.getAction() + "\" in controller named \"" + controllerName + "\" containing actions \"" + String.join(",",registration.getActions().keySet()) + "\"" );
             }
             String payload = data.getPayload();
-            ListenableFuture<String> invoke = invoke(entry, payload, ControllerContext.create(peerSession));
+            ListenableFuture<String> invoke = invoke(entry, payload, contextFactory.call(peerSession));
             invoke.addListener(new Runnable() {
                 @Override
                 public void run() {

@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 public @interface ControllerAction {
     String path();
     boolean isSynchronous() default true;
+    Class interceptor() default Object.class;
 }
 

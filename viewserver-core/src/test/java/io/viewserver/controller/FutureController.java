@@ -17,8 +17,18 @@ public class FutureController{
         return service.submit(() -> current+=addition);
     }
 
+    @ControllerAction(path = "plusIntercepted", interceptor = FutureLoggerInterceptor.class)
+    public ListenableFuture<Integer> plusIntercepted(Integer addition){
+        return service.submit(() -> current+=addition);
+    }
+
     @ControllerAction(path = "plusOne")
     public ListenableFuture<Integer> plusone(){
+        return service.submit(() -> current+=1);
+    }
+
+    @ControllerAction(path = "plusOneIntercepted", interceptor = FutureLoggerInterceptor.class)
+    public ListenableFuture<Integer> plusOneIntercepted(){
         return service.submit(() -> current+=1);
     }
 

@@ -18,11 +18,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class ControllerActionEntry{
 
     private final Class<?> parameterType;
     private final List<ControllerParamEntry> actionParams;
+    private Method interceptorMethod;
     private boolean isFuture = false;
     private Method method;
     private Object controller;
@@ -41,6 +43,21 @@ public class ControllerActionEntry{
         }
 
         this.method = method;
+        Class interceptor = an.interceptor();
+        if(interceptor!=null && !Object.class.equals(interceptor)){
+            String methodName = method.getName();
+            try {
+
+                interceptorMethod = interceptor.getDeclaredMethod(methodName,method.getParameterTypes());
+                if (!Modifier.isStatic( interceptorMethod.getModifiers() )) {
+                    throw new RuntimeException("Method '" + methodName + "' should be static");
+                }
+            } catch (NoSuchMethodException e) {
+                String message = "Invalid interceptor. In order to me used our interceptor should contain a method called " + methodName  +  method.getParameterTypes() == null ? "" : " with parmeter types (" + String.join(",",Arrays.stream(method.getParameterTypes()).map(c->c.getName()).collect(Collectors.toList())) + ")";
+                log.error(message);
+                throw new RuntimeException(message);
+            }
+        }
         this.controller = controller;
         if(this.method.getReturnType().isAssignableFrom(ListenableFuture.class)){
             this.isFuture = true;
@@ -197,12 +214,35 @@ public class ControllerActionEntry{
     }
 
     private ListenableFuture<String> invokeMethod(ListeningExecutorService service,ControllerContext ctxt,Object... args) throws IllegalAccessException, InvocationTargetException {
-        return this.invokeMethod(service,ctxt, () -> method.invoke(this.controller, args));
+        return this.invokeMethod(service,ctxt, () -> invokeWithArgs(args));
+    }
+
+    private Object invokeWithArgs(Object[] args) throws IllegalAccessException, InvocationTargetException {
+        if(interceptorMethod != null){
+            try {
+                interceptorMethod.invoke(null, args);
+            }catch (Exception ex){
+                log.error("Problem invoking interceptor method " + interceptorMethod.getName(),ex);
+            }
+        }
+        return method.invoke(this.controller, args);
     }
 
     private ListenableFuture<String> invokeMethod(ListeningExecutorService service,ControllerContext ctxt) throws IllegalAccessException, InvocationTargetException {
-        return this.invokeMethod(service,ctxt, () -> method.invoke(this.controller));
+        return this.invokeMethod(service,ctxt, () -> invokeWithoutArgs());
     }
+
+    private Object invokeWithoutArgs() throws IllegalAccessException, InvocationTargetException {
+        if(interceptorMethod != null){
+            try {
+                interceptorMethod.invoke(null);
+            }catch (Exception ex){
+                log.error("Problem invoking interceptor method " + interceptorMethod.getName(),ex);
+            }
+        }
+        return method.invoke(this.controller);
+    }
+
 
     private ListenableFuture<String> invokeMethod(ListeningExecutorService service, ControllerContext ctxt, Callable<Object> method){
         if(isFuture){
