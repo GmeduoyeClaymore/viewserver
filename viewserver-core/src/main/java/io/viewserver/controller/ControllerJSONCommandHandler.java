@@ -24,7 +24,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
     private ListeningExecutorService asyncExecutor = MoreExecutors.newDirectExecutorService();
     private ListeningExecutorService reactorExecutor;
     public ControllerJSONCommandHandler(ControllerCatalog controllerCatalog) {
-        super(IGenericJSONCommand.class);
+        this(IGenericJSONCommand.class,controllerCatalog, ControllerContext::create);
         this.controllerCatalog = controllerCatalog;
 
     }
