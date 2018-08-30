@@ -53,7 +53,7 @@ public class ControllerActionEntry{
                     throw new RuntimeException("Method '" + methodName + "' should be static");
                 }
             } catch (NoSuchMethodException e) {
-                String message = "Invalid interceptor. In order to me used our interceptor should contain a method called " + methodName  +  method.getParameterTypes() == null ? "" : " with parmeter types (" + String.join(",",Arrays.stream(method.getParameterTypes()).map(c->c.getName()).collect(Collectors.toList())) + ")";
+                String message = ("Invalid interceptor. In order to me used our interceptor should contain a method called \"" + methodName + "\"")  +  (method.getParameterTypes() == null ? "" : " with parmeter types (" + String.join(",",Arrays.stream(method.getParameterTypes()).map(c->c.getName()).collect(Collectors.toList())) + ")");
                 log.error(message);
                 throw new RuntimeException(message);
             }

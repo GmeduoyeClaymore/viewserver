@@ -10,9 +10,9 @@ public class FutureLoggerInterceptor {
         FutureLoggerInterceptor.userId = ControllerContext.get("userId");
         FutureLoggerInterceptor.plusOneIntercepted = true;
     }
-    public static void plusIntercepted(Integer addition){
+    public static void plusIntercepted(){
         FutureLoggerInterceptor.userId = ControllerContext.get("userId");
-        FutureLoggerInterceptor.plusInterceptedAddition = addition;
+        FutureLoggerInterceptor.plusInterceptedAddition = 1;
     }
 
     public static void reset() {
