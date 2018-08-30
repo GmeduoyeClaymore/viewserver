@@ -32,4 +32,13 @@ public class FutureController{
         return service.submit(() -> current+=1);
     }
 
+    @ControllerAction(path = "plusGenericIntercepted", interceptor = GenericFutureLoggerInterceptor.class)
+    public ListenableFuture<Integer> plusGenericIntercepted(Integer addition){
+        return service.submit(() -> current+=addition);
+    }
+    @ControllerAction(path = "plusOneGenericIntercepted", interceptor = GenericFutureLoggerInterceptor.class)
+    public ListenableFuture<Integer> plusOneGenericIntercepted(){
+        return service.submit(() -> current+=1);
+    }
+
 }

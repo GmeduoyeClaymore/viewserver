@@ -20,11 +20,14 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+
+
 public class ControllerActionEntry{
 
     private final Class<?> parameterType;
     private final List<ControllerParamEntry> actionParams;
     private Method interceptorMethod;
+    private boolean isGenericInterceptor;
     private boolean isFuture = false;
     private Method method;
     private Object controller;
@@ -47,13 +50,20 @@ public class ControllerActionEntry{
         if(interceptor!=null && !Object.class.equals(interceptor)){
             String methodName = method.getName();
             try {
-
-                interceptorMethod = interceptor.getDeclaredMethod(methodName,method.getParameterTypes());
+                try{
+                    interceptorMethod = interceptor.getDeclaredMethod("intercept",String.class,Object[].class);
+                    isGenericInterceptor = true;
+                }catch (NoSuchMethodException e){
+                    log.debug("Generic interceptor not found looking for specific");
+                }
+                if(interceptorMethod == null){
+                    interceptorMethod = interceptor.getDeclaredMethod(methodName,method.getParameterTypes());
+                }
                 if (!Modifier.isStatic( interceptorMethod.getModifiers() )) {
                     throw new RuntimeException("Method '" + methodName + "' should be static");
                 }
             } catch (NoSuchMethodException e) {
-                String message = ("Invalid interceptor. In order to me used our interceptor should contain a method called \"" + methodName + "\"")  +  (method.getParameterTypes() == null ? "" : " with parmeter types (" + String.join(",",Arrays.stream(method.getParameterTypes()).map(c->c.getName()).collect(Collectors.toList())) + ")");
+                String message = (an.path() + " has an invalid interceptor. In order to me used our interceptor should contain a method called either intercept(String actionName,Object[] args) \"" + methodName + "\"")  +  (method.getParameterTypes() == null ? "" : "(" + String.join(",",Arrays.stream(method.getParameterTypes()).map(c->c.getName()).collect(Collectors.toList())) + ")");
                 log.error(message);
                 throw new RuntimeException(message);
             }
@@ -218,14 +228,22 @@ public class ControllerActionEntry{
     }
 
     private Object invokeWithArgs(Object[] args) throws IllegalAccessException, InvocationTargetException {
+        tryIntercept(args);
+        return method.invoke(this.controller, args);
+    }
+
+    private void tryIntercept(Object[] args) {
         if(interceptorMethod != null){
             try {
-                interceptorMethod.invoke(null, args);
+                if(isGenericInterceptor){
+                    interceptorMethod.invoke(null,method.getName(),args);
+                }else{
+                    interceptorMethod.invoke(null, args);
+                }
             }catch (Exception ex){
                 log.error("Problem invoking interceptor method " + interceptorMethod.getName(),ex);
             }
         }
-        return method.invoke(this.controller, args);
     }
 
     private ListenableFuture<String> invokeMethod(ListeningExecutorService service,ControllerContext ctxt) throws IllegalAccessException, InvocationTargetException {
@@ -233,13 +251,7 @@ public class ControllerActionEntry{
     }
 
     private Object invokeWithoutArgs() throws IllegalAccessException, InvocationTargetException {
-        if(interceptorMethod != null){
-            try {
-                interceptorMethod.invoke(null);
-            }catch (Exception ex){
-                log.error("Problem invoking interceptor method " + interceptorMethod.getName(),ex);
-            }
-        }
+        tryIntercept(null);
         return method.invoke(this.controller);
     }
 

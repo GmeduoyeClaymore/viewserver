@@ -12,6 +12,7 @@ public class FutureControllerTest {
     @Before
     public void createSut(){
         FutureLoggerInterceptor.reset();
+        GenericFutureLoggerInterceptor.reset();
         sut = new FutureController();
     }
 
@@ -42,6 +43,24 @@ public class FutureControllerTest {
         ControllerRegistration reg = new ControllerRegistration(sut);
         System.out.println(TestControllerUtils.invoke(reg, "plusOneIntercepted", null));
         Assert.assertTrue(FutureLoggerInterceptor.plusOneIntercepted);
+    }
+
+    @Test
+    public  void canInvokeFutureWithParamAndGenericInterceptor() throws NoSuchMethodException {
+        ControllerRegistration reg = new ControllerRegistration(sut);
+        String params = "6";
+        System.out.println(TestControllerUtils.invoke(reg, "plusGenericIntercepted", params));
+        Assert.assertEquals(new Integer(6),GenericFutureLoggerInterceptor.args[0]);
+        Assert.assertEquals("plusGenericIntercepted",GenericFutureLoggerInterceptor.name);
+    }
+
+
+    @Test
+    public  void canInvokeFutureWithGenericInterceptor() throws NoSuchMethodException {
+        ControllerRegistration reg = new ControllerRegistration(sut);
+        System.out.println(TestControllerUtils.invoke(reg, "plusOneGenericIntercepted", null));
+        Assert.assertNull(GenericFutureLoggerInterceptor.args);
+        Assert.assertEquals("plusOneGenericIntercepted",GenericFutureLoggerInterceptor.name);
     }
 }
 
