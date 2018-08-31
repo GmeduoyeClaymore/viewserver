@@ -27,7 +27,7 @@ import java.util.List;
  */
 public abstract class ColumnStorageBase implements ITableStorage {
     private final IColumnFactory columnFactory;
-    private IGrowthPolicy growthPolicy = IGrowthPolicy.MinimumGrowth;
+    private IGrowthPolicy growthPolicy = IGrowthPolicy.DoubleGrowth;
     private int capacity;
     private IColumnWatcher columnWatcher;
 

@@ -107,7 +107,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
         return reactorExecutor;
     }
 
-    private synchronized ListenableFuture<String> invoke(ControllerActionEntry entry, String payload,ControllerContext context) {
+    private ListenableFuture<String> invoke(ControllerActionEntry entry, String payload,ControllerContext context) {
         if(entry.isSynchronous()){
             try(ControllerContext ctxt = ControllerContext.create(context)){
                 return entry.invoke(payload,ctxt, getReactorExecutor());

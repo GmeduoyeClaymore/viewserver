@@ -1,21 +1,23 @@
 package io.viewserver.operators.rx;
 
+import io.viewserver.core.NullableBool;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.operators.IOutput;
-import io.viewserver.schema.column.ColumnFlags;
-import io.viewserver.schema.column.ColumnHolder;
-import io.viewserver.schema.column.ColumnHolderUtils;
-import io.viewserver.schema.column.IRowFlags;
+import io.viewserver.schema.Schema;
+import io.viewserver.schema.column.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.viewserver.core.Utils.fromArray;
 
 public class OperatorEvent{
     private EventType eventType;
-    private Object eventData;
+    private IRecord eventData;
 
-    public OperatorEvent(EventType eventType, Object eventData) {
+    public OperatorEvent(EventType eventType, IRecord eventData) {
         this.eventType = eventType;
         this.eventData = eventData;
     }
@@ -28,15 +30,15 @@ public class OperatorEvent{
         this.eventType = eventType;
     }
 
-    public Object getEventData() {
+    public IRecord getEventData() {
         return eventData;
     }
 
-    public void setEventData(Object eventData) {
+    public void setEventData(IRecord eventData) {
         this.eventData = eventData;
     }
 
-    public static HashMap<String,Object> getRowDetails(IOutput producer, int row, IRowFlags rowFlags) {
+    public static HashMap<String, Object> getRowDetailsMap(IOutput producer, int row, IRowFlags rowFlags) {
         if(producer == null){
             return null;
         }
@@ -59,3 +61,5 @@ public class OperatorEvent{
         return result;
     }
 }
+
+

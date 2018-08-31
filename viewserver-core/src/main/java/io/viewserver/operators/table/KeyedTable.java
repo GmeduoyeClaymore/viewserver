@@ -16,16 +16,17 @@
 
 package io.viewserver.operators.table;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.core.IExecutionContext;
 import io.viewserver.datasource.IRecord;
+import io.viewserver.operators.rx.OperatorRecord;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnFlags;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.util.ViewServerException;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import rx.Observable;
 import rx.Scheduler;
 import rx.subjects.PublishSubject;
@@ -35,8 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static io.viewserver.core.Utils.toArray;
-import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
 
 /**
  * Created by bemm on 23/09/2014.
@@ -78,12 +77,12 @@ public class KeyedTable extends Table {
         super.initialise(capacity);
     }
 
-    public HashMap<String, Object> getRowObject(TableKey key){
+    public IRecord getRowObject(TableKey key){
         int rowId = this.getRow(key);
         if(rowId == -1){
             return null;
         }
-        return getRowDetails(this.getOutput(), rowId, null);
+        return new OperatorRecord(this.getOutput().getSchema()).withRow(rowId);
     }
 
     @Override

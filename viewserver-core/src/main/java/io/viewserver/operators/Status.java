@@ -50,7 +50,7 @@ public enum Status {
                 return SchemaReset;
             }
             default: {
-                throw new IllegalArgumentException("Invalid status id");
+                throw new IllegalArgumentException("Invalid status id " + id);
             }
         }
     }

@@ -25,6 +25,7 @@ import com.google.common.util.concurrent.*;
 import io.viewserver.util.dynamic.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rx.schedulers.Schedulers;
 
 import java.util.Comparator;
 import java.util.concurrent.*;
@@ -65,7 +66,7 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
         loopTasksCopy = new PriorityBlockingQueue<>(8, getLoopTaskComparator());
 
         executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadScheduledExecutor(r -> runThread = new Thread(r, "reactor-" + name)));
-        controllerExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(5,new NamedThreadFactory("controllers")));
+        controllerExecutor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(50,new NamedThreadFactory("controllers-" + name)));
 
         commandWheel = new SimpleReactorCommandWheel();
         commandWheel.registerReactorCommandListener(this);
@@ -338,13 +339,13 @@ public class EventLoopReactor implements IReactor, IReactorCommandListener, INet
     @Override
     public void onNetworkMessage(IChannel channel, IMessage msg) {
         if(msg.getType().equals(IMessage.Type.Command) && "genericJSON".equals(msg.getCommand().getCommand())){
-            controllerExecutor.submit(() -> network.waitForSession(channel).subscribe(c-> {
+            network.waitForSession(channel).subscribeOn(Schedulers.from(controllerExecutor)).subscribe(c-> {
                 network.receiveCommand(msg.getCommand(),c);
                 EventLoopReactor.this.wakeUp();
 
             }, err -> {
                 log.error("Failed to handle controller message:\n\r " + msg, err);
-            }));
+            });
         }else{
             executor.submit(() -> network.waitForSession(channel).subscribe(
                     c-> {

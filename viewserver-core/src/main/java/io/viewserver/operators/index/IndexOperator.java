@@ -648,6 +648,8 @@ public class IndexOperator extends ConfigurableOperatorBase<IIndexConfig> {
         public void applyChanges() {
             rowsForAdding.forEachEntry(this::applyAdds);
             rowsForRemoval.forEachEntry(this::applyRemoves);
+            rowsForRemoval.clear();
+            rowsForAdding.clear();
         }
 
         private boolean applyAdds(int value, TIntArrayList adds) {

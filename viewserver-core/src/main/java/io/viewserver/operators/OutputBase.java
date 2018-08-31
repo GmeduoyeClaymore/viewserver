@@ -16,13 +16,13 @@
 
 package io.viewserver.operators;
 
-import io.viewserver.Constants;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.core.ExecutionContext;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
+import io.viewserver.operators.rx.OperatorRecord;
 import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.IRowFlags;
@@ -34,12 +34,10 @@ import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
-import rx.subjects.ReplaySubject;
 
-import java.util.*;
-
-import static io.viewserver.core.Utils.fromArray;
-import static io.viewserver.operators.rx.OperatorEvent.getRowDetails;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by bemm on 26/09/2014.
@@ -50,6 +48,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     private final IOperator owner;
     private final ActiveRowTracker rowTracker;
     private final ColumnHolderFactory columnHolderFactory;
+    private final OperatorRecord record;
     private Schema schema;
     private IChangeQueue changeQueue;
     protected TableMetaData metaData;
@@ -69,6 +68,13 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         this.metaData = new TableMetaData();
         owner.getExecutionContext().getMetadataRegistry().registerOutput(this);
         this.subject = PublishSubject.create();
+        this.record = new OperatorRecord(this.schema);
+    }
+
+    public void setSchema(Schema schema) {
+        this.schema = schema;
+        this.record.withSchema(schema);
+        this.schema.setOwner(this);
     }
     @Override
     public Observable<OperatorEvent>  observable(String... observedColumns){
@@ -99,8 +105,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
                         subscription.unsubscribe();
                     });
                     while (rows.moveNext()) {
-                        HashMap<String, Object> rowDetails = getRowDetails(OutputBase.this.getProducer(), rows.getRowId(), flags);
-                        subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, rowDetails));
+                        subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, OutputBase.this.record.withRow(rows.getRowId())));
                     }
                 } catch (Exception ex) {
                     subscriber.onError(ex);
@@ -145,7 +150,8 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         getCurrentChanges().handleAdd(row);
         if(subject.hasObservers()){
             log.debug("RX Subject Handling Add - " +row);
-            subject.onNext(new OperatorEvent(EventType.ROW_ADD,getRowDetails(getProducer(),row,null)));
+
+            subject.onNext(new OperatorEvent(EventType.ROW_ADD, OutputBase.this.record.withRow(row)));
         }
     }
 
@@ -163,12 +169,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         getCurrentChanges().handleUpdate(row);
         if(subject.hasObservers()){
             log.debug("RX Subject Handling UPDATE - " +row);
-            subject.onNext(new OperatorEvent(EventType.ROW_UPDATE,getRowDetails(getProducer(), row, new IRowFlags() {
-                @Override
-                public boolean isDirty(int columnId) {
-                    return getCurrentChanges().isDirty(row,columnId);
-                }
-            })));
+            subject.onNext(new OperatorEvent(EventType.ROW_UPDATE, OutputBase.this.record.withRow(row)));
         }
     }
 
@@ -181,7 +182,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
         getCurrentChanges().handleRemove(row);
         if(subject.hasObservers()){
             log.debug("RX Subject Handling REMOVE - " +row);
-            subject.onNext(new OperatorEvent(EventType.ROW_REMOVE,getRowDetails(getProducer(),row,null)));
+            subject.onNext(new OperatorEvent(EventType.ROW_REMOVE, OutputBase.this.record.withRow(row)));
         }
     }
 

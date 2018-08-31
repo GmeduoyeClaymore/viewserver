@@ -19,11 +19,18 @@ package io.viewserver.operators.table;
 import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.changequeue.ChangeQueue;
+import io.viewserver.collections.LongIterator;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.core.NumberUtils;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.Schema;
 import gnu.trove.list.array.TIntArrayList;
+import io.viewserver.schema.column.ColumnHolder;
+import io.viewserver.schema.column.ColumnHolderUtils;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class Table extends InputOperatorBase implements IInputOperator, ITable {
     private Output output;
@@ -54,6 +61,14 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
         freeRowIds.clear();
     }
 
+    public void removeAllRows() {
+        IRowSequence allRows = getOutput().getAllRows();
+        while (allRows.moveNext()) {
+            output.handleRemove(allRows.getRowId());
+        }
+        allRows.reset();
+    }
+
     public ITableStorage getStorage() {
         return storage;
     }
@@ -71,7 +86,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
             throw new RuntimeException("Table already initialised");
         }
 
-        storage.initialise(capacity, output.schema, output.getCurrentChanges());
+        storage.initialise(capacity, output.getSchema(), output.getCurrentChanges());
 
         initialised = true;
         register();
@@ -84,7 +99,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     @Override
     public int addRow(ITableRowUpdater updater) {
         int row = getFreeRowId();
-        updater.ensureCapacity(storage,row, output.schema);
+        updater.ensureCapacity(storage,row, output.getSchema());
         tableRow.setRowId(row);
         updater.setValues(tableRow);
         updater.processAdd(output,row);
@@ -119,21 +134,11 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
     }
 
     private class Output extends OutputBase {
-        private Schema schema;
 
         private Output(String name, IOperator owner) {
             super(name, owner);
         }
 
-        private void setSchema(Schema schema) {
-            this.schema = schema;
-            this.schema.setOwner(this);
-        }
-
-        @Override
-        public Schema getSchema() {
-            return schema;
-        }
 
         @Override
         public void clearData() {

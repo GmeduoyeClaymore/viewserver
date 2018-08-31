@@ -128,7 +128,7 @@ public class MongoRecordLoaderTest {
         getTableOutput().timeout(10, TimeUnit.SECONDS).subscribe(
                 rec -> {
                     System.out.println(rec);
-                    name.set((String) ((HashMap)rec.getEventData()).get("name"));
+                    name.set((String) rec.getEventData().getString("name"));
                     latch.countDown();
                 },
                 err -> {
