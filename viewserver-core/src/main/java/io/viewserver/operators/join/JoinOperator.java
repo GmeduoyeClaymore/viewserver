@@ -134,7 +134,7 @@ public class JoinOperator extends ConfigurableOperatorBase<IJoinConfig> {
     }
 
     @Override
-    protected void onDataClear() {
+    public void onDataClear() {
         super.onDataClear();
 
         outRows.clear();

@@ -97,7 +97,8 @@ public class BasicServer {
                     List<Observable<Object>> observables = new ArrayList<>();
                     List<String> componentsByName = new ArrayList<>();
 
-                    this.componentFactories.forEach(c-> {
+                    List<Callable<IServerComponent>> componentFactories = new ArrayList<>(this.componentFactories);
+                    componentFactories.forEach(c-> {
                         IServerComponent component = c.call();
                         components.add(component);
                         String name = component.getClass().getName();

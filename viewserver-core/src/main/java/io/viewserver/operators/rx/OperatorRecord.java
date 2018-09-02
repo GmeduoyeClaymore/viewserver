@@ -109,7 +109,7 @@ public class OperatorRecord implements IRecord {
 
     @Override
     public boolean hasValue(String columnName) {
-        return getValue(columnName) != null;
+        return schema.getColumnHolder(columnName) != null;
     }
 
     public void withSchema(Schema schema) {

@@ -59,14 +59,7 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
         super.onDataClear();
         nextRowId = 0;
         freeRowIds.clear();
-    }
-
-    public void removeAllRows() {
-        IRowSequence allRows = getOutput().getAllRows();
-        while (allRows.moveNext()) {
-            output.handleRemove(allRows.getRowId());
-        }
-        allRows.reset();
+        getOutput().getRowTracker().clear();
     }
 
     public ITableStorage getStorage() {

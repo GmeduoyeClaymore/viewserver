@@ -23,4 +23,5 @@ public interface IActiveRowTracker {
     int getRowCount();
 
     IRowSequence getAllRows();
+
 }
