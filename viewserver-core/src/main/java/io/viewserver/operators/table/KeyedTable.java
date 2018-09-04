@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static io.viewserver.operators.rx.OperatorEvent.getRowDetailsMap;
+
 
 /**
  * Created by bemm on 23/09/2014.
@@ -77,13 +79,22 @@ public class KeyedTable extends Table {
         super.initialise(capacity);
     }
 
-    public IRecord getRowObject(TableKey key){
+    public IRecord getRowObjectRecord(TableKey key){
         int rowId = this.getRow(key);
         if(rowId == -1){
             return null;
         }
         return new OperatorRecord(this.getOutput().getSchema()).withRow(rowId);
     }
+
+    public HashMap<String, Object> getRowObject(TableKey key){
+        int rowId = this.getRow(key);
+        if(rowId == -1){
+            return null;
+        }
+        return getRowDetailsMap(this.getOutput(), rowId, null);
+    }
+
 
     @Override
     public int addRow(ITableRowUpdater updater) {

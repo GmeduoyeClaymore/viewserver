@@ -6,6 +6,7 @@ import io.viewserver.schema.Schema;
 import io.viewserver.schema.column.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,6 +101,10 @@ public class OperatorRecord implements IRecord {
             return null;
         }
         return new Date(aLong);
+    }
+
+    public HashMap toMap(){
+        return OperatorEvent.getRowDetailsMap(schema.getOwner(),this.row,null);
     }
 
     @Override

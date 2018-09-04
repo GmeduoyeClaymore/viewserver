@@ -38,6 +38,7 @@ public class OperatorEvent{
         this.eventData = eventData;
     }
 
+
     public static HashMap<String, Object> getRowDetailsMap(IOutput producer, int row, IRowFlags rowFlags) {
         if(producer == null){
             return null;
