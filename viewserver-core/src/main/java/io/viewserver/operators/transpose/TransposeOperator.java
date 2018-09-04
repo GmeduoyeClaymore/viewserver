@@ -20,11 +20,15 @@ import io.viewserver.Constants;
 import io.viewserver.catalog.ICatalog;
 import io.viewserver.collections.IntHashSet;
 import io.viewserver.core.IExecutionContext;
+import io.viewserver.datasource.Cardinality;
+import io.viewserver.datasource.ContentType;
+import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.operators.*;
 import io.viewserver.schema.ITableStorage;
 import io.viewserver.schema.column.*;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TIntIntHashMap;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +53,7 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
     private IntHashSet keys;
     private int[] keyComponents;
 
-    public TransposeOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage) {
+    public TransposeOperator(String name, IExecutionContext executionContext, ICatalog catalog, ITableStorage tableStorage, ITransposeConfig config) {
         super(name, executionContext, catalog);
         this.tableStorage = tableStorage;
 
@@ -63,6 +67,9 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
 
         tableStorage.initialise(128, output.getSchema(), output.getCurrentChanges());
         register();
+        if(config != null){
+            processConfig(config);
+        }
     }
 
     @Override
@@ -131,6 +138,9 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
             groupKey = getKeyComponent(keyColumns[0], row, usePreviousValues);
         } else {
             for (int i = 0; i < keyColumns.length; i++) {
+                if(keyColumns[i] == null){
+                    throw new RuntimeException("Cannot get key as cannot find column with name " + keyColumnNames.get(i) + " in schema " );
+                }
                 keyComponents[i] = getKeyComponent(keyColumns[i], row, usePreviousValues);
             }
             groupKey = Arrays.hashCode(keyComponents);
@@ -206,8 +216,17 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
 
             // otherwise, it's a pivoted column
             for (int i = 0; i < pivotValues.length; i++) {
-                String name = pivotColumnName + pivotValues[i] + "_" + columnHolder.getName();
-                ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(name, columnHolder, i);
+                String name = pivotColumnName + "_" + pivotValues[i] + "_" + columnHolder.getName();
+                String title = name;
+                DimensionMapper dimensionMapper = TransposeOperator.this.getExecutionContext().getDimensionMapper();
+                ContentType contentType = dimensionMapper.getContentType("global", pivotColumnName);
+                Cardinality cardinality = dimensionMapper.getCardinality("global", pivotColumnName);
+                if(contentType != null && cardinality != null){
+                    if(contentType.equals(ContentType.String) && (cardinality.equals(Cardinality.Short) || cardinality.equals(Cardinality.Int))){
+                        title = pivotColumnName + "_" + dimensionMapper.lookupString("global",pivotColumnName,(Integer)ConvertUtils.convert(pivotValues[i],Integer.class))+ "_" + columnHolder.getName();
+                    }
+                }
+                ColumnHolder outHolder = output.getColumnHolderFactory().createColumnHolder(title, columnHolder, i);
                 output.mapColumn(columnHolder, outHolder, getProducer().getCurrentChanges());
             }
         }
@@ -218,14 +237,9 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
 
         @Override
         protected void onRowAdd(int row) {
-            Object pivotValue = ColumnHolderUtils.getValue(pivotColumn, row);
-            int pivotValueIndex = -1;
-            for (int i = 0; i < pivotValues.length; i++) {
-                if (pivotValues[i].equals(pivotValue)) {
-                    pivotValueIndex = i;
-                    break;
-                }
-            }
+
+            int pivotValueIndex = getPivotValueIndex(row);
+
 
             // ignore rows with bad pivot values
             if (pivotValueIndex == -1) {
@@ -272,12 +286,32 @@ public class TransposeOperator extends ConfigurableOperatorBase<ITransposeConfig
             outRows[pivotValueIndex].put(key, row);
         }
 
+        private int getPivotValueIndex(int row){
+            Object pivotValue = ColumnHolderUtils.getValue(pivotColumn, row);
+            int pivotValueIndex = -1;
+            for (int i = 0; i < pivotValues.length; i++) {
+                if (pivotValue != null && pivotValues[i].equals(ConvertUtils.convert(pivotValue,pivotValues[i].getClass()))) {
+                    pivotValueIndex = i;
+                    break;
+                }
+            }
+            return pivotValueIndex;
+        }
+
         @Override
         protected void onRowUpdate(int row, IRowFlags rowFlags) {
             // ASSUMPTION!
             // this operator will generally have a GroupByOperator (or similar) plugged in to it
             // it is somewhat unlikely that the values in either the key columns or the pivot column will change
             // therefore, we don't deal with that
+
+            int pivotValueIndex = getPivotValueIndex(row);
+
+            // ignore rows with bad pivot values
+            if (pivotValueIndex == -1) {
+                return;
+            }
+
             int key = getKey(row, false);
             output.handleUpdate(key);
         }

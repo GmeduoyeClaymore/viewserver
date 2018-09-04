@@ -59,7 +59,6 @@ public class Table extends InputOperatorBase implements IInputOperator, ITable {
         super.onDataClear();
         nextRowId = 0;
         freeRowIds.clear();
-        getOutput().getRowTracker().clear();
     }
 
     public ITableStorage getStorage() {

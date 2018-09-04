@@ -53,7 +53,7 @@ public class TestTransposeOperatorFactory implements ITestOperatorFactory{
 
     @Override
     public IOperator create(String operatorName, Map<String, Object> context) {
-        TransposeOperator transposeOperator = new TransposeOperator(operatorName, executionContext, catalog,tableStorage);
+        TransposeOperator transposeOperator = new TransposeOperator(operatorName, executionContext, catalog,tableStorage, null);
         configure(operatorName,context);
         return transposeOperator;
     }

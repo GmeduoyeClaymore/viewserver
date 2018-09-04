@@ -107,6 +107,7 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
                     while (rows.moveNext()) {
                         subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, OutputBase.this.record.withRow(rows.getRowId())));
                     }
+                    subscriber.onNext(new OperatorEvent(EventType.SNAPSHOT_COMPLETE, null));
                 } catch (Exception ex) {
                     subscriber.onError(ex);
                 }

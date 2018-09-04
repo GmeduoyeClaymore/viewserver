@@ -79,9 +79,7 @@ public class TransposeOperatorTest {
                 row.setInt("hitRate", 3);
             }
         });
-
-        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024));
-        transpose.configure(new ITransposeConfig() {
+        ITransposeConfig market = new ITransposeConfig() {
             @Override
             public List<String> getKeyColumns() {
                 return Arrays.asList("market");
@@ -94,9 +92,11 @@ public class TransposeOperatorTest {
 
             @Override
             public Object[] getPivotValues() {
-                return new Object[] { 1, 2};
+                return new Object[]{1, 2};
             }
-        }, new CommandResult());
+        };
+        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024),market);
+        transpose.configure(market, new CommandResult());
         table.getOutput().plugIn(transpose.getInput());
 
         transpose.getOutput().plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
@@ -144,8 +144,7 @@ public class TransposeOperatorTest {
             }
         });
 
-        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024));
-        transpose.configure(new ITransposeConfig() {
+        ITransposeConfig market = new ITransposeConfig() {
             @Override
             public List<String> getKeyColumns() {
                 return Arrays.asList("market");
@@ -158,9 +157,11 @@ public class TransposeOperatorTest {
 
             @Override
             public Object[] getPivotValues() {
-                return new Object[] { 1, 2};
+                return new Object[]{1, 2};
             }
-        }, new CommandResult());
+        };
+        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024), market);
+        transpose.configure(market, new CommandResult());
         table.getOutput().plugIn(transpose.getInput());
 
         transpose.getOutput().plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());
@@ -228,8 +229,7 @@ public class TransposeOperatorTest {
         }, new CommandResult());
         table.getOutput().plugIn(calc.getInput());
 
-        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024));
-        transpose.configure(new ITransposeConfig() {
+        ITransposeConfig market = new ITransposeConfig() {
             @Override
             public List<String> getKeyColumns() {
                 return Arrays.asList("market");
@@ -242,9 +242,11 @@ public class TransposeOperatorTest {
 
             @Override
             public Object[] getPivotValues() {
-                return new Object[] { 1, 2};
+                return new Object[]{1, 2};
             }
-        }, new CommandResult());
+        };
+        TransposeOperator transpose = new TransposeOperator("transpose", executionContext, catalog, new ChunkedColumnStorage(1024), market);
+        transpose.configure(market, new CommandResult());
         calc.getOutput().plugIn(transpose.getInput());
 
         transpose.getOutput().plugIn(new ChangeRecorder("rec", executionContext, catalog).getInput());

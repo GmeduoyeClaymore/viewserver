@@ -49,6 +49,24 @@ public enum Status {
             case 2: {
                 return SchemaReset;
             }
+            case 3: {
+                return SchemaError;
+            }
+            case 4: {
+                return SchemaErrorCleared;
+            }
+            case 5: {
+                return ConfigError;
+            }
+            case 6: {
+                return ConfigErrorCleared;
+            }
+            case 7: {
+                return DataError;
+            }
+            case 8: {
+                return DataErrorCleared;
+            }
             default: {
                 throw new IllegalArgumentException("Invalid status id " + id);
             }

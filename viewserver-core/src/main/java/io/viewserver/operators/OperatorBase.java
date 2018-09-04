@@ -369,7 +369,7 @@ public abstract class OperatorBase implements IOperator {
         statuses.add(status);
     }
 
-    private void clearStatus(Status status) {
+    protected void clearStatus(Status status) {
         statuses.remove(status);
     }
 
