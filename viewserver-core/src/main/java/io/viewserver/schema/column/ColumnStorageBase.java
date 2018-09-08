@@ -27,7 +27,7 @@ import java.util.List;
  */
 public abstract class ColumnStorageBase implements ITableStorage {
     private final IColumnFactory columnFactory;
-    private IGrowthPolicy growthPolicy = IGrowthPolicy.DoubleGrowth;
+    public static IGrowthPolicy GrowthPolicy = IGrowthPolicy.TenPercentGrowth   ;
     private int capacity;
     private IColumnWatcher columnWatcher;
 
@@ -71,7 +71,7 @@ public abstract class ColumnStorageBase implements ITableStorage {
     @Override
     public void ensureCapacity(int requiredCapacity, Schema schema) {
         if (requiresGrowth(requiredCapacity)) {
-            capacity = growthPolicy.getNewSize(capacity, requiredCapacity);
+            capacity = GrowthPolicy.getNewSize(capacity, requiredCapacity);
             List<ColumnHolder> columnHolders = schema.getColumnHolders();
             int count = columnHolders.size();
             for (int i = 0; i < count; i++) {

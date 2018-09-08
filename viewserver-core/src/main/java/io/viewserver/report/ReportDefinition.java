@@ -18,6 +18,7 @@ package io.viewserver.report;
 
 import io.viewserver.execution.ReportContext;
 import io.viewserver.execution.nodes.GroupByNode;
+import io.viewserver.execution.nodes.IGraphNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by bemm on 31/10/2014.
- */
 public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> implements IParameterisedGraphDefinition, ICalculatingGraphDefinition, IMeasuringGraphDefinition {
     private static final Logger log = LoggerFactory.getLogger(ReportDefinition.class);
     private String id;
@@ -37,6 +35,7 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> impl
     private final Map<String, DefaultDimensionValues> defaultDimensionValues = new LinkedHashMap<>();
     private Map<String, MeasureDefinition> measures = new LinkedHashMap<>();
     private String dataSource;
+    private IGraphNodeRetriever graphNodeRetriever;
 
     public ReportDefinition() {
     }
@@ -44,6 +43,14 @@ public class ReportDefinition extends GraphDefinitionBase<ReportDefinition> impl
     public ReportDefinition(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public IGraphNodeRetriever getGraphNodeRetriever() {
+        return graphNodeRetriever;
+    }
+
+    public void setGraphNodeRetriever(IGraphNodeRetriever graphNodeRetriever) {
+        this.graphNodeRetriever = graphNodeRetriever;
     }
 
     @Override

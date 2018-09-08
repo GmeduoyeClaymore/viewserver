@@ -17,6 +17,7 @@
 package io.viewserver.operators;
 
 import io.viewserver.changequeue.IChangeQueue;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.OperatorEvent;
 import io.viewserver.schema.Schema;
@@ -29,6 +30,9 @@ import rx.Observable;
 public interface IOutput extends IActiveRowTracker {
     //be careful when using this it will start spamming alot of objects if you subscribe
     Observable<OperatorEvent> observable(String... observedcolumns);
+
+    Iterable<IRecord> snapshot();
+
     Observable<OperatorEvent> observable(IRowFlags flags);
     Observable<OperatorEvent> observable();
 

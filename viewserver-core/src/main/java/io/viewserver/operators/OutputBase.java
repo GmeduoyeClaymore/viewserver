@@ -19,6 +19,7 @@ package io.viewserver.operators;
 import io.viewserver.changequeue.ChangeQueue;
 import io.viewserver.changequeue.IChangeQueue;
 import io.viewserver.core.ExecutionContext;
+import io.viewserver.datasource.IRecord;
 import io.viewserver.execution.TableMetaData;
 import io.viewserver.operators.rx.EventType;
 import io.viewserver.operators.rx.OperatorEvent;
@@ -37,6 +38,7 @@ import rx.subjects.PublishSubject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -92,6 +94,27 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
     }
 
     @Override
+    public Iterable<IRecord> snapshot(){
+        IRowSequence rows = (OutputBase.this.getAllRows());
+        return () -> {
+            ExecutionContext.AssertUpdateThread();
+            rows.reset();
+            return new Iterator<IRecord>() {
+
+                @Override
+                public boolean hasNext() {
+                    return rows.moveNext();
+                }
+
+                @Override
+                public IRecord next() {
+                    return OutputBase.this.record.withRow(rows.getRowId());
+                }
+            };
+        };
+    }
+
+    @Override
     //be careful when using this it will start spamming alot of objects if you subscribe
     public Observable<OperatorEvent>  observable(IRowFlags flags){
         Observable<OperatorEvent> snapshot =  Observable.create(new Action1<Emitter<OperatorEvent>>() {
@@ -99,13 +122,22 @@ public abstract class OutputBase implements IOutput, IActiveRowTracker {
             @Override
             public void call(Emitter<OperatorEvent> subscriber) {
                 try {
+                    Object syncRoot = new Object();
                     IRowSequence rows = (OutputBase.this.getAllRows());
-                    this.subscription = subject.subscribe(el -> subscriber.onNext(el), err -> subscriber.onError(err), () ->{
+                    this.subscription = subject.subscribe(el ->
+                            {
+                                synchronized (syncRoot) {
+                                    subscriber.onNext(el);
+                                }
+                            }
+                            , err -> subscriber.onError(err), () ->{
                         subscriber.onCompleted();
                         subscription.unsubscribe();
                     });
-                    while (rows.moveNext()) {
-                        subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, OutputBase.this.record.withRow(rows.getRowId())));
+                    synchronized (syncRoot) {
+                        while (rows.moveNext()) {
+                            subscriber.onNext(new OperatorEvent(EventType.ROW_ADD, OutputBase.this.record.withRow(rows.getRowId())));
+                        }
                     }
                     subscriber.onNext(new OperatorEvent(EventType.SNAPSHOT_COMPLETE, null));
                 } catch (Exception ex) {

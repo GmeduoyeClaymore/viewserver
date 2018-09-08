@@ -24,10 +24,12 @@ import io.viewserver.datasource.ContentType;
 import io.viewserver.operators.IOperator;
 import io.viewserver.operators.InputBase;
 import io.viewserver.operators.OperatorBase;
+import io.viewserver.operators.Status;
 import io.viewserver.schema.column.ColumnHolder;
 import io.viewserver.schema.column.ColumnHolderUtils;
 import io.viewserver.schema.column.IRowFlags;
 import cucumber.api.DataTable;
+import rx.subjects.ReplaySubject;
 
 import java.util.*;
 
@@ -41,6 +43,7 @@ public class ValidationOperator extends OperatorBase{
     private HashMap<Integer,ValidationOperatorRow> rowMapSoWeKnowValuesOnARemovedRow = new HashMap<>();
     private List<ValidationOperatorColumn> validationColumns = new ArrayList<>();
     private List<ValidationControlEvent> validationControlEvents = new ArrayList<>();
+    private ReplaySubject<Status> operatorStatuses;
 
     private boolean validateOnCommit = true;
     private HashMap<String,ValidationOperatorColumn> columnsByName;
@@ -55,11 +58,20 @@ public class ValidationOperator extends OperatorBase{
         super(name, executionContext, catalog);
         input = new Input(Constants.IN, this);
         columnsByName = new HashMap<>();
+        operatorStatuses = ReplaySubject.create();
         addInput(input);
         register();
     }
 
+    public rx.Observable<Status> getOperatorStatuses() {
+        return operatorStatuses;
+    }
 
+    @Override
+    protected void setStatus(Status status) {
+        super.setStatus(status);
+        operatorStatuses.onNext(status);
+    }
 
     public void setValidateOnCommit(boolean validateOnCommit) {
         this.validateOnCommit = validateOnCommit;

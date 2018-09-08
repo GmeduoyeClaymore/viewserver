@@ -209,6 +209,21 @@ public class _KeyName_HashSet extends _KeyName_Hash {
         return compactIndex;
     }
 
+    public int replace_KeyName_(int compactIndex,_KeyType_ val ) {
+
+        if(compactIndex < 0){
+            throw new RuntimeException("Index must must not be less than zero");
+        }
+
+        insertKey(val, compactIndex);
+
+        _compactSet[compactIndex] = val;
+
+        postInsertHook( consumeFreeSlot );
+
+        return compactIndex;
+    }
+
     @Override
     public int index(_KeyType_ val) {
         int index = super.index(val);

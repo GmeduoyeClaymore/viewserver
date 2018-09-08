@@ -106,11 +106,23 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
                 break;
             }
             case Int: {
-                id = ((IColumnInt)sourceHolder).getPreviousInt(row);
-                if (metadata != null) {
-                    if (id == ((ColumnMetadataInt)metadata).getNullValue()) {
-                        id = -1;
+                if(sourceHolder instanceof IColumnInt){
+                    id = ((IColumnInt)sourceHolder).getPreviousInt(row);
+                    if (metadata != null) {
+                        if (id == ((ColumnMetadataInt)metadata).getNullValue()) {
+                            id = -1;
+                        }
                     }
+                }else if(sourceHolder instanceof IColumnShort){
+                    id = ((IColumnShort)sourceHolder).getPreviousShort(row);
+                    if (metadata != null) {
+                        if (id == ((ColumnMetadataShort)metadata).getNullValue()) {
+                            id = -1;
+                        }
+                    }
+                }
+                else{
+                    throw new RuntimeException(String.format("Could not unemum column %s as its type %s is neither int nor short",sourceHolder.getName(),sourceHolder.getClass()));
                 }
                 break;
             }
@@ -145,11 +157,23 @@ public class UnEnumColumn_KeyName_ implements IColumn_KeyName_, IWritableColumn,
                 break;
             }
             case Int: {
-                id = ((IColumnInt)sourceHolder).getInt(row);
-                if (metadata != null) {
-                    if (id == ((ColumnMetadataInt)metadata).getNullValue()) {
-                        id = -1;
+                if(sourceHolder instanceof IColumnInt){
+                    id = ((IColumnInt)sourceHolder).getInt(row);
+                    if (metadata != null) {
+                        if (id == ((ColumnMetadataInt)metadata).getNullValue()) {
+                            id = -1;
+                        }
                     }
+                }else if(sourceHolder instanceof IColumnShort){
+                    id = ((IColumnShort)sourceHolder).getShort(row);
+                    if (metadata != null) {
+                        if (id == ((ColumnMetadataShort)metadata).getNullValue()) {
+                            id = -1;
+                        }
+                    }
+                }
+                else{
+                    throw new RuntimeException(String.format("Could not unemum column %s as its type %s is neither int nor short",sourceHolder.getName(),sourceHolder.getClass()));
                 }
                 break;
             }

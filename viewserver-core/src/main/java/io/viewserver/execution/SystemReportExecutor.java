@@ -27,8 +27,11 @@ import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.context.IExecutionPlanContext;
 import io.viewserver.execution.context.ReportContextExecutionPlanContext;
 import io.viewserver.execution.context.ReportExecutionPlanContext;
+import io.viewserver.execution.nodes.IGraphNode;
 import io.viewserver.execution.plan.IExecutionPlan;
 import io.viewserver.execution.plan.SystemReportExecutionPlan;
+import io.viewserver.report.IGraphDefinition;
+import io.viewserver.report.IGraphNodeRetriever;
 import io.viewserver.report.ReportDefinition;
 import io.viewserver.report.ReportRegistry;
 import io.viewserver.util.ViewServerException;
@@ -87,7 +90,26 @@ public class SystemReportExecutor {
             reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
         }
         reportExecutionPlanContext.setReportContext(reportContext);
-        reportExecutionPlanContext.setGraphDefinition(reportDefinition);
+        reportExecutionPlanContext.setGraphDefinition(new IGraphDefinition() {
+            @Override
+            public List<IGraphNode> getNodes() {
+                IGraphNodeRetriever retriever = reportDefinition.getGraphNodeRetriever();
+                if(retriever == null){
+                    return reportDefinition.getNodes();
+                }
+                return retriever.transform(reportDefinition,reportContext);
+            }
+
+            @Override
+            public String getOutput() {
+                return reportDefinition.getOutput();
+            }
+
+            @Override
+            public void setOutput(String output) {
+                reportDefinition.setOutput(output);
+            }
+        });
         reportExecutionPlanContext.setDataSource(dataSource);
 
         return reportExecutionPlanContext;

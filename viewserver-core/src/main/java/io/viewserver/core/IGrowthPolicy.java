@@ -24,6 +24,7 @@ public interface IGrowthPolicy {
 
     public static final IGrowthPolicy DoubleGrowth = new DoubleGrowthPolicy();
     public static final IGrowthPolicy MinimumGrowth = new MinimumGrowthPolicy();
+    public static final IGrowthPolicy TenPercentGrowth = new TenPercentGrowthPolicy();
 
     static final class DoubleGrowthPolicy implements IGrowthPolicy {
         @Override
@@ -33,6 +34,14 @@ public interface IGrowthPolicy {
                 newSize <<= 1;
             }
             return newSize;
+        }
+    }
+
+
+    static final class TenPercentGrowthPolicy implements IGrowthPolicy {
+        @Override
+        public int getNewSize(int currentSize, int minimumNewSize) {
+            return minimumNewSize + (currentSize / 10);
         }
     }
 

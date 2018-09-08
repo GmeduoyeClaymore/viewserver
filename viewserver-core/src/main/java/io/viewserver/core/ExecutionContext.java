@@ -61,10 +61,7 @@ public class ExecutionContext implements IExecutionContext{
     public static boolean blockThreadAssertion = false;
 
     public static void AssertUpdateThread(){
-        if(true){
-            return;
-        }
-        if(!Thread.currentThread().getName().startsWith("reactor-")){
+        if(false && !Thread.currentThread().getName().startsWith("reactor-")){
             throw new RuntimeException(String.format("This code is being called from a non reactor thread this is wrong \"%s\"",Thread.currentThread().getName()));
         }
     }

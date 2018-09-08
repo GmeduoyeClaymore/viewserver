@@ -164,9 +164,6 @@ public class DeserialiserOperator extends InputOperatorBase implements IDataHand
                     doResetData();
                     break;
                 }
-                default: {
-                    throw new IllegalArgumentException("Unknown status " + status.getStatusId());
-                }
             }
             output.getCurrentChanges().handleStatus(Status.fromDto(status.getStatusId()));
         }

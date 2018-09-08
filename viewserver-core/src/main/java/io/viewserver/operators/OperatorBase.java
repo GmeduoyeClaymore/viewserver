@@ -274,9 +274,10 @@ public abstract class OperatorBase implements IOperator {
         return true;
     }
 
-    private void processStatuses() {
-        statuses.clear();
-
+    protected void processStatuses() {
+        if(inputs.size() > 0){
+            statuses.clear();
+        }
         int inputCount = inputs.size();
         for (int i = 0; i < inputCount; i++) {
             processStatuses(inputs.get(i));
@@ -365,7 +366,7 @@ public abstract class OperatorBase implements IOperator {
         }
     }
 
-    private void setStatus(Status status) {
+    protected void setStatus(Status status) {
         statuses.add(status);
     }
 
@@ -373,7 +374,7 @@ public abstract class OperatorBase implements IOperator {
         statuses.remove(status);
     }
 
-    private boolean hasStatus(Status status) {
+    protected boolean hasStatus(Status status) {
         return statuses.contains(status);
     }
 
@@ -381,11 +382,11 @@ public abstract class OperatorBase implements IOperator {
         errors.add(error);
     }
 
-    private void clearError(Error error) {
+    protected void clearError(Error error) {
         errors.remove(error);
     }
 
-    private boolean hasError(Error error) {
+    protected boolean hasError(Error error) {
         return errors.contains(error);
     }
 
