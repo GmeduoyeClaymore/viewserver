@@ -51,7 +51,7 @@ public class ControllerContext implements AutoCloseable{
                         ControllerContext.create(context);
                         command.run();
                     }finally {
-                        ControllerContext.closeStatic();
+                        //ControllerContext.closeStatic();
                     }
                 }
         );
