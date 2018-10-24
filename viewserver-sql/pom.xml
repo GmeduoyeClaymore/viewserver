@@ -28,7 +28,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>protoc-plugin</id>
-            <url>http://claymoreminds.com:8040/artifactory/libs-release/</url>
+            <url>http://repository.mapr.com/nexus/content/groups/mapr-public/releases</url>
         </pluginRepository>
     </pluginRepositories>
 

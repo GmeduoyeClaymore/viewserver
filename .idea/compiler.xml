@@ -1,75 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/operators/group/summary/Sum_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/sort/Comparer_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/literal/Literal_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/multiply/Multiply_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/divide/Divide_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/minus/Minus_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/plus/Plus_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/modulus/Modulus_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/gtequals/GTEquals_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/gt/GT_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/lt/LT_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/ltequals/LTEquals_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/power/Power_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/function/abs/Abs_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/disk/DiskColumn_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/operators/group/summary/sum/Sum_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/stdDev/StdDev_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/avg/Avg_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/var/Var_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/function/sqrt/Sqrt_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/minmax/MinMax_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/sum/Sum_KeyName__SumName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/chunked/ChunkedColumn_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/chunked/ChunkedColumnHolder_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/calccol/CalcColumnHolder_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnHolder_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/union/UnionColumnHolder_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/collections/_KeyName_HashSet.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/unenum/UnEnumColumn_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/memorymapped/MemoryMappedColumn_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/offheap/OffHeapArray_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName__ValueName_Hash.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName__ValueName_HashMap.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName_Array.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/offheap/OffHeapColumn_KeyName_.java" />
-      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnMetadata_KeyName_.java" />
-    </excludeFromCompile>
-    <resourceExtensions />
-    <wildcardResourcePatterns>
-      <entry name="!?*.java" />
-      <entry name="!?*.form" />
-      <entry name="!?*.class" />
-      <entry name="!?*.groovy" />
-      <entry name="!?*.scala" />
-      <entry name="!?*.flex" />
-      <entry name="!?*.kt" />
-      <entry name="!?*.clj" />
-      <entry name="*.txt" />
-    </wildcardResourcePatterns>
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="false">
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Annotation profile for viewserver-adapters-oracle" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="viewserver-adapters-oracle" />
-      </profile>
-      <profile default="false" name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="msx-server-demo" />
-        <module name="shotgun-viewsserver" />
         <module name="viewserver-adapters-common" />
         <module name="viewserver-adapters-csv" />
         <module name="viewserver-adapters-firebase" />
@@ -84,10 +20,8 @@
         <module name="viewserver-messages-protobuf" />
         <module name="viewserver-r" />
         <module name="viewserver-server" />
-        <module name="viewserver-shotgun" />
         <module name="viewserver-sourcegen" />
         <module name="viewserver-sql" />
-        <module name="viewsserver-shotgun" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -95,7 +29,6 @@
       <module name="viewserver-adapters-common" target="1.8" />
       <module name="viewserver-adapters-csv" target="1.8" />
       <module name="viewserver-adapters-firebase" target="1.8" />
-      <module name="viewserver-adapters-firebase (1)" target="1.5" />
       <module name="viewserver-adapters-h2" target="1.8" />
       <module name="viewserver-adapters-jdbc" target="1.8" />
       <module name="viewserver-adapters-mongo" target="1.8" />
@@ -110,13 +43,8 @@
       <module name="viewserver-messages-protobuf" target="1.8" />
       <module name="viewserver-r" target="1.8" />
       <module name="viewserver-server" target="1.8" />
-      <module name="viewserver-shotgun" target="1.8" />
       <module name="viewserver-sourcegen" target="1.8" />
       <module name="viewserver-sql" target="1.8" />
-      <module name="viewsserver-shotgun" target="1.8" />
     </bytecodeTargetLevel>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-parameters" />
   </component>
 </project>
