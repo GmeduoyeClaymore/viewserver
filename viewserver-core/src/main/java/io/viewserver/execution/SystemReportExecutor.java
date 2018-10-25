@@ -90,26 +90,7 @@ public class SystemReportExecutor {
             reportExecutionPlanContext.setInput(dataSource.getFinalOutput());
         }
         reportExecutionPlanContext.setReportContext(reportContext);
-        reportExecutionPlanContext.setGraphDefinition(new IGraphDefinition() {
-            @Override
-            public List<IGraphNode> getNodes() {
-                IGraphNodeRetriever retriever = reportDefinition.getGraphNodeRetriever();
-                if(retriever == null){
-                    return reportDefinition.getNodes();
-                }
-                return retriever.transform(reportDefinition,reportContext);
-            }
-
-            @Override
-            public String getOutput() {
-                return reportDefinition.getOutput();
-            }
-
-            @Override
-            public void setOutput(String output) {
-                reportDefinition.setOutput(output);
-            }
-        });
+        reportExecutionPlanContext.setGraphDefinition(new ReportDefinitionWrapper(reportDefinition, reportContext));
         reportExecutionPlanContext.setDataSource(dataSource);
 
         return reportExecutionPlanContext;
