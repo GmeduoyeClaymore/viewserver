@@ -94,7 +94,12 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                 }
             }, getReactorExecutor());
 
-        } catch(Exception e) {
+        }
+        catch(UserInputException e) {
+            log.info("User command returned false: " +  e.getMessage());
+            commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
+        }
+        catch(Exception e) {
             log.error("Failed to handle generic json command", e);
             commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
         }
@@ -112,13 +117,21 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             try(ControllerContext ctxt = ControllerContext.create(context)){
                 return entry.invoke(payload,ctxt, getReactorExecutor());
             } catch (Exception e) {
-                throw new RuntimeException(ControllerContext.Unwrap(e));
+                Throwable unwrap = ControllerContext.Unwrap(e);
+                if(unwrap instanceof RuntimeException){
+                    throw (RuntimeException)unwrap;
+                }
+                throw new RuntimeException(unwrap);
             }
         }
         try(ControllerContext ctxt = ControllerContext.create(context)){
             return entry.invoke(payload, ctxt,asyncExecutor);
         } catch (Exception e) {
-            throw new RuntimeException(ControllerContext.Unwrap(e));
+            Throwable unwrap = ControllerContext.Unwrap(e);
+            if(unwrap instanceof RuntimeException){
+                throw (RuntimeException)unwrap;
+            }
+            throw new RuntimeException(unwrap);
         }
     }
 
