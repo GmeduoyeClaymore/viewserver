@@ -20,7 +20,7 @@
 
     <groupId>io.viewserver</groupId>
     <artifactId>viewserver-engine</artifactId>
-    <version>1.0.72</version>
+    <version>1.0.79</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:git:https://github.com/GmeduoyeClaymore/viewserver.git</connection>
@@ -30,11 +30,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>claymoresnapshots</id>
-            <url>http://build.claymoreminds.com:8081/artifactory/libs-snapshot</url>
+            <url>http://build.claymoreminds.com:8081/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
         <repository>
             <id>claymorereleases</id>
-            <url>http://build.claymoreminds.com:8081/artifactory/libs-release</url>
+            <url>http://build.claymoreminds.com:8081/artifactory/libs-release-local</url>
         </repository>
     </distributionManagement>
 

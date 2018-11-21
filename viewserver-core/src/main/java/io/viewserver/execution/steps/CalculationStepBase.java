@@ -24,6 +24,8 @@ import io.viewserver.expression.AntlrExpressionParser;
 import io.viewserver.expression.parser.ColumnAliasingVisitor;
 import io.viewserver.operators.calccol.CalcColOperator;
 import io.viewserver.report.CalculationDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -32,19 +34,24 @@ import java.util.Map;
  * Created by bemm on 31/10/2014.
  */
 public abstract class CalculationStepBase<TGraphDefinition> implements IExecutionPlanStep<ReportExecutionPlanContext> {
+    private static final Logger logger = LoggerFactory.getLogger(CalculationStepBase.class);
     @Override
     public void execute(final ReportExecutionPlanContext context) {
         ReportContext reportContext = context.getReportContext();
 
-        TGraphDefinition graphDefinition = (TGraphDefinition) context.getGraphDefinition();
+        try {
+            TGraphDefinition graphDefinition = (TGraphDefinition) context.getGraphDefinition();
 
-        ParameterHelper parameterHelper = context.getParameterHelper();
-        for (CalculationDefinition calculationDefinition : getCalculations(reportContext, graphDefinition)) {
-            String expression = parameterHelper.substituteParameterValues(calculationDefinition.getExpression(), reportContext);
-            expression = updateColumnNames(expression, context.getCalculationAliases());
-            String columnName = "calc_" + Hasher.SHA1(expression);
-            context.getCalculationAliases().put(parameterHelper.substituteParameterValues(calculationDefinition.getName()), columnName);
-            context.getCalculations().add(new CalcColOperator.CalculatedColumn(columnName, expression));
+            ParameterHelper parameterHelper = context.getParameterHelper();
+            for (CalculationDefinition calculationDefinition : getCalculations(reportContext, graphDefinition)) {
+                String expression = parameterHelper.substituteParameterValues(calculationDefinition.getExpression(), reportContext);
+                expression = updateColumnNames(expression, context.getCalculationAliases());
+                String columnName = "calc_" + Hasher.SHA1(expression);
+                context.getCalculationAliases().put(parameterHelper.substituteParameterValues(calculationDefinition.getName()), columnName);
+                context.getCalculations().add(new CalcColOperator.CalculatedColumn(columnName, expression));
+            }
+        }catch (Exception ex){
+            logger.warn("Problem running calculation step {}", ex.getMessage());
         }
     }
 
