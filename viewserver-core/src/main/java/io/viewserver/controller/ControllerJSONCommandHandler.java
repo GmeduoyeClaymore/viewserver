@@ -77,6 +77,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             }
             String payload = data.getPayload();
             ListenableFuture<String> invoke = invoke(entry, payload, contextFactory.call(peerSession));
+
             invoke.addListener(new Runnable() {
                 @Override
                 public void run() {
@@ -88,8 +89,11 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                         log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
-                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
-                        commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
+                        Throwable unwrap = e.getCause();
+                        if(!RuntimeException.class.isAssignableFrom(unwrap.getClass())){
+                            log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
+                        }
+                        commandResult.setSuccess(false).setMessage(unwrap.getMessage()).setComplete(true);
                     }
                 }
             }, getReactorExecutor());
@@ -118,7 +122,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                 return entry.invoke(payload,ctxt, getReactorExecutor());
             } catch (Exception e) {
                 Throwable unwrap = ControllerContext.Unwrap(e);
-                if(unwrap instanceof RuntimeException){
+                if(RuntimeException.class.isAssignableFrom(unwrap.getClass())){
                     throw (RuntimeException)unwrap;
                 }
                 throw new RuntimeException(unwrap);
@@ -128,7 +132,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             return entry.invoke(payload, ctxt,asyncExecutor);
         } catch (Exception e) {
             Throwable unwrap = ControllerContext.Unwrap(e);
-            if(unwrap instanceof RuntimeException){
+            if(RuntimeException.class.isAssignableFrom(unwrap.getClass())){
                 throw (RuntimeException)unwrap;
             }
             throw new RuntimeException(unwrap);
