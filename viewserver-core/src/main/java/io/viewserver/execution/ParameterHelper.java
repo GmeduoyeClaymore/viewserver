@@ -16,6 +16,7 @@
 
 package io.viewserver.execution;
 
+import io.viewserver.controller.UserInputException;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.messages.command.IReportContext;
 import io.viewserver.messages.common.ValueLists;
@@ -70,7 +71,7 @@ public class ParameterHelper {
             }
         }
         if(errors.length() > 0){
-            throw new RuntimeException(errors.toString());
+            throw new UserInputException(errors.toString());
         }
     }
 
