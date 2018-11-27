@@ -64,6 +64,11 @@ public interface IRecord {
     boolean hasValue(String columnName);
 
     default String asString(){
+        HashMap<String, Object> record = toMap();
+        return JacksonSerialiser.getInstance().serialise(record);
+    }
+
+    default HashMap<String, Object> toMap() {
         HashMap<String,Object> record = new HashMap<>();
         for(String col : getColumnNames()){
             try{
@@ -73,7 +78,7 @@ public interface IRecord {
                 logger.error("Issue getting value for column " + col,ex);
             }
         }
-        return JacksonSerialiser.getInstance().serialise(record);
+        return record;
     }
 
 }

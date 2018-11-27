@@ -90,8 +90,11 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
                         Throwable unwrap = e.getCause();
-                        if(!RuntimeException.class.isAssignableFrom(unwrap.getClass())){
+                        if(!UserInputException.class.isAssignableFrom(unwrap.getClass())){
                             log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
+                        }else{
+                            log.warn(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
+
                         }
                         commandResult.setSuccess(false).setMessage(unwrap.getMessage()).setComplete(true);
                     }

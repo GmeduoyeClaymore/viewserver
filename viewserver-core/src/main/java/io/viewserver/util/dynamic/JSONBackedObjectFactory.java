@@ -1,11 +1,10 @@
 package io.viewserver.util.dynamic;
 
 import io.viewserver.controller.ControllerUtils;
+import io.viewserver.datasource.IRecord;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static io.viewserver.util.dynamic.MethodInterpreters.caching;
 
 public class JSONBackedObjectFactory {
     public static <T> T create(Class<T> classToCreate) {
@@ -18,6 +17,10 @@ public class JSONBackedObjectFactory {
 
     public static <T> T create(Map<String, Object> propertyValues, Class<T> classToCreate) {
         PropertyValueStore store = new PropertyValueStore(classToCreate, propertyValues);
+        return Proxies.simpleProxy(classToCreate, store.createMethodInterpreter(), EqualisableByState.class, DynamicJsonBackedObject.class);
+    }
+    public static <T> T create(IRecord record, Class<T> classToCreate) {
+        PropertyValueStore store = new PropertyValueStore(classToCreate, record.toMap());
         return Proxies.simpleProxy(classToCreate, store.createMethodInterpreter(), EqualisableByState.class, DynamicJsonBackedObject.class);
     }
 }
