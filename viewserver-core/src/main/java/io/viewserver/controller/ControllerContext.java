@@ -39,8 +39,11 @@ public class ControllerContext implements AutoCloseable{
     }
 
     public static ControllerContext create(ControllerContext context){
+
         current.set(context);
-        threadNameToContextMap.put(Thread.currentThread().getName(),context);
+        if(context != null){
+            threadNameToContextMap.put(Thread.currentThread().getName(),context);
+        }
         return context;
     }
 

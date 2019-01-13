@@ -109,7 +109,7 @@ public class MongoRecordLoaderTest {
                 }
         );
         int counter = 0;
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", "report_name"),null).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", "report_name"),(Integer)null).subscribe();
         Assert.assertTrue(latch.await(10,TimeUnit.SECONDS));
     }
 
@@ -135,8 +135,8 @@ public class MongoRecordLoaderTest {
                     System.err.println(err);
                 }
         );
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name"),null).subscribe();
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name2"),null).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name"), (Integer) null).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id").addValue("name", "report_name2"), (Integer)null).subscribe();
         Assert.assertTrue(latch.await(2,TimeUnit.SECONDS));
         Assert.assertEquals("report_name2", name.get());
     }
@@ -159,7 +159,7 @@ public class MongoRecordLoaderTest {
         int counter = 0;
         DynamicJsonBackedObject obj = JSONBackedObjectFactory.create(DynamicJsonBackedObject.class);
         obj.set("foo","bar");
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj),null).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", obj),(Integer) null).subscribe();
         Assert.assertTrue(latch.await(20,TimeUnit.SECONDS));
     }
 
@@ -183,7 +183,7 @@ public class MongoRecordLoaderTest {
         obj.set("foo","bar");
         ratings[0] = obj;
         ratings[1] = obj;
-        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", ratings),null).subscribe();
+        tableUpdater.addOrUpdateRow(tableName, config, new Record().addValue("id", "record_1_id" + counter++).addValue("name", ratings),(Integer)null).subscribe();
         Assert.assertTrue(latch.await(20,TimeUnit.SECONDS));
     }
 
