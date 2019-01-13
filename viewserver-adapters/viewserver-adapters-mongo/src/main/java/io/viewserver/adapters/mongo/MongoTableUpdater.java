@@ -18,6 +18,7 @@ import rx.Observable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 
 public class MongoTableUpdater implements IDatabaseUpdater {
@@ -30,6 +31,10 @@ public class MongoTableUpdater implements IDatabaseUpdater {
     }
 
 
+    @Override
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Supplier<Integer> version) {
+        return addOrUpdateRow(tableName,schemaConfig,record,version == null ? null : version.get());
+    }
     @Override
     public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Integer versionToBeUpdated){
         return Observable.create(
