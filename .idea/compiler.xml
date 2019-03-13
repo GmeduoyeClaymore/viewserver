@@ -24,6 +24,44 @@
         <module name="viewserver-sql" />
       </profile>
     </annotationProcessing>
+    <excludeFromCompile>
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/operators/group/summary/Sum_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/sort/Comparer_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/literal/Literal_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/multiply/Multiply_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/divide/Divide_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/minus/Minus_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/plus/Plus_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/modulus/Modulus_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/gtequals/GTEquals_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/gt/GT_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/lt/LT_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/ltequals/LTEquals_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/tree/power/Power_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/function/abs/Abs_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/disk/DiskColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/operators/group/summary/sum/Sum_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/stdDev/StdDev_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/avg/Avg_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/var/Var_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/expression/function/sqrt/Sqrt_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/minmax/MinMax_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/group/summary/sum/Sum_KeyName__SumName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/chunked/ChunkedColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/chunked/ChunkedColumnHolder_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/calccol/CalcColumnHolder_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnHolder_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/union/UnionColumnHolder_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/collections/_KeyName_HashSet.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/operators/unenum/UnEnumColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/memorymapped/MemoryMappedColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/offheap/OffHeapArray_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName__ValueName_Hash.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName__ValueName_HashMap.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/collections/memorymapped/MemoryMapped_KeyName_Array.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/com/cmm/viewserver/schema/column/offheap/OffHeapColumn_KeyName_.java" />
+      <file url="file://$PROJECT_DIR$/viewserver-core/src/main/java/io/viewserver/schema/column/ColumnMetadata_KeyName_.java" />
+    </excludeFromCompile>
     <bytecodeTargetLevel>
       <module name="viewserver-adapters" target="1.8" />
       <module name="viewserver-adapters-common" target="1.8" />

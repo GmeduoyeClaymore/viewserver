@@ -77,6 +77,7 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             }
             String payload = data.getPayload();
             ListenableFuture<String> invoke = invoke(entry, payload, contextFactory.call(peerSession));
+
             invoke.addListener(new Runnable() {
                 @Override
                 public void run() {
@@ -88,13 +89,24 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
                         log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
                         commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
                     } catch (ExecutionException e) {
-                        log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
-                        commandResult.setSuccess(false).setMessage(ControllerContext.Unwrap(e).getMessage()).setComplete(true);
+                        Throwable unwrap = e.getCause();
+                        if(!UserInputException.class.isAssignableFrom(unwrap.getClass())){
+                            log.error(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
+                        }else{
+                            log.warn(String.format("Failed to handle JSON command :\"%s\" action:\"%s\"",controllerName,trim(action)), e);
+
+                        }
+                        commandResult.setSuccess(false).setMessage(unwrap.getMessage()).setComplete(true);
                     }
                 }
             }, getReactorExecutor());
 
-        } catch(Exception e) {
+        }
+        catch(UserInputException e) {
+            log.info("User command returned false: " +  e.getMessage());
+            commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
+        }
+        catch(Exception e) {
             log.error("Failed to handle generic json command", e);
             commandResult.setSuccess(false).setMessage(e.getMessage()).setComplete(true);
         }
@@ -112,13 +124,21 @@ public class ControllerJSONCommandHandler extends CommandHandlerBase<IGenericJSO
             try(ControllerContext ctxt = ControllerContext.create(context)){
                 return entry.invoke(payload,ctxt, getReactorExecutor());
             } catch (Exception e) {
-                throw new RuntimeException(ControllerContext.Unwrap(e));
+                Throwable unwrap = ControllerContext.Unwrap(e);
+                if(RuntimeException.class.isAssignableFrom(unwrap.getClass())){
+                    throw (RuntimeException)unwrap;
+                }
+                throw new RuntimeException(unwrap);
             }
         }
         try(ControllerContext ctxt = ControllerContext.create(context)){
             return entry.invoke(payload, ctxt,asyncExecutor);
         } catch (Exception e) {
-            throw new RuntimeException(ControllerContext.Unwrap(e));
+            Throwable unwrap = ControllerContext.Unwrap(e);
+            if(RuntimeException.class.isAssignableFrom(unwrap.getClass())){
+                throw (RuntimeException)unwrap;
+            }
+            throw new RuntimeException(unwrap);
         }
     }
 

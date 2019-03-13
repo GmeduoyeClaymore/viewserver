@@ -19,19 +19,19 @@
     <parent>
         <artifactId>viewserver-adapters</artifactId>
         <groupId>io.viewserver</groupId>
-     <version>1.0.79</version>
+     <version>1.0.88</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>viewserver-adapters-sqlserver</artifactId>
- <version>1.0.79</version>
+ <version>1.0.88</version>
 
     <dependencies>
         <dependency>
             <groupId>io.viewserver</groupId>
             <artifactId>viewserver-adapters-jdbc</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>net.sourceforge.jtds</groupId>
             <artifactId>jtds</artifactId>

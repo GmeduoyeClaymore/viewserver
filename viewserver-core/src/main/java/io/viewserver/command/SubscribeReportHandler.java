@@ -20,6 +20,7 @@ import io.viewserver.catalog.ICatalog;
 import io.viewserver.configurator.Configurator;
 import io.viewserver.controller.ControllerContext;
 import io.viewserver.controller.ControllerUtils;
+import io.viewserver.controller.UserInputException;
 import io.viewserver.datasource.DimensionMapper;
 import io.viewserver.datasource.IDataSourceRegistry;
 import io.viewserver.execution.*;
@@ -92,7 +93,11 @@ public class SubscribeReportHandler extends ReportContextHandler<ISubscribeRepor
             this.createSubscription(activeExecutionPlanContext, command.getId(), peerSession, options);
         } catch (Throwable ex) {
             commandResult.setSuccess(false).setMessage(ex.getMessage()).setComplete(true);
-            log.error("Failed to subscribe to report", ex);
+            if(!(ex instanceof UserInputException)){
+                log.error("Failed to subscribe to report", ex);
+            }else{
+                log.warn("Failed to subscribe to report  - " +  ex.getMessage());
+            }
         }
     }
 

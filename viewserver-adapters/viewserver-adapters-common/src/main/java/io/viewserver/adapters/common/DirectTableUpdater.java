@@ -10,6 +10,10 @@ import io.viewserver.operators.table.KeyedTable;
 import rx.Emitter;
 import rx.Observable;
 
+import java.util.concurrent.Callable;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 public class DirectTableUpdater implements IDatabaseUpdater{
     private final IExecutionContext executionContext;
     private ICatalog serverCatalog;
@@ -35,10 +39,15 @@ public class DirectTableUpdater implements IDatabaseUpdater{
         return Observable.just(true);
     }
 
+    @Override
+    public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record, Supplier<Integer> version) {
+        return addOrUpdateRow(tableName,schemaConfig,record,version == null ? null : version.get());
+    }
+
     public Observable<Boolean> scheduleAddOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record) {
         return Observable.create(subscriber -> this.executionContext.getReactor().scheduleTask(() -> {
             try{
-                addOrUpdateRow(tableName,schemaConfig,record,null);
+                addOrUpdateRow(tableName,schemaConfig,record,(Integer)null);
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }catch (Exception ex){

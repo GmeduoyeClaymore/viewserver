@@ -15,6 +15,7 @@ import rx.Observable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 
 public class FirebaseTableUpdater implements IDatabaseUpdater {
@@ -24,6 +25,8 @@ public class FirebaseTableUpdater implements IDatabaseUpdater {
     public FirebaseTableUpdater(FirebaseConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
+
+
 
     @Override
     public Observable<Boolean> addOrUpdateRow(String tableName, SchemaConfig schemaConfig, IRecord record,Integer version){

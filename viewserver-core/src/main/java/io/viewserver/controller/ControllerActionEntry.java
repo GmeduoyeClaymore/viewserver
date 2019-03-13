@@ -189,7 +189,7 @@ public class ControllerActionEntry{
                                     args[paramEntry.index] = mapper.readValue(getParameter(parameter),paramEntry.getType());
                                 }
 
-                            }catch (Exception ex){
+                            } catch (Exception ex){
                                 throw new RuntimeException(String.format("Problem deserializing parameter named \"%s\" ",paramEntry.getName())  + ex, ex);
                             }
 
@@ -290,7 +290,11 @@ public class ControllerActionEntry{
                 return toString(method.call());
             }
             catch(Exception ex){
-                throw new RuntimeException(ControllerContext.Unwrap(ex));
+                Throwable unwrap = ControllerContext.Unwrap(ex);
+                if(RuntimeException.class.isAssignableFrom(unwrap.getClass())){
+                    throw  (RuntimeException)unwrap;
+                }
+                throw new RuntimeException(unwrap);
             }
         });
     }
