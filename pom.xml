@@ -30,11 +30,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>claymoresnapshots</id>
-            <url>http://build.claymoreminds.com:8081/artifactory/libs-snapshot-local</url>
+            <url>http://claymoreminds.com:8040/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
         <repository>
             <id>claymorereleases</id>
-            <url>http://build.claymoreminds.com:8081/artifactory/libs-release-local</url>
+            <url>http://claymoreminds.com:8040/artifactory/libs-release-local</url>
         </repository>
     </distributionManagement>
 
