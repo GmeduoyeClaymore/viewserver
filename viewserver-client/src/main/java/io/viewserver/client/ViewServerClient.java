@@ -231,7 +231,7 @@ public class ViewServerClient implements AutoCloseable {
                         }
                     });
                     iPeerSession.sendCommand(command);
-                    command.getMessage().release();
+                    //command.getMessage().release();
                 },
                 err -> {
                     future.setException(err);
